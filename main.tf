@@ -92,9 +92,13 @@ resource "aws_security_group" "bastion_sg" {
     cidr_blocks = ["0.0.0.0/0"]
     description = "Allow Bastion Host to call on VPC Endpoints related to AWS SSM"
   }
+
+  tags = {
+    Name = "bastion_sg"
+  }
 }
 
-# NEXT STEPS: Create Bastion instance's IAM policy for SSM access, NATGW, IGW, and configure route tables
+# NEXT STEPS: Create NATGW, IGW, and configure route tables
 
 ## Create S3 buckets using random module for naming conventions
 
