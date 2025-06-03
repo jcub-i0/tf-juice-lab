@@ -94,7 +94,7 @@ resource "aws_security_group" "bastion_sg" {
   }
 }
 
-# NEXT STEPS: Create EC2 instances, NATGW, IGW, and configure route tables
+# NEXT STEPS: Create Bastion instance's IAM policy for SSM access, NATGW, IGW, and configure route tables
 
 ## Create S3 buckets using random module for naming conventions
 
@@ -108,6 +108,24 @@ data "aws_ami" "amz-linux-2023" {
     values = ["al2023-ami-*-x86_64"]
   }
   owners = ["137112412989"]
+}
+
+resource "aws_iam_role" "ssm_role" {
+  name = "EC2-SSM-Role"
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [
+      {
+        Action = "sts:AssumeRole"
+        Effect = "Allow"
+        Sid = ""
+        Principal = {
+          Service = "ec2.amazonaws.com"
+        }
+      },
+    ]
+  })
 }
 
 resource "aws_instance" "bastion" {
