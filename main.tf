@@ -93,3 +93,31 @@ resource "aws_security_group" "bastion_sg" {
     description = "Allow Bastion Host to call on VPC Endpoints related to AWS SSM"
   }
 }
+
+# NEXT STEPS: Create EC2 instances, NATGW, IGW, and configure route tables
+
+## Create S3 buckets using random module for naming conventions
+
+# CREATE EC2 INSTANCES
+
+data "aws_ami" "amz-linux-2023" {
+  most_recent = true
+
+  filter {
+    name   = "name"
+    values = ["al2023-ami-*-x86_64"]
+  }
+  owners = ["137112412989"]
+}
+
+resource "aws_instance" "bastion" {
+  ami                         = data.aws_ami.amz-linux-2023.id
+  instance_type               = "t2.micro"
+  subnet_id                   = aws_subnet.public.id
+  security_groups             = [aws_security_group.bastion_sg.id]
+  associate_public_ip_address = true
+
+  tags = {
+    Name = "Bastion Host"
+  }
+}
