@@ -98,7 +98,7 @@ resource "aws_security_group" "bastion_sg" {
   }
 }
 
-# NEXT STEPS: Create NATGW, IGW, and configure route tables
+# NEXT STEPS: Configure route tables
 
 ## Create S3 buckets using random module for naming conventions
 
@@ -177,5 +177,23 @@ resource "aws_internet_gateway" "igw" {
 
   tags = {
     Name = "IGW"
+  }
+}
+
+resource "aws_route_table" "private" {
+  vpc_id = aws_vpc.tf-juice-lab.id
+
+  route {
+    cidr_block     = "0.0.0.0/0"
+    nat_gateway_id = aws_nat_gateway.natgw.id
+  }
+}
+
+resource "aws_route_table" "public" {
+  vpc_id = aws_vpc.tf-juice-lab.id
+
+  route {
+    cidr_block = "0.0.0.0/0"
+    gateway_id = aws_internet_gateway.igw.id
   }
 }
