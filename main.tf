@@ -123,7 +123,7 @@ resource "aws_iam_role" "ssm_role" {
       {
         Action = "sts:AssumeRole"
         Effect = "Allow"
-        Sid = ""
+        Sid    = ""
         Principal = {
           Service = "ec2.amazonaws.com"
         }
@@ -137,7 +137,7 @@ data "aws_iam_policy" "ssm_core" {
 }
 
 resource "aws_iam_role_policy_attachment" "ssm_core_attach" {
-  role = aws_iam_role.ssm_role.name
+  role       = aws_iam_role.ssm_role.name
   policy_arn = data.aws_iam_policy.ssm_core.arn
 }
 
@@ -147,7 +147,7 @@ resource "aws_instance" "bastion" {
   subnet_id                   = aws_subnet.public.id
   security_groups             = [aws_security_group.bastion_sg.id]
   associate_public_ip_address = true
-  
+
   tags = {
     Name = "Bastion Host"
   }
@@ -156,4 +156,26 @@ resource "aws_instance" "bastion" {
 resource "aws_iam_instance_profile" "ssm_profile" {
   name = "EC2-SSM-Profile"
   role = aws_iam_role.ssm_role.name
+}
+
+resource "aws_eip" "natgw_eip" {
+  domain = "vpc"
+}
+
+resource "aws_nat_gateway" "natgw" {
+  allocation_id = aws_eip.natgw_eip.id
+  subnet_id     = aws_subnet.public.id
+
+  tags = {
+    Name = "NATGW"
+  }
+  depends_on = [aws_internet_gateway.igw]
+}
+
+resource "aws_internet_gateway" "igw" {
+  vpc_id = aws_vpc.tf-juice-lab.id
+
+  tags = {
+    Name = "main"
+  }
 }
