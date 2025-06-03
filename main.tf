@@ -98,9 +98,7 @@ resource "aws_security_group" "bastion_sg" {
   }
 }
 
-# NEXT STEPS: Configure route tables
-
-## Create S3 buckets using random module for naming conventions
+# NEXT STEPS: Create S3 buckets using random module for naming conventions
 
 # CREATE EC2 INSTANCES
 
@@ -147,6 +145,7 @@ resource "aws_instance" "bastion" {
   subnet_id                   = aws_subnet.public.id
   security_groups             = [aws_security_group.bastion_sg.id]
   associate_public_ip_address = true
+  iam_instance_profile        = aws_iam_instance_profile.ssm_profile.name
 
   tags = {
     Name = "Bastion Host"
@@ -199,11 +198,11 @@ resource "aws_route_table" "public" {
 }
 
 resource "aws_route_table_association" "private_assc" {
-  subnet_id = aws_subnet.private.id
+  subnet_id      = aws_subnet.private.id
   route_table_id = aws_route_table.private.id
 }
 
 resource "aws_route_table_association" "public_assc" {
-  subnet_id = aws_subnet.public.id
+  subnet_id      = aws_subnet.public.id
   route_table_id = aws_route_table.public.id
 }
