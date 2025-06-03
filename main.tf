@@ -176,6 +176,6 @@ resource "aws_internet_gateway" "igw" {
   vpc_id = aws_vpc.tf-juice-lab.id
 
   tags = {
-    Name = "main"
+    Name = "IGW"
   }
 }
