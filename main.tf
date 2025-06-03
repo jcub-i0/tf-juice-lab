@@ -10,6 +10,8 @@ resource "aws_vpc" "tf-juice-lab" {
   }
 }
 
+# CREATE SUBNETS
+
 resource "aws_subnet" "public" {
   vpc_id            = aws_vpc.tf-juice-lab.id
   cidr_block        = var.public_sub_cidr
@@ -31,6 +33,8 @@ resource "aws_subnet" "private" {
     Terraform = "true"
   }
 }
+
+# CREATE SECURITY GROUPS
 
 resource "aws_security_group" "juice_sg" {
   name        = "juice-sg"
