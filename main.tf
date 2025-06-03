@@ -143,8 +143,13 @@ resource "aws_instance" "bastion" {
   subnet_id                   = aws_subnet.public.id
   security_groups             = [aws_security_group.bastion_sg.id]
   associate_public_ip_address = true
-
+  
   tags = {
     Name = "Bastion Host"
   }
+}
+
+resource "aws_iam_instance_profile" "ssm_profile" {
+  name = "EC2-SSM-Profile"
+  role = aws_iam_role.ssm_role.name
 }
