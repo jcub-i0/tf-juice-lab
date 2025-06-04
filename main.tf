@@ -98,7 +98,8 @@ resource "aws_security_group" "bastion_sg" {
   }
 }
 
-# NEXT STEPS: Create S3 buckets using random module for naming conventions
+# NEXT STEPS: Install SSM agent on bastion instance -- apparently linux 2023 does not come with the agent installed
+# Create S3 buckets using random module for naming conventions
 
 # CREATE EC2 INSTANCES
 
@@ -147,6 +148,14 @@ resource "aws_instance" "bastion" {
   associate_public_ip_address = true
   iam_instance_profile        = aws_iam_instance_profile.ssm_profile.name
 
+  # Install SSM agent on AL2023 Bastion instance
+  user_data = <<-EOF
+              #!/bin/bash
+              yum update -y
+              yum install -y amazon-ssm-agent
+              systemctl enable amazon-ssm-agent
+              systemctl start amazon-ssm-agent
+              EOF
   tags = {
     Name = "Bastion Host"
   }
