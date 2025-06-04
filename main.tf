@@ -98,9 +98,6 @@ resource "aws_security_group" "bastion_sg" {
   }
 }
 
-# NEXT STEPS: Install SSM agent on bastion instance -- apparently linux 2023 does not come with the agent installed
-# Create S3 buckets using random module for naming conventions
-
 # CREATE EC2 INSTANCES
 
 data "aws_ami" "amz-linux-2023" {
@@ -215,3 +212,5 @@ resource "aws_route_table_association" "public_assc" {
   subnet_id      = aws_subnet.public.id
   route_table_id = aws_route_table.public.id
 }
+
+# NEXT STEP: Create S3 buckets using random module for naming conventions
