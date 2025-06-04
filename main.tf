@@ -213,4 +213,5 @@ resource "aws_route_table_association" "public_assc" {
   route_table_id = aws_route_table.public.id
 }
 
-# NEXT STEP: Create S3 buckets using random module for naming conventions
+# NEXT STEPS: CREATE KALI AND JUICESHOP INSTANCES
+# Create S3 buckets using random module for naming conventions
