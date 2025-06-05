@@ -93,6 +93,14 @@ resource "aws_security_group" "bastion_sg" {
     description = "Allow Bastion Host to call on VPC Endpoints related to AWS SSM"
   }
 
+  egress {
+    from_port = 22
+    to_port = 22
+    protocol = "tcp"
+    cidr_blocks = [aws_vpc.tf-juice-lab.cidr_block]
+    description = "Allow outbound ssh traffic on port 22 to private subnet"
+  }
+
   tags = {
     Name = "bastion_sg"
   }
