@@ -77,13 +77,7 @@ resource "aws_security_group" "bastion_sg" {
   description = "Allow AWS SSM to control the Bastion Host"
   vpc_id      = aws_vpc.tf-juice-lab.id
 
-  ingress {
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
-    description = "Allow all inbound traffic"
-  }
+  # no inbound rules needed -- instance is accessed via AWS SSM
 
   egress {
     from_port   = 443
