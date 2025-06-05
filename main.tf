@@ -225,7 +225,8 @@ data "aws_ami" "kali-linux" {
 
 resource "aws_instance" "kali" {
   ami           = data.aws_ami.kali-linux.id
-  instance_type = "t3.large"
+  instance_type = "t2.medium"
+  subnet_id = aws_subnet.private.id
 
   root_block_device {
     volume_size = "50"
