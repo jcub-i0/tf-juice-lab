@@ -42,11 +42,11 @@ resource "aws_security_group" "juice_sg" {
   vpc_id      = aws_vpc.tf-juice-lab.id
 
   ingress {
-    from_port = 22
-    to_port = 22
-    protocol = "tcp"
+    from_port       = 22
+    to_port         = 22
+    protocol        = "tcp"
     security_groups = [aws_security_group.kali_sg.id]
-    description = "Allow Kali to SSH into Juice instance for app installation"
+    description     = "Allow Kali to SSH into Juice instance for app installation"
   }
 
   ingress {
@@ -122,10 +122,10 @@ data "aws_ami" "amz-linux-2023" {
 
 data "aws_ami" "ubuntu" {
   most_recent = true
-  owners = ["099720109477"]
+  owners      = ["099720109477"]
 
   filter {
-    name = "name"
+    name   = "name"
     values = ["ubuntu/images/hvm-ssd/ubuntu-jammy-22.04-amd64-server-*"]
   }
 }
@@ -250,7 +250,7 @@ resource "tls_private_key" "generate_kali_key" {
 
 resource "tls_private_key" "generate_juice_key" {
   algorithm = "RSA"
-  rsa_bits = 4096
+  rsa_bits  = 4096
 }
 
 resource "local_sensitive_file" "kali_priv_key" {
@@ -259,7 +259,7 @@ resource "local_sensitive_file" "kali_priv_key" {
 }
 
 resource "local_sensitive_file" "juice_priv_key" {
-  content = tls_private_key.generate_juice_key.private_key_openssh
+  content  = tls_private_key.generate_juice_key.private_key_openssh
   filename = "juice_priv_key.pem"
 }
 
@@ -289,7 +289,7 @@ resource "aws_key_pair" "kali_key" {
 }
 
 resource "aws_key_pair" "juice_key" {
-  key_name = "juice_key"
+  key_name   = "juice_key"
   public_key = tls_private_key.generate_juice_key.public_key_openssh
 }
 
@@ -314,15 +314,15 @@ resource "aws_instance" "kali" {
 # Create General Purpose and Log S3 buckets using random module for naming conventions
 
 resource "aws_instance" "juice-shop" {
-  ami = data.aws_ami.ubuntu.id
-  instance_type = "t3.small"
-  subnet_id = aws_subnet.private.id
-  key_name = aws_key_pair.juice_key.key_name
+  ami             = data.aws_ami.ubuntu.id
+  instance_type   = "t3.small"
+  subnet_id       = aws_subnet.private.id
+  key_name        = aws_key_pair.juice_key.key_name
   security_groups = [aws_security_group.juice_sg.id]
 
   root_block_device {
-    volume_size = "20"
-    volume_type = "gp3"
+    volume_size           = "20"
+    volume_type           = "gp3"
     delete_on_termination = "false"
   }
 
