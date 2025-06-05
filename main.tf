@@ -242,14 +242,25 @@ data "aws_ami" "kali-linux" {
     values = ["Kali Linux -AWS-Nuvemnest-prod-gwn444uatyjk4"]
   }
 }
+
 resource "tls_private_key" "generate_kali_key" {
   algorithm = "RSA"
   rsa_bits  = 4096
 }
 
+resource "tls_private_key" "generate_juice_key" {
+  algorithm = "RSA"
+  rsa_bits = 4096
+}
+
 resource "local_sensitive_file" "kali_priv_key" {
   content  = tls_private_key.generate_kali_key.private_key_openssh
   filename = "kali_priv_key.pem"
+}
+
+resource "local_sensitive_file" "juice_priv_key" {
+  content = tls_private_key.generate_juice_key.private_key_openssh
+  filename = "juice_priv_key.pem"
 }
 
 resource "null_resource" "chmod_kali_priv_key" {
@@ -262,9 +273,24 @@ resource "null_resource" "chmod_kali_priv_key" {
   depends_on = [local_sensitive_file.kali_priv_key]
 }
 
+resource "null_resource" "chmod_juice_priv_key" {
+  provisioner "local-exec" {
+    command = "chmod 600 ${local_sensitive_file.juice_priv_key.filename}"
+  }
+  triggers = {
+    timestamp = timestamp()
+  }
+  depends_on = [local_sensitive_file.juice_priv_key]
+}
+
 resource "aws_key_pair" "kali_key" {
   key_name   = "kali_key"
   public_key = tls_private_key.generate_kali_key.public_key_openssh
+}
+
+resource "aws_key_pair" "juice_key" {
+  key_name = "juice_key"
+  public_key = tls_private_key.genrate_juice_key.public_key_openssh
 }
 
 resource "aws_instance" "kali" {
@@ -291,6 +317,7 @@ resource "aws_instance" "juice-shop" {
   ami = data.aws_ami.ubuntu.id
   instance_type = "t3.small"
   subnet_id = aws_subnet.private.id
+  key_name = aws_key_pair.juice_key.key_name
   security_groups = [aws_security_group.juice_sg.id]
 
   root_block_device {
