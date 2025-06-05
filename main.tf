@@ -213,5 +213,28 @@ resource "aws_route_table_association" "public_assc" {
   route_table_id = aws_route_table.public.id
 }
 
+data "aws_ami" "kali-linux" {
+  most_recent = true
+  owners      = ["679593333241"]
+
+  filter {
+    name   = "name"
+    values = ["Kali Linux -AWS-Nuvemnest-prod-gwn444uatyjk4"]
+  }
+}
+
+resource "aws_instance" "kali" {
+  ami           = data.aws_ami.kali-linux.id
+  instance_type = "t3.large"
+
+  root_block_device {
+    volume_size = "50"
+  }
+
+  tags = {
+    Name = "Kali"
+  }
+}
+
 # NEXT STEPS: CREATE KALI AND JUICESHOP INSTANCES
 # Create S3 buckets using random module for naming conventions
