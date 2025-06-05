@@ -6,7 +6,7 @@ This project provisions a secure, isolated AWS cloud environment designed to sim
 
 ## Core Use Case: Penetration Testing OWASP Juice Shop
 
-The environment deploys OWASP Juice Shop—a deliberately vulnerable web application—on a private EC2 instance within a hardened VPC. Users can access it through a bastion host using SSH tunneling or via AWS Systems Manager (SSM). This setup enables:
+The environment deploys OWASP Juice Shop -- a deliberately vulnerable web application -- on a private EC2 instance within a hardened VPC. Users can access it through a bastion host using SSH tunneling or via AWS Systems Manager (SSM). This setup enables:
 
 - Web application scanning with tools like Nmap, Nikto, Burp Suite, and OWASP ZAP
 - Practical exploitation of common vulnerabilities in a safe, reproducible environment
