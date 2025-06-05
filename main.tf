@@ -232,6 +232,14 @@ resource "local_sensitive_file" "kali_priv_key" {
   filename = "kali_priv_key.pem"
 }
 
+resource "null_resource" "chmod_kali_priv_key" {
+  provisioner "local-exec" {
+    command = "chmod 600 ${local_sensitive_file.kali_priv_key.filename}"
+  }
+  triggers = "${timestamp()}"
+  depends_on = [local_sensitive_file.kali_priv_key]
+}
+
 resource "aws_key_pair" "kali_key" {
   key_name = "kali_key"
   public_key = tls_private_key.generate_kali_key.public_key_openssh
