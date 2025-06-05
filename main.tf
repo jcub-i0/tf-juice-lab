@@ -236,7 +236,9 @@ resource "null_resource" "chmod_kali_priv_key" {
   provisioner "local-exec" {
     command = "chmod 600 ${local_sensitive_file.kali_priv_key.filename}"
   }
-  triggers = "${timestamp()}"
+  triggers = {
+    timestamp = timestamp()
+  }
   depends_on = [local_sensitive_file.kali_priv_key]
 }
 
