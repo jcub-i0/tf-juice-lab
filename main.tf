@@ -57,6 +57,13 @@ resource "aws_security_group" "juice_sg" {
     description     = "Allow Kali to access JuiceShop"
   }
 
+  egress {
+    from_port = 0
+    to_port = 0
+    protocol = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
   tags = {
     Name = "juice_sg"
   }
@@ -317,7 +324,7 @@ resource "aws_instance" "kali" {
   }
 }
 
-# NEXT STEPS: CREATE JUICE SHOP INSTANCE
+# NEXT STEPS: Loosen security group ingress rules to allow my personal IP address so I can create SSH tunnel (otherwise no UI)
 # Create General Purpose and Log S3 buckets using random module for naming conventions
 
 resource "aws_instance" "juice-shop" {
