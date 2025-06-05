@@ -42,6 +42,14 @@ resource "aws_security_group" "juice_sg" {
   vpc_id      = aws_vpc.tf-juice-lab.id
 
   ingress {
+    from_port = 22
+    to_port = 22
+    protocol = "tcp"
+    security_groups = [aws_security_group.kali_sg.id]
+    description = "Allow Kali to SSH into Juice instance for app installation"
+  }
+
+  ingress {
     from_port       = 3000
     to_port         = 3000
     protocol        = "tcp"
