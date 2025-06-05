@@ -94,9 +94,9 @@ resource "aws_security_group" "bastion_sg" {
   }
 
   egress {
-    from_port = 22
-    to_port = 22
-    protocol = "tcp"
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
     cidr_blocks = [aws_vpc.tf-juice-lab.cidr_block]
     description = "Allow outbound ssh traffic on port 22 to private subnet"
   }
@@ -271,5 +271,5 @@ resource "aws_instance" "kali" {
   }
 }
 
-# NEXT STEPS: JUICESHOP INSTANCE
-# Create S3 buckets using random module for naming conventions
+# NEXT STEPS: CREATE JUICE SHOP INSTANCE
+# Create General Purpose and Log S3 buckets using random module for naming conventions

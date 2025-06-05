@@ -1,9 +1,9 @@
 terraform {
 
   backend "s3" {
-    bucket = "tf-juice-lab"
-    key    = "tf-juice-lab/tf-state"
-    region = "us-east-1"
+    bucket  = "tf-juice-lab"
+    key     = "tf-juice-lab/tf-state"
+    region  = "us-east-1"
     encrypt = true
   }
 
