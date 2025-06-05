@@ -271,5 +271,5 @@ resource "aws_instance" "kali" {
   }
 }
 
-# NEXT STEPS: CREATE KALI AND JUICESHOP INSTANCES
+# NEXT STEPS: JUICESHOP INSTANCE
 # Create S3 buckets using random module for naming conventions
