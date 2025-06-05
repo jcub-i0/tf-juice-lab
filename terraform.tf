@@ -1,4 +1,12 @@
 terraform {
+
+  backend "s3" {
+    bucket = "tf-juice-lab"
+    key    = "tf-juice-lab/tf-state"
+    region = "us-east-1"
+    encrypt = true
+  }
+
   required_providers {
     aws = {
       source  = "hashicorp/aws"
@@ -13,7 +21,7 @@ terraform {
       version = "2.5.3"
     }
     random = {
-      source = "hashicorp/random"
+      source  = "hashicorp/random"
       version = "3.7.2"
     }
   }
