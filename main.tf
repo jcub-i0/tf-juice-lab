@@ -290,7 +290,7 @@ resource "aws_key_pair" "kali_key" {
 
 resource "aws_key_pair" "juice_key" {
   key_name = "juice_key"
-  public_key = tls_private_key.genrate_juice_key.public_key_openssh
+  public_key = tls_private_key.generate_juice_key.public_key_openssh
 }
 
 resource "aws_instance" "kali" {
