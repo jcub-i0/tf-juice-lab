@@ -224,11 +224,11 @@ data "aws_ami" "kali-linux" {
 }
 resource "tls_private_key" "generate_kali_key" {
   algorithm = "RSA"
-  rsa_bits = 4096
+  rsa_bits  = 4096
 }
 
 resource "local_sensitive_file" "kali_priv_key" {
-  content = tls_private_key.generate_kali_key.private_key_openssh
+  content  = tls_private_key.generate_kali_key.private_key_openssh
   filename = "kali_priv_key.pem"
 }
 
@@ -243,16 +243,16 @@ resource "null_resource" "chmod_kali_priv_key" {
 }
 
 resource "aws_key_pair" "kali_key" {
-  key_name = "kali_key"
+  key_name   = "kali_key"
   public_key = tls_private_key.generate_kali_key.public_key_openssh
 }
 
 resource "aws_instance" "kali" {
-  ami           = data.aws_ami.kali-linux.id
-  instance_type = "t2.medium"
-  subnet_id = aws_subnet.private.id
-  key_name = aws_key_pair.kali_key.key_name
-  security_groups = [aws_security_group.kali_sg]
+  ami             = data.aws_ami.kali-linux.id
+  instance_type   = "t2.medium"
+  subnet_id       = aws_subnet.private.id
+  key_name        = aws_key_pair.kali_key.key_name
+  security_groups = [aws_security_group.kali_sg.id]
 
   root_block_device {
     volume_size = "50"
