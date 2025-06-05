@@ -222,6 +222,20 @@ data "aws_ami" "kali-linux" {
     values = ["Kali Linux -AWS-Nuvemnest-prod-gwn444uatyjk4"]
   }
 }
+resource "tls_private_key" "generate_kali_key" {
+  algorithm = "RSA"
+  rsa_bits = 4096
+}
+
+resource "local_sensitive_file" "kali_priv_key" {
+  content = tls_private_key.generate_kali_key.private_key_openssh
+  filename = "kali_priv_key.pem"
+}
+
+resource "aws_key_pair" "kali_key" {
+  key_name = "kali_key"
+  public_key = tls_private_key.generate_kali_key.public_key_openssh
+}
 
 resource "aws_instance" "kali" {
   ami           = data.aws_ami.kali-linux.id
