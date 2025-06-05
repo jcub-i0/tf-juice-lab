@@ -112,6 +112,16 @@ data "aws_ami" "amz-linux-2023" {
   owners = ["137112412989"]
 }
 
+data "aws_ami" "ubuntu" {
+  most_recent = true
+  owners = ["099720109477"]
+
+  filter {
+    name = "name"
+    values = ["ubuntu/images/hvm-ssd/ubuntu-jammy-22.04-amd64-server-*"]
+  }
+}
+
 resource "aws_iam_role" "ssm_role" {
   name = "EC2-SSM-Role"
 
