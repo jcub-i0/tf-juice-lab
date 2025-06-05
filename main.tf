@@ -268,6 +268,7 @@ resource "aws_instance" "kali" {
 
   root_block_device {
     volume_size = "50"
+    volume_type = "gp3"
   }
 
   tags = {
@@ -286,6 +287,7 @@ resource "aws_instance" "juice-shop" {
 
   root_block_device {
     volume_size = "20"
+    volume_type = "gp3"
     delete_on_termination = "false"
   }
 
