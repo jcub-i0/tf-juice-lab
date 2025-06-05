@@ -75,6 +75,13 @@ resource "aws_security_group" "kali_sg" {
     description     = "Allow Bastion Host to access Kali"
   }
 
+  egress {
+    from_port = 0
+    to_port = 0
+    protocol = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
   tags = {
     Name = "kali_sg"
   }
