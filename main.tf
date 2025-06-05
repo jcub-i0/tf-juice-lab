@@ -277,3 +277,19 @@ resource "aws_instance" "kali" {
 
 # NEXT STEPS: CREATE JUICE SHOP INSTANCE
 # Create General Purpose and Log S3 buckets using random module for naming conventions
+
+resource "aws_instance" "juice-shop" {
+  ami = data.aws_ami.ubuntu.id
+  instance_type = "t3.small"
+  subnet_id = aws_subnet.private.id
+  security_groups = [aws_security_group.juice_sg.id]
+
+  root_block_device {
+    volume_size = "20"
+    delete_on_termination = "false"
+  }
+
+  tags = {
+    Name = "OWASP JuiceShop"
+  }
+}
