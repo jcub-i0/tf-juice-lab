@@ -364,5 +364,5 @@ resource "aws_instance" "juice-shop" {
 }
 
 
-# NEXT STEPS: Generate SSH key for Bastion instance so authentication from local machine is possible
+# NEXT STEPS: Create an SSH config file to specify keys and hosts - this will allow ssh'ing from local > bastion > kali > juice
 # Create General Purpose and Log S3 buckets using random module for naming conventions
