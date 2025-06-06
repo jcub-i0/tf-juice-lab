@@ -96,10 +96,16 @@ resource "aws_security_group" "kali_sg" {
 
 resource "aws_security_group" "bastion_sg" {
   name        = "bastion-sg"
-  description = "Allow AWS SSM to control the Bastion Host"
+  description = "Allow AWS SSM to control the Bastion Host and allow local machine to run pentests via Kali"
   vpc_id      = aws_vpc.tf-juice-lab.id
 
-  # no inbound rules needed -- instance is accessed via AWS SSM
+  ingress {
+    from_port = 22
+    to_port = 22
+    protocol = "tcp"
+    cidr_blocks = ["70.110.18.115"]
+    description = "Allow localhost access to enable UI when pentesting"
+  }
 
   egress {
     from_port   = 443
