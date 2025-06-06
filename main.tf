@@ -45,7 +45,7 @@ resource "aws_security_group" "juice_sg" {
     from_port       = 22
     to_port         = 22
     protocol        = "tcp"
-    security_groups = [aws_security_group.kali_sg.id]
+    cidr_blocks = [var.private_sub_cidr]
     description     = "Allow Kali to SSH into Juice instance for app installation"
   }
 
@@ -53,7 +53,7 @@ resource "aws_security_group" "juice_sg" {
     from_port       = 3000
     to_port         = 3000
     protocol        = "tcp"
-    security_groups = [aws_security_group.kali_sg.id]
+    cidr_blocks = [var.private_sub_cidr]
     description     = "Allow Kali to access JuiceShop"
   }
 
@@ -112,15 +112,23 @@ resource "aws_security_group" "bastion_sg" {
     to_port     = 443
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
-    description = "Allow Bastion Host to call on VPC Endpoints related to AWS SSM"
+    description = "Allow Bastion to call on VPC Endpoints related to AWS SSM"
   }
 
   egress {
     from_port   = 22
     to_port     = 22
     protocol    = "tcp"
-    cidr_blocks = [aws_vpc.tf-juice-lab.cidr_block]
+    cidr_blocks = [var.private_sub_cidr]
     description = "Allow outbound ssh traffic on port 22 to private subnet"
+  }
+
+  egress {
+    from_port = 3000
+    to_port = 3000
+    protocol = "tcp"
+    cidr_blocks = [var.private_sub_cidr]
+    description = "Allow Bastion to forward traffic to Juice Shop over port 3000"
   }
 
   tags = {
