@@ -42,25 +42,25 @@ resource "aws_security_group" "juice_sg" {
   vpc_id      = aws_vpc.tf-juice-lab.id
 
   ingress {
-    from_port       = 22
-    to_port         = 22
-    protocol        = "tcp"
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
     cidr_blocks = [var.private_sub_cidr]
-    description     = "Allow Kali to SSH into Juice instance for app installation"
+    description = "Allow Kali to SSH into Juice instance for app installation"
   }
 
   ingress {
-    from_port       = 3000
-    to_port         = 3000
-    protocol        = "tcp"
+    from_port   = 3000
+    to_port     = 3000
+    protocol    = "tcp"
     cidr_blocks = [var.private_sub_cidr]
-    description     = "Allow Kali to access JuiceShop"
+    description = "Allow Kali to access JuiceShop"
   }
 
   egress {
-    from_port = 0
-    to_port = 0
-    protocol = "-1"
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
     cidr_blocks = ["0.0.0.0/0"]
   }
 
@@ -83,9 +83,9 @@ resource "aws_security_group" "kali_sg" {
   }
 
   egress {
-    from_port = 0
-    to_port = 0
-    protocol = "-1"
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
     cidr_blocks = ["0.0.0.0/0"]
   }
 
@@ -100,9 +100,9 @@ resource "aws_security_group" "bastion_sg" {
   vpc_id      = aws_vpc.tf-juice-lab.id
 
   ingress {
-    from_port = 22
-    to_port = 22
-    protocol = "tcp"
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
     cidr_blocks = ["70.110.18.115/32"]
     description = "Allow local machine to ssh into Bastion instance"
   }
@@ -124,9 +124,9 @@ resource "aws_security_group" "bastion_sg" {
   }
 
   egress {
-    from_port = 3000
-    to_port = 3000
-    protocol = "tcp"
+    from_port   = 3000
+    to_port     = 3000
+    protocol    = "tcp"
     cidr_blocks = [var.private_sub_cidr]
     description = "Allow Bastion to forward traffic to Juice Shop over port 3000"
   }
@@ -190,7 +190,7 @@ resource "aws_instance" "bastion" {
   instance_type               = "t2.micro"
   subnet_id                   = aws_subnet.public.id
   security_groups             = [aws_security_group.bastion_sg.id]
-  key_name = aws_key_pair.bastion_key.key_name
+  key_name                    = aws_key_pair.bastion_key.key_name
   associate_public_ip_address = true
   iam_instance_profile        = aws_iam_instance_profile.ssm_profile.name
 
@@ -274,7 +274,7 @@ data "aws_ami" "kali-linux" {
 
 resource "tls_private_key" "generate_bastion_key" {
   algorithm = "RSA"
-  rsa_bits = 4096
+  rsa_bits  = 4096
 }
 
 resource "tls_private_key" "generate_kali_key" {
@@ -288,7 +288,7 @@ resource "tls_private_key" "generate_juice_key" {
 }
 
 resource "local_sensitive_file" "bastion_priv_key" {
-  content = tls_private_key.generate_bastion_key.private_key_openssh
+  content  = tls_private_key.generate_bastion_key.private_key_openssh
   filename = "bastion_priv_key.pem"
 }
 
@@ -314,8 +314,8 @@ resource "null_resource" "chmod_priv_keys" {
 }
 
 resource "aws_key_pair" "bastion_key" {
-  key_name = "bastion_key"
-  public_key = tls_private_key.generate_bastion_key.public_key_openssh  
+  key_name   = "bastion_key"
+  public_key = tls_private_key.generate_bastion_key.public_key_openssh
 }
 
 resource "aws_key_pair" "kali_key" {
