@@ -99,7 +99,13 @@ resource "aws_security_group" "bastion_sg" {
   description = "Allow AWS SSM to control the Bastion Host and allow local machine to run pentests via Kali"
   vpc_id      = aws_vpc.tf-juice-lab.id
 
-  # no inbound rules needed -- instance is accessed via AWS SSM
+  ingress {
+    from_port = 22
+    to_port = 22
+    protocol = "tcp"
+    cidr_blocks = ["70.110.18.115/32"]
+    description = "Allow local machine to ssh into Bastion instance"
+  }
 
   egress {
     from_port   = 443
@@ -257,6 +263,11 @@ data "aws_ami" "kali-linux" {
   }
 }
 
+resource "tls_private_key" "generate_bastion_key" {
+  algorithm = "RSA"
+  rsa_bits = 4096
+}
+
 resource "tls_private_key" "generate_kali_key" {
   algorithm = "RSA"
   rsa_bits  = 4096
@@ -265,6 +276,11 @@ resource "tls_private_key" "generate_kali_key" {
 resource "tls_private_key" "generate_juice_key" {
   algorithm = "RSA"
   rsa_bits  = 4096
+}
+
+resource "local_sensitive_file" "bastion_priv_key" {
+  content = tls_private_key.generate_bastion_key.private_key_openssh
+  filename = "bastion_priv_key.pem"
 }
 
 resource "local_sensitive_file" "kali_priv_key" {
@@ -277,9 +293,10 @@ resource "local_sensitive_file" "juice_priv_key" {
   filename = "juice_priv_key.pem"
 }
 
-resource "null_resource" "chmod_kali_priv_key" {
+# CHMOD 600 all private RSA keys
+resource "null_resource" "chmod_priv_keys" {
   provisioner "local-exec" {
-    command = "chmod 600 ${local_sensitive_file.kali_priv_key.filename}"
+    command = "chmod 600 ${local_sensitive_file.bastion_priv_key.filename} ${local_sensitive_file.kali_priv_key.filename} ${local_sensitive_file.juice_priv_key.filename}"
   }
   triggers = {
     timestamp = timestamp()
@@ -287,14 +304,9 @@ resource "null_resource" "chmod_kali_priv_key" {
   depends_on = [local_sensitive_file.kali_priv_key]
 }
 
-resource "null_resource" "chmod_juice_priv_key" {
-  provisioner "local-exec" {
-    command = "chmod 600 ${local_sensitive_file.juice_priv_key.filename}"
-  }
-  triggers = {
-    timestamp = timestamp()
-  }
-  depends_on = [local_sensitive_file.juice_priv_key]
+resource "aws_key_pair" "bastion_key" {
+  key_name = "bastion_key"
+  public_key = tls_private_key.generate_bastion_key.public_key_openssh  
 }
 
 resource "aws_key_pair" "kali_key" {
