@@ -182,6 +182,7 @@ resource "aws_instance" "bastion" {
   instance_type               = "t2.micro"
   subnet_id                   = aws_subnet.public.id
   security_groups             = [aws_security_group.bastion_sg.id]
+  key_name = aws_key_pair.bastion_key.key_name
   associate_public_ip_address = true
   iam_instance_profile        = aws_iam_instance_profile.ssm_profile.name
 
