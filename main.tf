@@ -324,9 +324,6 @@ resource "aws_instance" "kali" {
   }
 }
 
-# NEXT STEPS: Loosen security group ingress rules to allow my personal IP address so I can create SSH tunnel (otherwise no UI)
-# Create General Purpose and Log S3 buckets using random module for naming conventions
-
 resource "aws_instance" "juice-shop" {
   ami             = data.aws_ami.ubuntu.id
   instance_type   = "t3.small"
@@ -344,3 +341,7 @@ resource "aws_instance" "juice-shop" {
     Name = "OWASP JuiceShop"
   }
 }
+
+
+# NEXT STEPS: Generate SSH key for Bastion instance so authentication from local machine is possible
+# Create General Purpose and Log S3 buckets using random module for naming conventions
