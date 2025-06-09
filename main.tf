@@ -202,8 +202,6 @@ resource "aws_security_group" "bastion_sg" {
   }
 }
 
-# CREATE EC2 INSTANCES
-
 # CREATE AND ATTACH IAM ROLES, INSTANCE PROFILES, ETC
 
 resource "aws_iam_role" "ssm_role" {
