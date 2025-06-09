@@ -141,11 +141,11 @@ resource "aws_security_group" "kali_sg" {
   vpc_id      = aws_vpc.tf-juice-lab.id
 
   ingress {
-    from_port       = 22
-    to_port         = 22
-    protocol        = "tcp"
-    security_groups = [aws_security_group.bastion_sg.id]
-    description     = "Allow Bastion Host to access Kali"
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
+    cidr_blocks = [aws_instance.bastion.public_ip]
+    description = "Allow Bastion Host to access Kali"
   }
 
   egress {
@@ -333,7 +333,7 @@ resource "aws_instance" "bastion" {
   associate_public_ip_address = true
   iam_instance_profile        = aws_iam_instance_profile.ssm_profile.name
 
-  # Install SSM agent on AL2023 Bastion instance
+  # Install SSM agent on Bastion (AL2023) instance
   user_data = <<-EOF
               #!/bin/bash
               yum update -y
@@ -350,11 +350,11 @@ resource "aws_instance" "bastion" {
 
 
 resource "aws_instance" "kali" {
-  ami             = data.aws_ami.kali-linux.id
-  instance_type   = "t2.medium"
-  subnet_id       = aws_subnet.private.id
-  key_name        = aws_key_pair.kali_key.key_name
-  security_groups = [aws_security_group.kali_sg.id]
+  ami                  = data.aws_ami.kali-linux.id
+  instance_type        = "t2.medium"
+  subnet_id            = aws_subnet.private.id
+  key_name             = aws_key_pair.kali_key.key_name
+  security_groups      = [aws_security_group.kali_sg.id]
   iam_instance_profile = aws_iam_instance_profile.ssm_profile.name
 
   root_block_device {
