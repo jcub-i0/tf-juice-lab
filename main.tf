@@ -149,6 +149,14 @@ resource "aws_security_group" "kali_sg" {
   }
 
   egress {
+    from_port   = 443
+    to_port     = 443
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+    description = "Allow Kali to call on VPC Endpoints related to AWS SSM"
+  }
+
+  egress {
     from_port   = 0
     to_port     = 0
     protocol    = "-1"
@@ -337,6 +345,9 @@ resource "aws_instance" "bastion" {
     Name = "Bastion Host"
   }
 }
+
+# ATTACH JUICE SHOP-INSTALLED EBS VOLUME TO JUICE SHOP INSTANCE
+
 
 resource "aws_instance" "kali" {
   ami             = data.aws_ami.kali-linux.id
