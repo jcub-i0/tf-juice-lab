@@ -346,6 +346,7 @@ resource "aws_instance" "kali" {
   subnet_id       = aws_subnet.private.id
   key_name        = aws_key_pair.kali_key.key_name
   security_groups = [aws_security_group.kali_sg.id]
+  iam_instance_profile = aws_iam_instance_profile.ssm_profile.name
 
   root_block_device {
     volume_size = "50"
