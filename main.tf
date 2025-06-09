@@ -234,11 +234,11 @@ resource "aws_iam_instance_profile" "ssm_profile" {
   role = aws_iam_role.ssm_role.name
 }
 
+# CREATE EIP, NATGW, AND IGW
+
 resource "aws_eip" "natgw_eip" {
   domain = "vpc"
 }
-
-# CREATE NATGW AND IGW
 
 resource "aws_nat_gateway" "natgw" {
   allocation_id = aws_eip.natgw_eip.id
@@ -374,7 +374,3 @@ resource "aws_instance" "juice-shop" {
     Name = "OWASP JuiceShop"
   }
 }
-
-
-# NEXT STEPS: Create an SSH config file to specify keys and hosts - this will allow ssh'ing from local > bastion > kali > juice
-# Create General Purpose and Log S3 buckets using random module for naming conventions
