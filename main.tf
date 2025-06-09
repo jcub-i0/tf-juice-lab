@@ -10,7 +10,43 @@ resource "aws_vpc" "tf-juice-lab" {
   }
 }
 
-# CREATE SUBNETS
+# DATA BLOCKS
+
+data "aws_ami" "amz-linux-2023" {
+  most_recent = true
+
+  filter {
+    name   = "name"
+    values = ["al2023-ami-*-x86_64"]
+  }
+  owners = ["137112412989"]
+}
+
+data "aws_ami" "ubuntu" {
+  most_recent = true
+  owners      = ["099720109477"]
+
+  filter {
+    name   = "name"
+    values = ["ubuntu/images/hvm-ssd/ubuntu-jammy-22.04-amd64-server-*"]
+  }
+}
+
+data "aws_ami" "kali-linux" {
+  most_recent = true
+  owners      = ["679593333241"]
+
+  filter {
+    name   = "name"
+    values = ["Kali Linux -AWS-Nuvemnest-prod-gwn444uatyjk4"]
+  }
+}
+
+data "aws_iam_policy" "ssm_core" {
+  name = "AmazonSSMManagedInstanceCore"
+}
+
+# CREATE PUBLIC AND PRIVATE SUBNETS
 
 resource "aws_subnet" "public" {
   vpc_id            = aws_vpc.tf-juice-lab.id
@@ -32,6 +68,36 @@ resource "aws_subnet" "private" {
     Name      = "Private Subnet"
     Terraform = "true"
   }
+}
+
+# CREATE AND ASSOCIATE ROUTE TABLES
+
+resource "aws_route_table" "private" {
+  vpc_id = aws_vpc.tf-juice-lab.id
+
+  route {
+    cidr_block     = "0.0.0.0/0"
+    nat_gateway_id = aws_nat_gateway.natgw.id
+  }
+}
+
+resource "aws_route_table" "public" {
+  vpc_id = aws_vpc.tf-juice-lab.id
+
+  route {
+    cidr_block = "0.0.0.0/0"
+    gateway_id = aws_internet_gateway.igw.id
+  }
+}
+
+resource "aws_route_table_association" "private_assc" {
+  subnet_id      = aws_subnet.private.id
+  route_table_id = aws_route_table.private.id
+}
+
+resource "aws_route_table_association" "public_assc" {
+  subnet_id      = aws_subnet.public.id
+  route_table_id = aws_route_table.public.id
 }
 
 # CREATE SECURITY GROUPS
@@ -138,25 +204,7 @@ resource "aws_security_group" "bastion_sg" {
 
 # CREATE EC2 INSTANCES
 
-data "aws_ami" "amz-linux-2023" {
-  most_recent = true
-
-  filter {
-    name   = "name"
-    values = ["al2023-ami-*-x86_64"]
-  }
-  owners = ["137112412989"]
-}
-
-data "aws_ami" "ubuntu" {
-  most_recent = true
-  owners      = ["099720109477"]
-
-  filter {
-    name   = "name"
-    values = ["ubuntu/images/hvm-ssd/ubuntu-jammy-22.04-amd64-server-*"]
-  }
-}
+# CREATE AND ATTACH IAM ROLES, INSTANCE PROFILES, ETC
 
 resource "aws_iam_role" "ssm_role" {
   name = "EC2-SSM-Role"
@@ -176,35 +224,9 @@ resource "aws_iam_role" "ssm_role" {
   })
 }
 
-data "aws_iam_policy" "ssm_core" {
-  name = "AmazonSSMManagedInstanceCore"
-}
-
 resource "aws_iam_role_policy_attachment" "ssm_core_attach" {
   role       = aws_iam_role.ssm_role.name
   policy_arn = data.aws_iam_policy.ssm_core.arn
-}
-
-resource "aws_instance" "bastion" {
-  ami                         = data.aws_ami.amz-linux-2023.id
-  instance_type               = "t2.micro"
-  subnet_id                   = aws_subnet.public.id
-  security_groups             = [aws_security_group.bastion_sg.id]
-  key_name                    = aws_key_pair.bastion_key.key_name
-  associate_public_ip_address = true
-  iam_instance_profile        = aws_iam_instance_profile.ssm_profile.name
-
-  # Install SSM agent on AL2023 Bastion instance
-  user_data = <<-EOF
-              #!/bin/bash
-              yum update -y
-              yum install -y amazon-ssm-agent
-              systemctl enable amazon-ssm-agent
-              systemctl start amazon-ssm-agent
-              EOF
-  tags = {
-    Name = "Bastion Host"
-  }
 }
 
 resource "aws_iam_instance_profile" "ssm_profile" {
@@ -215,6 +237,8 @@ resource "aws_iam_instance_profile" "ssm_profile" {
 resource "aws_eip" "natgw_eip" {
   domain = "vpc"
 }
+
+# CREATE NATGW AND IGW
 
 resource "aws_nat_gateway" "natgw" {
   allocation_id = aws_eip.natgw_eip.id
@@ -234,43 +258,7 @@ resource "aws_internet_gateway" "igw" {
   }
 }
 
-resource "aws_route_table" "private" {
-  vpc_id = aws_vpc.tf-juice-lab.id
-
-  route {
-    cidr_block     = "0.0.0.0/0"
-    nat_gateway_id = aws_nat_gateway.natgw.id
-  }
-}
-
-resource "aws_route_table" "public" {
-  vpc_id = aws_vpc.tf-juice-lab.id
-
-  route {
-    cidr_block = "0.0.0.0/0"
-    gateway_id = aws_internet_gateway.igw.id
-  }
-}
-
-resource "aws_route_table_association" "private_assc" {
-  subnet_id      = aws_subnet.private.id
-  route_table_id = aws_route_table.private.id
-}
-
-resource "aws_route_table_association" "public_assc" {
-  subnet_id      = aws_subnet.public.id
-  route_table_id = aws_route_table.public.id
-}
-
-data "aws_ami" "kali-linux" {
-  most_recent = true
-  owners      = ["679593333241"]
-
-  filter {
-    name   = "name"
-    values = ["Kali Linux -AWS-Nuvemnest-prod-gwn444uatyjk4"]
-  }
-}
+# CREATE AND LOCALLY SAVE ENCRYPTION KEY PAIRS
 
 resource "tls_private_key" "generate_bastion_key" {
   algorithm = "RSA"
@@ -302,7 +290,7 @@ resource "local_sensitive_file" "juice_priv_key" {
   filename = "juice_priv_key.pem"
 }
 
-# CHMOD 600 all private RSA keys
+## chmod 600 all private RSA key files
 resource "null_resource" "chmod_priv_keys" {
   provisioner "local-exec" {
     command = "chmod 600 ${local_sensitive_file.bastion_priv_key.filename} ${local_sensitive_file.kali_priv_key.filename} ${local_sensitive_file.juice_priv_key.filename}"
@@ -326,6 +314,30 @@ resource "aws_key_pair" "kali_key" {
 resource "aws_key_pair" "juice_key" {
   key_name   = "juice_key"
   public_key = tls_private_key.generate_juice_key.public_key_openssh
+}
+
+# CREATE INSTANCES
+
+resource "aws_instance" "bastion" {
+  ami                         = data.aws_ami.amz-linux-2023.id
+  instance_type               = "t2.micro"
+  subnet_id                   = aws_subnet.public.id
+  security_groups             = [aws_security_group.bastion_sg.id]
+  key_name                    = aws_key_pair.bastion_key.key_name
+  associate_public_ip_address = true
+  iam_instance_profile        = aws_iam_instance_profile.ssm_profile.name
+
+  # Install SSM agent on AL2023 Bastion instance
+  user_data = <<-EOF
+              #!/bin/bash
+              yum update -y
+              yum install -y amazon-ssm-agent
+              systemctl enable amazon-ssm-agent
+              systemctl start amazon-ssm-agent
+              EOF
+  tags = {
+    Name = "Bastion Host"
+  }
 }
 
 resource "aws_instance" "kali" {
