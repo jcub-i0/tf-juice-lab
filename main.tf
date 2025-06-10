@@ -144,7 +144,7 @@ resource "aws_security_group" "kali_sg" {
     from_port   = 22
     to_port     = 22
     protocol    = "tcp"
-    cidr_blocks = [aws_instance.bastion.public_ip]
+    cidr_blocks = ["${aws_instance.bastion.public_ip}/32"]
     description = "Allow Bastion Host to access Kali"
   }
 
@@ -361,6 +361,23 @@ resource "aws_instance" "kali" {
     volume_size = "50"
     volume_type = "gp3"
   }
+
+  # Install and start SSM agent on Kali (Debian) instance
+  user_data = <<-EOF
+              #!/bin/bash
+              apt update -y
+              apt install -y wget curl unzip
+
+              # Download latest SSM Agent .deb package and install package
+              wget https://s3.amazonaws.com/amazon-ssm-us-east-1/latest/debian_amd64/amazon-ssm-agent.deb
+              dpkg -i amazon-ssm-agent.deb
+              # Install potentially unmet dependencies
+              apt install -f -y
+
+              # Enable and start the SSM service
+              systemctl enable amazon-ssm-agent
+              systemctl start amazon-ssm-agent
+              EOF
 
   tags = {
     Name = "Kali"
