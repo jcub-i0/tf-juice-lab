@@ -398,6 +398,6 @@ resource "aws_instance" "juice-shop" {
   }
 
   tags = {
-    Name = "OWASP JuiceShop"
+    Name = "JuiceShop"
   }
 }
