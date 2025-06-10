@@ -386,16 +386,33 @@ resource "aws_instance" "kali" {
 
 resource "aws_instance" "juice-shop" {
   ami             = data.aws_ami.ubuntu.id
-  instance_type   = "t3.small"
+  instance_type   = "t3.medium"
   subnet_id       = aws_subnet.private.id
   key_name        = aws_key_pair.juice_key.key_name
   security_groups = [aws_security_group.juice_sg.id]
 
   root_block_device {
-    volume_size           = "20"
+    volume_size           = "40"
     volume_type           = "gp3"
-    delete_on_termination = "false"
   }
+
+  /*user_data = <<EOF
+    #!/bin/bash
+    sudo apt update -y
+    sudo DEBIAN_FRONTEND=noninteractive apt install -y git curl build-essential python3
+
+    # Install latest version of Node LTS (as of 06/09/2025)
+    curl -fsSL https://deb.nodesource.com/setup_22.x | sudo bash -
+    sudo apt-get install nodejs -y
+
+    cd /home/ubuntu
+    git clone https://github.com/juice-shop/juice-shop.git --depth 1
+    cd juice-shop
+
+    npm install
+    nohup npm start > juice.log 2>&1 &
+    EOF
+    */
 
   tags = {
     Name = "JuiceShop"
