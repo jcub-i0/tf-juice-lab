@@ -147,15 +147,7 @@ resource "aws_security_group" "kali_sg" {
     cidr_blocks = ["${aws_instance.bastion.public_ip}/32"]
     description = "Allow Bastion Host to access Kali"
   }
-
-  egress {
-    from_port   = 443
-    to_port     = 443
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-    description = "Allow Kali to call on VPC Endpoints related to AWS SSM"
-  }
-
+  
   egress {
     from_port   = 0
     to_port     = 0
@@ -396,23 +388,27 @@ resource "aws_instance" "juice-shop" {
     volume_type           = "gp3"
   }
 
-  /*user_data = <<EOF
+  user_data = <<EOF
     #!/bin/bash
+
     sudo apt update -y
+
+    # Inline DEBIAN_FRONTEND with each apt call to suppress popups
     sudo DEBIAN_FRONTEND=noninteractive apt install -y git curl build-essential python3
 
-    # Install latest version of Node LTS (as of 06/09/2025)
+    # Install latest LTS version of Node
     curl -fsSL https://deb.nodesource.com/setup_22.x | sudo bash -
-    sudo apt-get install nodejs -y
+    sudo DEBIAN_FRONTEND=noninteractive apt-get install -y nodejs
 
+    # Clone OWASP Juice Shop's repository
     cd /home/ubuntu
     git clone https://github.com/juice-shop/juice-shop.git --depth 1
     cd juice-shop
 
+    # Install NPM, launch Juice Shop application, and let it run in the background
     npm install
     nohup npm start > juice.log 2>&1 &
     EOF
-    */
 
   tags = {
     Name = "JuiceShop"
