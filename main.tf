@@ -111,7 +111,7 @@ resource "aws_security_group" "juice_sg" {
     from_port   = 22
     to_port     = 22
     protocol    = "tcp"
-    cidr_blocks = [var.private_sub_cidr]
+    cidr_blocks = ["${aws_instance.bastion.private_ip}/32", var.private_sub_cidr]
     description = "Allow Kali to SSH into Juice instance for app installation"
   }
 
@@ -119,7 +119,7 @@ resource "aws_security_group" "juice_sg" {
     from_port   = 3000
     to_port     = 3000
     protocol    = "tcp"
-    cidr_blocks = [var.private_sub_cidr]
+    cidr_blocks = ["${aws_instance.bastion.private_ip}/32", var.private_sub_cidr]
     description = "Allow Kali to access JuiceShop"
   }
 
@@ -343,7 +343,7 @@ resource "aws_instance" "bastion" {
 
 resource "aws_instance" "kali" {
   ami                  = data.aws_ami.kali-linux.id
-  instance_type        = "t2.medium"
+  instance_type        = "t3.medium"
   subnet_id            = aws_subnet.private.id
   key_name             = aws_key_pair.kali_key.key_name
   security_groups      = [aws_security_group.kali_sg.id]
@@ -414,3 +414,6 @@ EOF
     Name = "JuiceShop"
   }
 }
+
+# NEXT STEPS: Create ssh tunnel command to chain local machine > kali > juice over port 3000,
+# so the local machine's UI can be used as well as the Kali tools
