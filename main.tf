@@ -360,21 +360,36 @@ resource "aws_instance" "kali" {
     volume_type = "gp3"
   }
 
-  # Install and start SSM agent on Kali (Debian) instance
+  # Install and start SSM agent and install pentesting tools on Kali (Debian) instance
   user_data = <<-EOF
               #!/bin/bash
+              set -eux
+
+              export DEBIAN_FRONTEND=noninteractive
+
               apt update -y
               apt install -y wget curl unzip
 
               # Download latest SSM Agent .deb package and install package
               wget https://s3.amazonaws.com/amazon-ssm-us-east-1/latest/debian_amd64/amazon-ssm-agent.deb
-              dpkg -i amazon-ssm-agent.deb
-              # Install potentially unmet dependencies
-              apt install -f -y
+              dpkg -i amazon-ssm-agent.deb || apt install -f -y
 
               # Enable and start the SSM service
               systemctl enable amazon-ssm-agent
               systemctl start amazon-ssm-agent
+
+              # Install CLI tools necessary to pentest Juice Shop
+              apt install -y \
+                httpie \
+                nmap \
+                whatweb \
+                gobuster \
+                ffuf \
+                sqlmap \
+                nikto \
+                hydra \
+                seclists
+              echo "CLI pentesting tools installed: httpie, nmap, whatweb, gobuster, ffuf, sqlmap, nikto, hydra, seclists"
               EOF
 
   tags = {
