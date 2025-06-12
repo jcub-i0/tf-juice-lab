@@ -333,12 +333,12 @@ resource "aws_instance" "bastion" {
 
   # Install SSM agent on Bastion (AL2023) instance
   user_data = <<-EOF
-              #!/bin/bash
-              yum update -y
-              yum install -y amazon-ssm-agent
-              systemctl enable amazon-ssm-agent
-              systemctl start amazon-ssm-agent
-              EOF
+#!/bin/bash
+yum update -y
+yum install -y amazon-ssm-agent
+systemctl enable amazon-ssm-agent
+systemctl start amazon-ssm-agent
+EOF
   tags = {
     Name = "Bastion Host"
   }
@@ -362,35 +362,35 @@ resource "aws_instance" "kali" {
 
   # Install and start SSM agent and install pentesting tools on Kali (Debian) instance
   user_data = <<-EOF
-              #!/bin/bash
-              set -eux
+#!/bin/bash
+set -eux
 
-              export DEBIAN_FRONTEND=noninteractive
+export DEBIAN_FRONTEND=noninteractive
 
-              apt update -y
-              apt install -y wget curl unzip
+apt update -y
+apt install -y wget curl unzip
 
-              # Download latest SSM Agent .deb package and install package
-              wget https://s3.amazonaws.com/amazon-ssm-us-east-1/latest/debian_amd64/amazon-ssm-agent.deb
-              dpkg -i amazon-ssm-agent.deb || apt install -f -y
+# Download latest SSM Agent .deb package and install package
+wget https://s3.amazonaws.com/amazon-ssm-us-east-1/latest/debian_amd64/amazon-ssm-agent.deb
+dpkg -i amazon-ssm-agent.deb || apt install -f -y
 
-              # Enable and start the SSM service
-              systemctl enable amazon-ssm-agent
-              systemctl start amazon-ssm-agent
+# Enable and start the SSM service
+systemctl enable amazon-ssm-agent
+systemctl start amazon-ssm-agent
 
-              # Install CLI tools necessary to pentest Juice Shop
-              apt install -y \
-                httpie \
-                nmap \
-                whatweb \
-                gobuster \
-                ffuf \
-                sqlmap \
-                nikto \
-                hydra \
-                seclists
-              echo "CLI pentesting tools installed: httpie, nmap, whatweb, gobuster, ffuf, sqlmap, nikto, hydra, seclists"
-              EOF
+# Install CLI tools necessary to pentest Juice Shop
+apt install -y \
+  httpie \
+  nmap \
+  whatweb \
+  gobuster \
+  ffuf \
+  sqlmap \
+  nikto \
+  hydra \
+  seclists
+echo "CLI pentesting tools installed: httpie, nmap, whatweb, gobuster, ffuf, sqlmap, nikto, hydra, seclists"
+EOF
 
   tags = {
     Name = "Kali"
@@ -405,8 +405,8 @@ resource "aws_instance" "juice-shop" {
   security_groups = [aws_security_group.juice_sg.id]
 
   root_block_device {
-    volume_size           = "40"
-    volume_type           = "gp3"
+    volume_size = "40"
+    volume_type = "gp3"
   }
 
   user_data = <<EOF
