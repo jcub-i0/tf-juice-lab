@@ -79,6 +79,9 @@ resource "aws_route_table" "private" {
     cidr_block     = "0.0.0.0/0"
     nat_gateway_id = aws_nat_gateway.natgw.id
   }
+  tags = {
+    Name = "Private RT"
+  }
 }
 
 resource "aws_route_table" "public" {
@@ -87,6 +90,9 @@ resource "aws_route_table" "public" {
   route {
     cidr_block = "0.0.0.0/0"
     gateway_id = aws_internet_gateway.igw.id
+  }
+  tags = {
+    Name = "Public RT"
   }
 }
 
