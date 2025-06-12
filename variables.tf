@@ -37,3 +37,8 @@ variable "private_sub_az" {
   type        = string
   default     = "us-east-1a"
 }
+
+variable "bastion_allowed_cidrs" {
+  description = "The CIDR(s) of the local machine(s) allowed to access the Bastion Host instance"
+  type = list(string)
+}

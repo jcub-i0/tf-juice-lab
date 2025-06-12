@@ -175,7 +175,7 @@ resource "aws_security_group" "bastion_sg" {
     from_port   = 22
     to_port     = 22
     protocol    = "tcp"
-    cidr_blocks = ["70.110.18.115/32"]
+    cidr_blocks = var.bastion_allowed_cidrs
     description = "Allow local machine to ssh into Bastion instance"
   }
 
@@ -436,5 +436,4 @@ EOF
   }
 }
 
-# NEXT STEPS: Create ssh tunnel command to chain local machine > kali > juice over port 3000,
-# so the local machine's UI can be used as well as the Kali tools
+# NEXT STEPS: Create an S3 bucket for CloudTrail logs and configure CloudTrail
