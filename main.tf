@@ -444,11 +444,11 @@ resource "random_id" "logs_bucket_suffix" {
 }
 
 resource "aws_s3_bucket" "centralized_logs" {
-  bucket = "juice-shop-logs-${random_id.logs_bucket_suffix.hex}"
+  bucket        = "juice-shop-logs-${random_id.logs_bucket_suffix.hex}"
   force_destroy = true
 
   tags = {
-    Name = "Juice Shop Logs"
+    Name        = "Juice Shop Logs"
     Environment = var.environment
   }
 }
@@ -466,7 +466,47 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "logs_bucket_encry
 
 resource "aws_s3_bucket_versioning" "logs_bucket" {
   bucket = aws_s3_bucket.centralized_logs.id
+
   versioning_configuration {
     status = "Enabled"
   }
+}
+
+# CREATE MONITORING RESOURCES
+
+## Fetch information about the AWS identity Terraform is currently using
+data "aws_caller_identity" "current" {}
+
+## Allow CloudTrail to PutObject in logs bucket
+resource "aws_s3_bucket_policy" "cloudtrail_policy" {
+  bucket = aws_s3_bucket.centralized_logs.id
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Principal = {
+          Service = "cloudtrail.amazonaws.com"
+        }
+        Action   = "s3:PutObject"
+        Resource = "${aws_s3_bucket.centralized_logs.arn}/AWSLogs/${data.aws_caller_identity.current.account_id}/*"
+        Condition = {
+          StringEquals = {
+            "s3:x-amz-acl" = "bucket-owner-full-control"
+          }
+        }
+      }
+    ]
+  })
+}
+
+resource "aws_cloudtrail" "cloudtrail" {
+  depends_on                    = [aws_s3_bucket_policy.cloudtrail_policy]
+  
+  name                          = "CloudTrail"
+  s3_bucket_name                = aws_s3_bucket.centralized_logs.bucket
+  include_global_service_events = true
+  is_multi_region_trail         = true
+  enable_log_file_validation    = true
 }

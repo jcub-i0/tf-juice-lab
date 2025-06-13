@@ -40,5 +40,5 @@ variable "private_sub_az" {
 
 variable "bastion_allowed_cidrs" {
   description = "The CIDR(s) of the local machine(s) allowed to access the Bastion Host instance"
-  type = list(string)
+  type        = list(string)
 }
