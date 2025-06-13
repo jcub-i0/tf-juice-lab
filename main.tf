@@ -407,13 +407,21 @@ resource "aws_s3_bucket_versioning" "logs_bucket" {
 }
 
 resource "aws_cloudtrail" "cloudtrail" {
-  depends_on = [aws_s3_bucket_policy.cloudtrail_policy]
+  depends_on = [
+    aws_s3_bucket_policy.cloudtrail_policy,
+    aws_iam_role.cloudtrail_to_cw,
+    aws_iam_role_policy.cloudtrail_to_cw_policy,
+    aws_cloudwatch_log_group.cloudtrail_logs
+    ]
 
   name                          = "CloudTrail"
   s3_bucket_name                = aws_s3_bucket.centralized_logs.bucket
   include_global_service_events = true
   is_multi_region_trail         = true
   enable_log_file_validation    = true
+
+  cloud_watch_logs_group_arn = "${aws_cloudwatch_log_group.cloudtrail_logs.arn}:*"
+  cloud_watch_logs_role_arn = aws_iam_role.cloudtrail_to_cw.arn
 
   insight_selector {
     insight_type = "ApiCallRateInsight"
@@ -422,4 +430,51 @@ resource "aws_cloudtrail" "cloudtrail" {
   insight_selector {
     insight_type = "ApiErrorRateInsight"
   }
+}
+
+resource "aws_cloudwatch_log_group" "cloudtrail_logs" {
+  name              = "tf-juice-lab-cloudtrail"
+  retention_in_days = 30
+
+  tags = {
+    Name        = "TF-Juice-Lab CloudTrail Logs"
+    Environment = var.environment
+  }
+}
+
+resource "aws_iam_role" "cloudtrail_to_cw" {
+  name = "cloudtrail-to-cloudwatch-role"
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Action = "sts:AssumeRole"
+        Effect = "Allow"
+        Sid    = "AllowCloudTrailToCloudWatch"
+        Principal = {
+          Service = "cloudtrail.amazonaws.com"
+        }
+      }
+    ]
+  })
+}
+
+resource "aws_iam_role_policy" "cloudtrail_to_cw_policy" {
+  name = "cloudtrail-to-cw-policy"
+  role = aws_iam_role.cloudtrail_to_cw.id
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Action = [
+          "logs:CreateLogStream",
+          "logs:PutLogEvents"
+        ]
+        Resource = "${aws_cloudwatch_log_group.cloudtrail_logs.arn}:*"
+      }
+    ]
+  })
 }
