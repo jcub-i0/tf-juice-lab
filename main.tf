@@ -299,9 +299,7 @@ resource "null_resource" "chmod_priv_keys" {
   provisioner "local-exec" {
     command = "chmod 600 ${local_sensitive_file.bastion_priv_key.filename} ${local_sensitive_file.kali_priv_key.filename} ${local_sensitive_file.juice_priv_key.filename}"
   }
-  triggers = {
-    timestamp = timestamp()
-  }
+  
   depends_on = [local_sensitive_file.kali_priv_key]
 }
 
