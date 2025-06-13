@@ -444,7 +444,8 @@ resource "random_id" "logs_bucket_suffix" {
 }
 
 resource "aws_s3_bucket" "centralized_logs" {
-  bucket = "juice-shop-logs${random_id.logs_bucket_suffix.hex}"
+  bucket = "juice-shop-logs-${random_id.logs_bucket_suffix.hex}"
+  force_destroy = true
 
   tags = {
     Name = "Juice Shop Logs"
