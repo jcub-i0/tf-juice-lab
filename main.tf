@@ -436,4 +436,36 @@ EOF
   }
 }
 
-# NEXT STEPS: Create an S3 bucket for CloudTrail logs and configure CloudTrail
+# CREATE LOGGING RESOURCES
+
+## Create 8 random digits to tack onto the end of the centralized_logs bucket's name
+resource "random_id" "logs_bucket_suffix" {
+  byte_length = 4
+}
+
+resource "aws_s3_bucket" "centralized_logs" {
+  bucket = "juice-shop-logs${random_id.logs_bucket_suffix.hex}"
+
+  tags = {
+    Name = "Juice Shop Logs"
+    Environment = var.environment
+  }
+}
+
+## Enable SSE encryption on centralized_logs bucket
+resource "aws_s3_bucket_server_side_encryption_configuration" "logs_bucket_encrypt" {
+  bucket = aws_s3_bucket.centralized_logs.id
+
+  rule {
+    apply_server_side_encryption_by_default {
+      sse_algorithm = "AES256"
+    }
+  }
+}
+
+resource "aws_s3_bucket_versioning" "logs_bucket" {
+  bucket = aws_s3_bucket.centralized_logs.id
+  versioning_configuration {
+    status = "Enabled"
+  }
+}
