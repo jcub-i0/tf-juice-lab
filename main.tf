@@ -361,6 +361,8 @@ cd juice-shop
 # Install NPM, launch Juice Shop application, and let it run in the background
 npm install
 nohup npm start > juice.log 2>&1 &
+
+echo "To troubleshoot, cat into /var/log/cloud-init-output.log"
 EOF
 
   tags = {
