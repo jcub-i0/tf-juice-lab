@@ -51,12 +51,12 @@ resource "aws_s3_bucket_policy" "cloudtrail_policy" {
         }
       },
       {
-        Sid = "AWSCloudTrailListBucket"
+        Sid    = "AWSCloudTrailListBucket"
         Effect = "Allow"
         Principal = {
           Service = "cloudtrail.amazonaws.com"
         }
-        Action = "s3:ListBucket"
+        Action   = "s3:ListBucket"
         Resource = aws_s3_bucket.centralized_logs.arn
         Condition = {
           StringEquals = {
@@ -65,12 +65,12 @@ resource "aws_s3_bucket_policy" "cloudtrail_policy" {
         }
       },
       {
-        Sid = "AWSCloudTrailGetBucketAcl"
+        Sid    = "AWSCloudTrailGetBucketAcl"
         Effect = "Allow"
         Principal = {
           Service = "cloudtrail.amazonaws.com"
         }
-        Action = "s3:GetBucketAcl"
+        Action   = "s3:GetBucketAcl"
         Resource = aws_s3_bucket.centralized_logs.arn
       }
     ]
