@@ -299,7 +299,7 @@ resource "null_resource" "chmod_priv_keys" {
   provisioner "local-exec" {
     command = "chmod 600 ${local_sensitive_file.bastion_priv_key.filename} ${local_sensitive_file.kali_priv_key.filename} ${local_sensitive_file.juice_priv_key.filename}"
   }
-  
+
   depends_on = [local_sensitive_file.kali_priv_key]
 }
 
@@ -483,6 +483,7 @@ resource "aws_s3_bucket_policy" "cloudtrail_policy" {
     Version = "2012-10-17"
     Statement = [
       {
+        Sid    = "AWSCloudTrailWrite"
         Effect = "Allow"
         Principal = {
           Service = "cloudtrail.amazonaws.com"
@@ -500,8 +501,8 @@ resource "aws_s3_bucket_policy" "cloudtrail_policy" {
 }
 
 resource "aws_cloudtrail" "cloudtrail" {
-  depends_on                    = [aws_s3_bucket_policy.cloudtrail_policy]
-  
+  depends_on = [aws_s3_bucket_policy.cloudtrail_policy]
+
   name                          = "CloudTrail"
   s3_bucket_name                = aws_s3_bucket.centralized_logs.bucket
   include_global_service_events = true
