@@ -404,9 +404,6 @@ resource "aws_s3_bucket_versioning" "logs_bucket" {
   }
 }
 
-## Fetch information about the AWS identity Terraform is currently using
-data "aws_caller_identity" "current" {}
-
 resource "aws_cloudtrail" "cloudtrail" {
   depends_on = [aws_s3_bucket_policy.cloudtrail_policy]
 
