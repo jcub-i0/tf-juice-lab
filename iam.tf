@@ -1,8 +1,3 @@
-# IAM Data Blocks
-data "aws_iam_policy" "ssm_core" {
-  name = "AmazonSSMManagedInstanceCore"
-}
-
 # CREATE AND ATTACH IAM ROLES, INSTANCE PROFILES, ETC
 
 resource "aws_iam_role" "ssm_role" {
