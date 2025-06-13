@@ -76,3 +76,41 @@ resource "aws_s3_bucket_policy" "cloudtrail_policy" {
     ]
   })
 }
+
+## Allow CloudTrail to access CloudWatch Logs
+resource "aws_iam_role" "cloudtrail_to_cw" {
+  name = "cloudtrail-to-cloudwatch-role"
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Action = "sts:AssumeRole"
+        Effect = "Allow"
+        Sid    = "AllowCloudTrailToCloudWatch"
+        Principal = {
+          Service = "cloudtrail.amazonaws.com"
+        }
+      }
+    ]
+  })
+}
+
+resource "aws_iam_role_policy" "cloudtrail_to_cw_policy" {
+  name = "cloudtrail-to-cw-policy"
+  role = aws_iam_role.cloudtrail_to_cw.id
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Action = [
+          "logs:CreateLogStream",
+          "logs:PutLogEvents"
+        ]
+        Resource = "${aws_cloudwatch_log_group.cloudtrail_logs.arn}:*"
+      }
+    ]
+  })
+}
