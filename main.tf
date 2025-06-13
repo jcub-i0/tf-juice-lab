@@ -42,10 +42,6 @@ data "aws_ami" "kali-linux" {
   }
 }
 
-data "aws_iam_policy" "ssm_core" {
-  name = "AmazonSSMManagedInstanceCore"
-}
-
 # CREATE PUBLIC AND PRIVATE SUBNETS
 
 resource "aws_subnet" "public" {
@@ -206,36 +202,6 @@ resource "aws_security_group" "bastion_sg" {
   tags = {
     Name = "bastion_sg"
   }
-}
-
-# CREATE AND ATTACH IAM ROLES, INSTANCE PROFILES, ETC
-
-resource "aws_iam_role" "ssm_role" {
-  name = "EC2-SSM-Role"
-
-  assume_role_policy = jsonencode({
-    Version = "2012-10-17",
-    Statement = [
-      {
-        Action = "sts:AssumeRole"
-        Effect = "Allow"
-        Sid    = ""
-        Principal = {
-          Service = "ec2.amazonaws.com"
-        }
-      },
-    ]
-  })
-}
-
-resource "aws_iam_role_policy_attachment" "ssm_core_attach" {
-  role       = aws_iam_role.ssm_role.name
-  policy_arn = data.aws_iam_policy.ssm_core.arn
-}
-
-resource "aws_iam_instance_profile" "ssm_profile" {
-  name = "EC2-SSM-Profile"
-  role = aws_iam_role.ssm_role.name
 }
 
 # CREATE EIP, NATGW, AND IGW
@@ -470,58 +436,8 @@ resource "aws_s3_bucket_versioning" "logs_bucket" {
   }
 }
 
-# CREATE MONITORING RESOURCES
-
 ## Fetch information about the AWS identity Terraform is currently using
 data "aws_caller_identity" "current" {}
-
-## Allow CloudTrail to PutObject in logs bucket
-resource "aws_s3_bucket_policy" "cloudtrail_policy" {
-  bucket = aws_s3_bucket.centralized_logs.id
-
-  policy = jsonencode({
-    Version = "2012-10-17"
-    Statement = [
-      {
-        Sid    = "AWSCloudTrailWrite"
-        Effect = "Allow"
-        Principal = {
-          Service = "cloudtrail.amazonaws.com"
-        }
-        Action   = "s3:PutObject"
-        Resource = "${aws_s3_bucket.centralized_logs.arn}/AWSLogs/${data.aws_caller_identity.current.account_id}/*"
-        Condition = {
-          StringEquals = {
-            "s3:x-amz-acl" = "bucket-owner-full-control"
-          }
-        }
-      },
-      {
-        Sid = "AWSCloudTrailListBucket"
-        Effect = "Allow"
-        Principal = {
-          Service = "cloudtrail.amazonaws.com"
-        }
-        Action = "s3:ListBucket"
-        Resource = aws_s3_bucket.centralized_logs.arn
-        Condition = {
-          StringEquals = {
-            "s3:prefix" = "AWSLogs/${data.aws_caller_identity.current.account_id}/"
-          }
-        }
-      },
-      {
-        Sid = "AWSCloudTrailGetBucketAcl"
-        Effect = "Allow"
-        Principal = {
-          Service = "cloudtrail.amazonaws.com"
-        }
-        Action = "s3:GetBucketAcl"
-        Resource = aws_s3_bucket.centralized_logs.arn
-      }
-    ]
-  })
-}
 
 resource "aws_cloudtrail" "cloudtrail" {
   depends_on = [aws_s3_bucket_policy.cloudtrail_policy]
@@ -531,7 +447,7 @@ resource "aws_cloudtrail" "cloudtrail" {
   include_global_service_events = true
   is_multi_region_trail         = true
   enable_log_file_validation    = true
-  
+
   insight_selector {
     insight_type = "ApiCallRateInsight"
   }
