@@ -495,6 +495,29 @@ resource "aws_s3_bucket_policy" "cloudtrail_policy" {
             "s3:x-amz-acl" = "bucket-owner-full-control"
           }
         }
+      },
+      {
+        Sid = "AWSCloudTrailListBucket"
+        Effect = "Allow"
+        Principal = {
+          Service = "cloudtrail.amazonaws.com"
+        }
+        Action = "s3:ListBucket"
+        Resource = aws_s3_bucket.centralized_logs.arn
+        Condition = {
+          StringEquals = {
+            "s3:prefix" = "AWSLogs/${data.aws_caller_identity.current.account_id}/"
+          }
+        }
+      },
+      {
+        Sid = "AWSCloudTrailGetBucketAcl"
+        Effect = "Allow"
+        Principal = {
+          Service = "cloudtrail.amazonaws.com"
+        }
+        Action = "s3:GetBucketAcl"
+        Resource = aws_s3_bucket.centralized_logs.arn
       }
     ]
   })
