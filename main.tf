@@ -412,7 +412,7 @@ resource "aws_cloudtrail" "cloudtrail" {
     aws_iam_role.cloudtrail_to_cw,
     aws_iam_role_policy.cloudtrail_to_cw_policy,
     aws_cloudwatch_log_group.cloudtrail_logs
-    ]
+  ]
 
   name                          = "CloudTrail"
   s3_bucket_name                = aws_s3_bucket.centralized_logs.bucket
@@ -421,7 +421,7 @@ resource "aws_cloudtrail" "cloudtrail" {
   enable_log_file_validation    = true
 
   cloud_watch_logs_group_arn = "${aws_cloudwatch_log_group.cloudtrail_logs.arn}:*"
-  cloud_watch_logs_role_arn = aws_iam_role.cloudtrail_to_cw.arn
+  cloud_watch_logs_role_arn  = aws_iam_role.cloudtrail_to_cw.arn
 
   insight_selector {
     insight_type = "ApiCallRateInsight"
@@ -442,3 +442,29 @@ resource "aws_cloudwatch_log_group" "cloudtrail_logs" {
   }
 }
 
+## Create CloudWatch metrics and CloudWatch Alarms
+
+resource "aws_cloudwatch_metric_alarm" "cpu_util" {
+  alarm_name                = "cpu_util"
+  comparison_operator       = "GreaterThanOrEqualToThreshold"
+  period                    = 120
+  evaluation_periods        = 1
+  statistic                 = "Average"
+  metric_name               = "CPUUtilization"
+  namespace                 = "AWS/EC2"
+  threshold                 = 80
+  alarm_description         = "This metric alerts if CPU utilization exceeds 80% for 2 minutes"
+  alarm_actions = [aws_sns_topic.alerts.arn]
+  insufficient_data_actions = []
+}
+
+resource "aws_sns_topic" "alerts" {
+  name = "tf-juice-lab-alerts"
+}
+
+## Consider using a for_each loop for multiple email addresses to be used
+resource "aws_sns_topic_subscription" "name" {
+  topic_arn = aws_sns_topic.alerts.arn
+  protocol = "email"
+  endpoint = var.alert_email
+}
