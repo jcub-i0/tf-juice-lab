@@ -42,3 +42,8 @@ variable "bastion_allowed_cidrs" {
   description = "The CIDR(s) of the local machine(s) allowed to access the Bastion Host instance"
   type        = list(string)
 }
+
+variable "alert_email" {
+  description = "Email address to send CloudWatch Alarm alerts to"
+  type = string
+}
