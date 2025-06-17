@@ -490,7 +490,7 @@ resource "aws_sns_topic" "alerts" {
 }
 
 ## Consider using a for_each loop for multiple email addresses to be used
-resource "aws_sns_topic_subscription" "name" {
+resource "aws_sns_topic_subscription" "alerts_sub" {
   topic_arn = aws_sns_topic.alerts.arn
   protocol  = "email"
   endpoint  = var.alert_email
