@@ -442,7 +442,7 @@ resource "aws_cloudwatch_log_group" "cloudtrail_logs" {
   }
 }
 
-## Create CloudWatch metrics and CloudWatch Alarms
+## Create CloudWatch metrics, CloudWatch Alarms, and SNS Topics/Subscriptions
 
 resource "aws_cloudwatch_metric_alarm" "cpu_util" {
   alarm_name                = "cpu_util"
@@ -454,6 +454,33 @@ resource "aws_cloudwatch_metric_alarm" "cpu_util" {
   namespace                 = "AWS/EC2"
   threshold                 = 80
   alarm_description         = "This metric alerts if CPU utilization exceeds 80% for 2 minutes"
+  alarm_actions = [aws_sns_topic.alerts.arn]
+  insufficient_data_actions = []
+}
+
+## Custom CloudWatch metric based on patterns in logs within CloudWatch Logs
+resource "aws_cloudwatch_log_metric_filter" "unauthorized_api_calls" {
+  name = "Unauthorized-API-Calls"
+  pattern = "{($.errorCode = \"UnauthorizedOperation\") || ($.errorCode = \"AccessDenied\")}"
+  log_group_name = aws_cloudwatch_log_group.cloudtrail_logs.name
+
+  metric_transformation {
+    name = "UnauthorizedAPICallCount"
+    namespace = "CloudTrailMetrics"
+    value = "1"
+  }
+}
+
+resource "aws_cloudwatch_metric_alarm" "unauthorized_api_calls" {
+  alarm_name = "Unauthorized_API_Calls"
+  period = 180
+  evaluation_periods = 1
+  comparison_operator = "GreaterThanOrEqualToThreshold"
+  threshold = 1
+  statistic = "Sum"
+  metric_name = "UnauthorizedAPICallCount"
+  namespace = "CloudTrailMetrics"
+  alarm_description = "Detect unauthorized API activity"
   alarm_actions = [aws_sns_topic.alerts.arn]
   insufficient_data_actions = []
 }
