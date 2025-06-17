@@ -45,5 +45,5 @@ variable "bastion_allowed_cidrs" {
 
 variable "alert_email" {
   description = "Email address to send CloudWatch Alarm alerts to"
-  type = string
+  type        = string
 }
