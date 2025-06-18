@@ -495,3 +495,13 @@ resource "aws_sns_topic_subscription" "alerts_sub" {
   protocol  = "email"
   endpoint  = var.alert_email
 }
+
+resource "aws_config_configuration_recorder" "name" {
+  name = "TF-Juice-Lab-Config"
+  role_arn = aws_iam_role.config_role.arn
+
+  recording_group {
+    all_supported = true
+    include_global_resource_types = true
+  }
+}
