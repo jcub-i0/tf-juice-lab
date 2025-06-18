@@ -374,7 +374,7 @@ EOF
 
 ## Create 8 random digits to tack onto the end of the centralized_logs bucket's name
 resource "random_id" "logs_bucket_suffix" {
-  byte_length = 4
+  byte_length = 2
 }
 
 resource "aws_s3_bucket" "centralized_logs" {
