@@ -115,3 +115,28 @@ resource "aws_iam_role_policy" "cloudtrail_to_cw_policy" {
     ]
   })
 }
+
+## Create IAM role for AWS Config
+resource "aws_iam_role" "config_role" {
+  name = "config_role"
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+        {
+            Action = "sts:AssumeRole"
+            Effect = "Allow"
+            Sid = ""
+            Principal = {
+                Service = "config.amazonaws.com"
+            }
+        }
+    ]
+  })
+}
+
+## Attach AWS Config managed policy
+resource "aws_iam_role_policy_attachment" "name" {
+  role = aws_iam_role.config_role.name
+  policy_arn = "arn:aws:iam::aws:policy/aws-service-role/AWSConfigServiceRolePolicy"
+}
