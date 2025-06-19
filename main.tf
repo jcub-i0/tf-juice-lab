@@ -536,11 +536,3 @@ resource "aws_config_config_rule" "s3_sse_enabled" {
     source_identifier = "S3_BUCKET_SERVER_SIDE_ENCRYPTION_ENABLED"
   }
 }
-
-resource "aws_s3_bucket" "sample" {
-  bucket = "sample7167"
-  
-  tags = {
-    Name = "sample-bucket7167"
-  }
-}
