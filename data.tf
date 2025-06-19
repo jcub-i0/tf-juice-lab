@@ -36,3 +36,39 @@ data "aws_iam_policy" "ssm_core" {
 
 # Fetch information about the AWS identity Terraform is currently using
 data "aws_caller_identity" "current" {}
+
+## IAM Trust Policy for AWS Config
+data "aws_iam_policy_document" "assume_role_config" {
+  statement {
+    effect = "Allow"
+
+    principals {
+      type = "Service"
+      identifiers = ["config.amazonaws.com"]
+    }
+
+    actions = ["sts:AssumeRole"]
+  }
+}
+
+## IAM permissions for AWS Config
+data "aws_iam_policy_document" "config_permissions" {
+  statement {
+    effect = "Allow"
+    actions = [
+      "config:BatchGetResourceConfig",
+      "config:Put*",
+      "config:Get*",
+      "config:Describe*",
+      "s3:PutObject",
+      "s3:GetBucketAcl",
+      "sns:Publish",
+      "iam:Get*",
+      "ec2:Describe*",
+      "rds:Describe*",
+      "lambda:List*",
+      "lambda:Get*"
+    ]
+    resources = ["*"]
+  }
+}

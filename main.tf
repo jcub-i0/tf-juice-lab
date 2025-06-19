@@ -496,12 +496,51 @@ resource "aws_sns_topic_subscription" "alerts_sub" {
   endpoint  = var.alert_email
 }
 
-resource "aws_config_configuration_recorder" "name" {
-  name = "TF-Juice-Lab-Config"
+resource "aws_config_configuration_recorder" "config_rec" {
+  name     = "TF-Juice-Lab-Config"
   role_arn = aws_iam_role.config_role.arn
 
   recording_group {
-    all_supported = true
+    all_supported                 = true
     include_global_resource_types = true
+  }
+}
+
+resource "aws_config_delivery_channel" "config_delivery_channel" {
+  name           = "Config-Delivery-Channel"
+  s3_bucket_name = aws_s3_bucket.centralized_logs.bucket
+  depends_on     = [aws_config_configuration_recorder.config_rec]
+}
+
+resource "aws_config_configuration_recorder_status" "config_rec_stat" {
+  name       = aws_config_configuration_recorder.config_rec.name
+  is_enabled = true
+  depends_on = [aws_config_delivery_channel.config_delivery_channel]
+}
+
+## Rule that enforces prohibited public access for S3 buckets
+resource "aws_config_config_rule" "s3_public_access_prohibited" {
+  name = "s3-public-access-prohibited"
+
+  source {
+    owner             = "AWS"
+    source_identifier = "S3_BUCKET_LEVEL_PUBLIC_ACCESS_PROHIBITED"
+  }
+}
+
+resource "aws_config_config_rule" "s3_sse_enabled" {
+  name = "s3-sse-enabled"
+
+  source {
+    owner             = "AWS"
+    source_identifier = "S3_BUCKET_SERVER_SIDE_ENCRYPTION_ENABLED"
+  }
+}
+
+resource "aws_s3_bucket" "sample" {
+  bucket = "sample7167"
+  
+  tags = {
+    Name = "sample-bucket7167"
   }
 }
