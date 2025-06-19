@@ -544,5 +544,3 @@ resource "aws_config_config_rule" "s3_sse_enabled" {
     aws_config_configuration_recorder_status.config_rec_stat
   ]
 }
-
-# test
