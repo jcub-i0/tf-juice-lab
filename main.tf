@@ -526,6 +526,10 @@ resource "aws_config_config_rule" "s3_public_access_prohibited" {
     owner             = "AWS"
     source_identifier = "S3_BUCKET_LEVEL_PUBLIC_ACCESS_PROHIBITED"
   }
+
+  depends_on = [
+    aws_config_configuration_recorder_status.config_rec_stat
+  ]
 }
 
 resource "aws_config_config_rule" "s3_sse_enabled" {
@@ -535,4 +539,8 @@ resource "aws_config_config_rule" "s3_sse_enabled" {
     owner             = "AWS"
     source_identifier = "S3_BUCKET_SERVER_SIDE_ENCRYPTION_ENABLED"
   }
+
+  depends_on = [
+    aws_config_configuration_recorder_status.config_rec_stat
+  ]
 }
