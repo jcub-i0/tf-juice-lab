@@ -43,7 +43,7 @@ data "aws_iam_policy_document" "assume_role_config" {
     effect = "Allow"
 
     principals {
-      type = "Service"
+      type        = "Service"
       identifiers = ["config.amazonaws.com"]
     }
 
