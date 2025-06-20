@@ -280,12 +280,12 @@ EOF
 
 
 resource "aws_instance" "kali" {
-  ami                  = data.aws_ami.kali-linux.id
-  instance_type        = "t3.medium"
-  subnet_id            = aws_subnet.private.id
-  key_name             = aws_key_pair.kali_key.key_name
+  ami                    = data.aws_ami.kali-linux.id
+  instance_type          = "t3.medium"
+  subnet_id              = aws_subnet.private.id
+  key_name               = aws_key_pair.kali_key.key_name
   vpc_security_group_ids = [aws_security_group.kali_sg.id]
-  iam_instance_profile = aws_iam_instance_profile.ssm_profile.name
+  iam_instance_profile   = aws_iam_instance_profile.ssm_profile.name
 
   root_block_device {
     volume_size = "50"
@@ -330,10 +330,10 @@ EOF
 }
 
 resource "aws_instance" "juice-shop" {
-  ami             = data.aws_ami.ubuntu.id
-  instance_type   = "t3.medium"
-  subnet_id       = aws_subnet.private.id
-  key_name        = aws_key_pair.juice_key.key_name
+  ami                    = data.aws_ami.ubuntu.id
+  instance_type          = "t3.medium"
+  subnet_id              = aws_subnet.private.id
+  key_name               = aws_key_pair.juice_key.key_name
   vpc_security_group_ids = [aws_security_group.juice_sg.id]
 
   root_block_device {
