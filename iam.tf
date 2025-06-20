@@ -128,3 +128,8 @@ resource "aws_iam_role_policy" "config_policy" {
   role   = aws_iam_role.config_role.id
   policy = data.aws_iam_policy_document.config_permissions.json
 }
+
+resource "aws_iam_role_policy_attachment" "config_attach" {
+  role = aws_iam_role.config_role.name
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AWS_ConfigRole"
+}
