@@ -399,7 +399,7 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "logs_bucket_encry
 }
 
 resource "aws_s3_bucket_versioning" "logs_bucket" {
-  bucket = aws_s3_bucket.centralized_logs.id
+  bucket = aws_s3_bucket.centralized_logs.bucket
 
   versioning_configuration {
     status = "Enabled"
