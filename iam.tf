@@ -31,7 +31,7 @@ resource "aws_iam_instance_profile" "ssm_profile" {
 
 ## S3 Bucket Policies
 resource "aws_s3_bucket_policy" "cloudtrail_policy" {
-  bucket = aws_s3_bucket.centralized_logs.id
+  bucket = aws_s3_bucket.centralized_logs.bucket
 
   policy = jsonencode({
     Version = "2012-10-17"
