@@ -43,7 +43,7 @@ variable "bastion_allowed_cidrs" {
   type        = list(string)
 }
 
-variable "alert_email" {
+variable "alert_emails" {
   description = "Email address to send CloudWatch Alarm alerts to"
   type        = list(string)
 }
