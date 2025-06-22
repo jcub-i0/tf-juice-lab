@@ -554,7 +554,7 @@ resource "aws_config_remediation_configuration" "disable_public_s3_access" {
   maximum_automatic_attempts = 5
   retry_attempt_seconds = 120
 
-  depends_on = [aws_iam_role_policy.config_ssm_automation]
+  depends_on = [aws_iam_role_policy_attachment.config_ssm_automation]
 }
 
 resource "aws_config_config_rule" "s3_sse_enabled" {
