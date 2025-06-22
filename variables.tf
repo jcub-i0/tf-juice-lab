@@ -47,3 +47,13 @@ variable "alert_emails" {
   description = "Email address to send CloudWatch Alarm alerts to"
   type        = list(string)
 }
+
+variable "guardduty_features" {
+  description = "List of features to be added to GuardDuty - Determines data souces"
+  type = list(string)
+  default = [
+    "S3_DATA_EVENTS",
+    "EBS_MALWARE_PROTECTION",
+    "LAMBDA_NETWORK_LOGS"
+  ]
+}
