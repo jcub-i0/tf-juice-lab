@@ -34,7 +34,7 @@ data "aws_iam_policy" "ssm_core" {
   name = "AmazonSSMManagedInstanceCore"
 }
 
-data "aws_iam_policy" "config_remediation_role" {
+data "aws_iam_policy" "ssm_automation" {
   name = "AmazonSSMAutomationRole"
 }
 
