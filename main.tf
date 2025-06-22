@@ -569,3 +569,7 @@ resource "aws_config_config_rule" "s3_sse_enabled" {
     aws_config_configuration_recorder_status.config_rec_stat
   ]
 }
+
+resource "aws_guardduty_detector" "main" {
+  enable = true
+}
