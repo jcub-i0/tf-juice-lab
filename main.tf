@@ -573,3 +573,10 @@ resource "aws_config_config_rule" "s3_sse_enabled" {
 resource "aws_guardduty_detector" "main" {
   enable = true
 }
+
+resource "aws_guardduty_detector_feature" "features" {
+  for_each = toset(var.guardduty_features)
+  detector_id = aws_guardduty_detector.main.id
+  name = each.value
+  status = "ENABLED"
+}
