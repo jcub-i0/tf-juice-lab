@@ -133,3 +133,23 @@ resource "aws_iam_role_policy_attachment" "config_attach" {
   role = aws_iam_role.config_role.name
   policy_arn = "arn:aws:iam::aws:policy/service-role/AWS_ConfigRole"
 }
+
+#Config Remediation
+resource "aws_iam_role" "config_remediation_role" {
+  name = "ConfigRemediationRole"
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [{
+      Effect = "Allow"
+      Principal = {
+        Service = "ssm.amazonaws.com"
+      },
+      Action = "sts:AssumeRole"
+    }]
+  })
+}
+
+resource "aws_iam_role_policy_attachment" "config_ssm_automation" {
+  role = aws_iam_role.config_remediation_role.name
+  policy_arn = data.aws_iam_policy.ssm_automation.arn
+}
