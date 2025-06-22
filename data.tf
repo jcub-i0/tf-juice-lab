@@ -34,6 +34,10 @@ data "aws_iam_policy" "ssm_core" {
   name = "AmazonSSMManagedInstanceCore"
 }
 
+data "aws_iam_policy" "config_remediation_role" {
+  name = "AmazonSSMAutomationRole"
+}
+
 # Fetch information about the AWS identity Terraform is currently using
 data "aws_caller_identity" "current" {}
 
