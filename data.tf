@@ -55,8 +55,6 @@ data "aws_iam_policy_document" "assume_role_config" {
   }
 }
 
-## IAM permissions for AWS Config
-### NEED TO ADD MORE, PARTICULARLY S3 READ RIGHTS
 data "aws_iam_policy_document" "config_permissions" {
   statement {
     effect = "Allow"
