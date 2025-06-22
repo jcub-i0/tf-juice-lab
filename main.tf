@@ -534,6 +534,29 @@ resource "aws_config_config_rule" "s3_public_access_prohibited" {
   ]
 }
 
+### Remediation action to automatically disable S3 public read and write
+resource "aws_config_remediation_configuration" "disable_public_s3_access" {
+  config_rule_name = aws_config_config_rule.s3_public_access_prohibited.name
+  resource_type = "AWS::S3::Bucket"
+  target_type = "SSM_DOCUMENT"
+  target_id = "AWSConfigRemediation-ConfigureS3BucketPublicAccessBlock"
+
+  parameter {
+    name = "AutomationAssumeRole"
+    static_value = aws_iam_role.config_remediation_role.arn
+  }
+  parameter {
+    name = "BucketName"
+    resource_value = "RESOURCE_ID"
+  }
+
+  automatic = true
+  maximum_automatic_attempts = 5
+  retry_attempt_seconds = 120
+
+  depends_on = [aws_iam_role_policy.config_ssm_automation]
+}
+
 resource "aws_config_config_rule" "s3_sse_enabled" {
   name = "s3-sse-enabled"
 
