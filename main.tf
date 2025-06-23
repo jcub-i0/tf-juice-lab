@@ -276,9 +276,6 @@ EOF
   }
 }
 
-# ATTACH JUICE SHOP-INSTALLED EBS VOLUME TO JUICE SHOP INSTANCE
-
-
 resource "aws_instance" "kali" {
   ami                    = data.aws_ami.kali-linux.id
   instance_type          = "t3.medium"
