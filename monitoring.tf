@@ -245,7 +245,7 @@ resource "aws_cloudwatch_event_target" "send_to_sns" {
 resource "aws_securityhub_account" "main" {}
 
 resource "aws_securityhub_standards_subscription" "standards" {
-  for_each = local.securityhub_standards
+  for_each      = local.securityhub_standards
   standards_arn = each.value
-  depends_on = [aws_securityhub_account.main]
+  depends_on    = [aws_securityhub_account.main]
 }
