@@ -153,3 +153,28 @@ resource "aws_iam_role_policy_attachment" "config_ssm_automation" {
   role = aws_iam_role.config_remediation_role.name
   policy_arn = data.aws_iam_policy.ssm_automation.arn
 }
+
+/*
+Give Config remediation's SSM Automation document explicit permissions to read and modify public
+access on all S3 buckets and to read and update the bucket's policy if needed
+*/
+resource "aws_iam_role_policy" "config_remediation_policy" {
+  name = "ConfigRemediationPolicy"
+  role = aws_iam_role.config_remediation_role.id
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Action = [
+          "s3:GetBucketPublicAccessBlock",
+          "s3:PutBucketPublicAccessBlock",
+          "s3:GetBucketPolicy",
+          "s3:PutBucketPolicy"
+        ],
+        Resource = "*"
+      }
+    ]
+  })
+}
