@@ -602,3 +602,11 @@ resource "aws_cloudwatch_event_target" "send_to_sns" {
   arn       = aws_sns_topic.alerts.arn
   target_id = "SendToSNS"
 }
+
+resource "aws_securityhub_account" "main" {}
+
+resource "aws_securityhub_standards_subscription" "standards" {
+  for_each = var.securityhub_standards
+  standards_arn = each.value
+  depends_on = [aws_securityhub_account.main]
+}
