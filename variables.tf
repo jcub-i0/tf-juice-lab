@@ -57,15 +57,3 @@ variable "guardduty_features" {
     "LAMBDA_NETWORK_LOGS"
   ]
 }
-
-variable "securityhub_standards" {
-  description = "Map of short-named Security Hub standards to their ARNs"
-  type = map(string)
-  default = {
-    # Each value (arn) is specific to the us-east-1 region. Replace it with the region your infrastructure is deployed in.
-    aws_fsbp = "arn:aws:securityhub:us-east-1::standards/aws-foundational-security-best-practices/v/1.0.0",
-    cis = "arn:aws:securityhub:us-east-1::standards/cis-aws-foundations-benchmark/v/3.0.0",
-    nist_800 = "arn:aws:securityhub:us-east-1::standards/nist-800-53/v/5.0.0",
-    pci_dss = "arn:aws:securityhub:us-east-1::standards/pci-dss/v/3.2.1"
-  }
-}
