@@ -172,8 +172,25 @@ resource "aws_security_group" "bastion_sg" {
   }
 }
 
-# CREATE EIP, NATGW, AND IGW
+resource "aws_security_group" "quarantine_sg" {
+  name        = "quarantine-sg"
+  description = "Security Group to send compromised EC2 instances to for isolation"
+  vpc_id      = aws_vpc.tf-juice-lab.id
 
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = []
+    description = "Block all outbound traffic"
+  }
+
+  tags = {
+    Name = "quarantine_sg"
+  }
+}
+
+# CREATE EIP, NATGW, AND IGW
 resource "aws_eip" "natgw_eip" {
   domain = "vpc"
 }
