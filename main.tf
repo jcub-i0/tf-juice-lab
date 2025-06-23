@@ -580,3 +580,13 @@ resource "aws_guardduty_detector_feature" "features" {
   name = each.value
   status = "ENABLED"
 }
+
+resource "aws_cloudwatch_event_rule" "guardduty_findings" {
+  name = "guardduty-findings"
+  description = "Trigger on GuardDuty findings"
+
+  event_pattern = jsonencode({
+    source = ["aws.guardduty"]
+    detail-type = ["GuardDuty Finding"]
+  })
+}
