@@ -581,6 +581,7 @@ resource "aws_guardduty_detector_feature" "features" {
   status = "ENABLED"
 }
 
+# Create EventBridge Rule for AWS GuardDuty
 resource "aws_cloudwatch_event_rule" "guardduty_findings" {
   name = "guardduty-findings"
   description = "Trigger on GuardDuty findings"
@@ -589,4 +590,11 @@ resource "aws_cloudwatch_event_rule" "guardduty_findings" {
     source = ["aws.guardduty"]
     detail-type = ["GuardDuty Finding"]
   })
+}
+
+# Create EventBridge Target to send events to (target=SNS)
+resource "aws_cloudwatch_event_target" "send_to_sns" {
+  rule = aws_cloudwatch_event_rule.guardduty_findings.name
+  arn = aws_sns_topic.alerts.arn
+  target_id = "SendToSNS"
 }
