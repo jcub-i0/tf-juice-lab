@@ -130,7 +130,7 @@ resource "aws_iam_role_policy" "config_policy" {
 }
 
 resource "aws_iam_role_policy_attachment" "config_attach" {
-  role = aws_iam_role.config_role.name
+  role       = aws_iam_role.config_role.name
   policy_arn = "arn:aws:iam::aws:policy/service-role/AWS_ConfigRole"
 }
 
@@ -150,7 +150,7 @@ resource "aws_iam_role" "config_remediation_role" {
 }
 
 resource "aws_iam_role_policy_attachment" "config_ssm_automation" {
-  role = aws_iam_role.config_remediation_role.name
+  role       = aws_iam_role.config_remediation_role.name
   policy_arn = data.aws_iam_policy.ssm_automation.arn
 }
 
@@ -186,12 +186,12 @@ resource "aws_sns_topic_policy" "sns_policy" {
     Version = "2012-10-17",
     Statement = [
       {
-        Sid = "AllowEventBridgePublish",
+        Sid    = "AllowEventBridgePublish",
         Effect = "Allow",
         Principal = {
           Service = "events.amazonaws.com"
         }
-        Action = "sns:Publish",
+        Action   = "sns:Publish",
         Resource = aws_sns_topic.alerts.arn
       }
     ]

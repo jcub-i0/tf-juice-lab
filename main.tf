@@ -537,22 +537,22 @@ resource "aws_config_config_rule" "s3_public_access_prohibited" {
 ### Remediation action to automatically disable S3 public read and write
 resource "aws_config_remediation_configuration" "disable_public_s3_access" {
   config_rule_name = aws_config_config_rule.s3_public_access_prohibited.name
-  resource_type = "AWS::S3::Bucket"
-  target_type = "SSM_DOCUMENT"
-  target_id = "AWSConfigRemediation-ConfigureS3BucketPublicAccessBlock"
+  resource_type    = "AWS::S3::Bucket"
+  target_type      = "SSM_DOCUMENT"
+  target_id        = "AWSConfigRemediation-ConfigureS3BucketPublicAccessBlock"
 
   parameter {
-    name = "AutomationAssumeRole"
+    name         = "AutomationAssumeRole"
     static_value = aws_iam_role.config_remediation_role.arn
   }
   parameter {
-    name = "BucketName"
+    name           = "BucketName"
     resource_value = "RESOURCE_ID"
   }
 
-  automatic = true
+  automatic                  = true
   maximum_automatic_attempts = 5
-  retry_attempt_seconds = 120
+  retry_attempt_seconds      = 120
 
   depends_on = [aws_iam_role_policy_attachment.config_ssm_automation]
 }
@@ -575,26 +575,30 @@ resource "aws_guardduty_detector" "main" {
 }
 
 resource "aws_guardduty_detector_feature" "features" {
-  for_each = toset(var.guardduty_features)
+  for_each    = toset(var.guardduty_features)
   detector_id = aws_guardduty_detector.main.id
-  name = each.value
-  status = "ENABLED"
+  name        = each.value
+  status      = "ENABLED"
 }
 
 # Create EventBridge Rule for AWS GuardDuty
 resource "aws_cloudwatch_event_rule" "guardduty_findings" {
-  name = "guardduty-findings"
+  name        = "guardduty-findings"
   description = "Trigger on GuardDuty findings"
 
   event_pattern = jsonencode({
-    source = ["aws.guardduty"]
-    detail-type = ["GuardDuty Finding"]
+    source = [
+      "aws.guardduty"
+    ]
+    detail-type = [
+      "GuardDuty Finding"
+    ]
   })
 }
 
 # Create EventBridge Target to send events to (target=SNS)
 resource "aws_cloudwatch_event_target" "send_to_sns" {
-  rule = aws_cloudwatch_event_rule.guardduty_findings.name
-  arn = aws_sns_topic.alerts.arn
+  rule      = aws_cloudwatch_event_rule.guardduty_findings.name
+  arn       = aws_sns_topic.alerts.arn
   target_id = "SendToSNS"
 }
