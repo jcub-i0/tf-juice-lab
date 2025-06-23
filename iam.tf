@@ -178,3 +178,22 @@ resource "aws_iam_role_policy" "config_remediation_policy" {
     ]
   })
 }
+
+# Permit EventBridge to publish to "Alerts" SNS topic
+resource "aws_sns_topic_policy" "sns_policy" {
+  arn = aws_sns_topic.alerts.arn
+  policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [
+      {
+        Sid = "AllowEventBridgePublish",
+        Effect = "Allow",
+        Principal = {
+          Service = "events.amazonaws.com"
+        }
+        Action = "sns:Publish",
+        Resource = aws_sns_topic.alerts.arn
+      }
+    ]
+  })
+}
