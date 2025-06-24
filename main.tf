@@ -390,7 +390,7 @@ resource "random_id" "random_suffix" {
 }
 
 resource "aws_s3_bucket" "general_purpose" {
-  bucket = "general_purpose-${random_id.random_suffix.hex}"
+  bucket = "general-purpose-${random_id.random_suffix.hex}"
 
   tags = {
     Name = "General Purpose"
