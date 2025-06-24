@@ -29,7 +29,7 @@ resource "aws_iam_instance_profile" "ssm_profile" {
   role = aws_iam_role.ssm_role.name
 }
 
-## S3 Bucket Policies
+# S3 Bucket Policies
 resource "aws_s3_bucket_policy" "cloudtrail_policy" {
   bucket = aws_s3_bucket.centralized_logs.bucket
 
@@ -209,4 +209,29 @@ resource "aws_iam_role_policy" "lambda_quarantine_policy" {
   name = "lambda_quarantine_policy"
   role = aws_iam_role.lambda_execution_role.id
   policy = data.aws_iam_policy_document.lambda_permissions.json
+}
+
+# S3 bucket policy to allow Lambda and the Terraform admin user read access to the General Purpose S3 bucket
+resource "aws_s3_bucket_policy" "general_purpose_policy" {
+  bucket = aws_s3_bucket.general_purpose.bucket
+
+  policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [
+      {
+        Effect = "Allow",
+        Principal = {
+          AWS = [
+            aws_iam_role.lambda_execution_role.arn,
+            "arn:aws:iam::${data.aws_caller_identity.current.account_id}:user/${var.terraform_admin_username}"
+          ]
+        },
+        Action = [
+          "s3:GetObject",
+          "s3:GetObjectVersion"
+        ],
+        Resource = "${aws_s3_bucket.general_purpose.arn}/*"
+      }
+    ]
+  })
 }
