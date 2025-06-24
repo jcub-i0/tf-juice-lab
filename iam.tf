@@ -249,3 +249,12 @@ resource "aws_iam_policy" "terraform_s3_write_policy" {
   name = "terraform_s3_write_policy"
   policy = data.aws_iam_policy_document.terraform_s3_write.json
 }
+
+# Attach IAM policy that allows Terraform admin user read and write access to General Purpose S3 bucket
+resource "aws_iam_policy_attachment" "terraform_s3_write_policy_attach" {
+  name = "terraform_s3_write_policy_attach"
+  users = [
+    var.terraform_admin_username
+  ]
+  policy_arn = aws_iam_policy.terraform_s3_write_policy.arn
+}
