@@ -136,3 +136,20 @@ data "aws_iam_policy_document" "lambda_general_purpose_s3_read" {
     ]
   }
 }
+
+# IAM policy document granting Terraform read and write access to objects in the General Purpose S3 bucket
+data "aws_iam_policy_document" "terraform_s3_write" {
+  version = "2012-10-17"
+  statement {
+    effect = "Allow"
+    actions = [
+      "s3:PutObject",
+      "s3:PutObjectAcl",
+      "s3:GetObject",
+      "s3:GetObjectVersion"
+    ]
+    resources = [
+      "${aws_s3_bucket.general_purpose.arn}/*"
+    ]
+  }
+}
