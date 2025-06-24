@@ -27,6 +27,7 @@ override.tf.json
 terraform.rc
 
 # Ignore secret files
-bastion_priv_key.pem
-kali_priv_key.pem
-juice_priv_key.pem
+*.pem
+
+# Ignore zip archives generated for Lambda deployment
+*.zip
