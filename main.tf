@@ -383,3 +383,35 @@ EOF
     Name = "JuiceShop"
   }
 }
+
+## Create 8 random digits to tack onto resources that require a unique name
+resource "random_id" "random_suffix" {
+  byte_length = 4
+}
+
+resource "aws_s3_bucket" "general_purpose" {
+  bucket = "general_purpose-${random_id.random_suffix.hex}"
+  force_destroy = true
+
+  tags = {
+    Name = "General Purpose"
+    Environment = var.environment
+  }
+}
+
+resource "aws_s3_bucket_server_side_encryption_configuration" "general_purpose_sse" {
+  bucket = aws_s3_bucket.general_purpose.bucket
+
+  rule {
+    apply_server_side_encryption_by_default {
+      sse_algorithm = "AES356"
+    }
+  }
+}
+
+resource "aws_s3_bucket_versioning" "general_purpose_versioning" {
+  bucket = aws_s3_bucket.general_purpose.bucket
+  versioning_configuration {
+    status = "Enabled"
+  }
+}
