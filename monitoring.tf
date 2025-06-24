@@ -11,13 +11,8 @@ locals {
   }
 }
 
-## Create 8 random digits to tack onto the end of the centralized_logs bucket's name
-resource "random_id" "logs_bucket_suffix" {
-  byte_length = 2
-}
-
 resource "aws_s3_bucket" "centralized_logs" {
-  bucket        = "juice-shop-logs-${random_id.logs_bucket_suffix.hex}"
+  bucket        = "juice-shop-logs-${random_id.random_suffix.hex}"
   force_destroy = true
 
   tags = {
@@ -249,9 +244,9 @@ resource "aws_securityhub_standards_subscription" "standards" {
   standards_arn = each.value
   depends_on    = [aws_securityhub_account.main]
 }
+
 /*
-resource "aws_lambda_function" "name" {
-  function_name = ONE_SEC
-  role = ONE_SEC
+resource "aws_lambda_function" "ec2_isolation" {
+  function_name = 
 }
 */
