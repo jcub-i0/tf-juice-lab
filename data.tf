@@ -123,3 +123,16 @@ data "aws_iam_policy_document" "lambda_permissions"{
     resources = ["*"]
   }
 }
+
+# IAM permission policy to allow Lambda read access to General Purpose S3 bucket
+data "aws_iam_policy_document" "lambda_general_purpose_s3_read" {
+  statement {
+    actions = [
+      "s3:GetObject",
+      "s3:GetObjectVersion"
+    ]
+    resources = [
+      "arn:aws:s3:::${aws_s3_bucket.general_purpose.arn}/*"
+    ]
+  }
+}
