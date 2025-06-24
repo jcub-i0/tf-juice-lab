@@ -41,7 +41,7 @@ data "aws_iam_policy" "ssm_automation" {
 # Fetch information about the AWS identity Terraform is currently using
 data "aws_caller_identity" "current" {}
 
-## IAM Trust Policy for AWS Config
+# IAM Trust Policy for AWS Config
 data "aws_iam_policy_document" "assume_role_config" {
   statement {
     effect = "Allow"
@@ -71,6 +71,53 @@ data "aws_iam_policy_document" "config_permissions" {
       "rds:Describe*",
       "lambda:List*",
       "lambda:Get*"
+    ]
+    resources = ["*"]
+  }
+}
+
+# IAM Trust Policy for Lambda
+data "aws_iam_policy_document" "assume_role_lambda" {
+  statement {
+    effect = "Allow"
+
+    principals {
+      type = "Service"
+      identifiers = ["lambda.amazonaws.com"]
+    }
+
+    actions = ["sts:AssumeRole"]
+  }
+}
+
+data "aws_iam_policy_document" "lambda_permissions"{
+  statement {
+    effect = "Allow"
+    actions = [
+      "ec2:ModifyInstanceAttribute",
+      "ec2:DescribeInstances",
+      "ec2:DescribeSecurityGroups"
+    ]
+    resources = ["*"]
+  }
+
+  statement {
+    effect = "Allow"
+    actions = [
+      "s3:PutObject",
+      "s3:PutObjectAcl"
+    ]
+    resources = [
+      "arn:aws:s3:::${aws_s3_bucket.centralized_logs.arn}/*"
+    ]
+  }
+
+  statement {
+    effect = "Allow"
+    actions = [
+      "logs:CreateLogGroup",
+      "logs:CreateLogStream",
+      "logs:PutLogEvents"
     ]
     resources = ["*"]
   }
