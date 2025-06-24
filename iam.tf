@@ -235,3 +235,11 @@ resource "aws_s3_bucket_policy" "general_purpose_policy" {
     ]
   })
 }
+
+# Attach IAM policy that allows Lambda read access to General Purpose S3 to Lambda execution role
+resource "aws_iam_role_policy" "lambda_general_purpose_s3_read" {
+  name = "lambda_general_purpose_s3_read"
+  role = aws_iam_role.lambda_execution_role.id
+
+  policy = data.aws_iam_policy_document.lambda_general_purpose_s3_read.json
+}
