@@ -20,3 +20,11 @@ output "enabled_securityhub_standards" {
     key => value.standards_arn
   }
 }
+
+output "general_purpose_s3_bucket_name" {
+  value = aws_s3_bucket.general_purpose.bucket
+}
+
+output "centralized_logs_s3_bucket_name" {
+  value = aws_s3_bucket.centralized_logs.bucket
+}
