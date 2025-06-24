@@ -197,3 +197,15 @@ resource "aws_sns_topic_policy" "sns_policy" {
     ]
   })
 }
+
+# IAM Trust Policy for Lambda
+resource "aws_iam_role" "lambda_execution_role" {
+  name = "lambda_execution_role"
+  assume_role_policy = data.aws_iam_policy_document.assume_role_lambda.json
+}
+
+resource "aws_iam_role_policy" "lambda_quarantine_policy" {
+  name = "lambda_quarantine_policy"
+  role = aws_iam_role.lambda_execution_role.id
+  policy = data.aws_iam_policy_document.lambda_permissions.json
+}
