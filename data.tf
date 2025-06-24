@@ -97,7 +97,8 @@ data "aws_iam_policy_document" "lambda_permissions"{
     actions = [
       "ec2:ModifyInstanceAttribute",
       "ec2:DescribeInstances",
-      "ec2:DescribeSecurityGroups"
+      "ec2:DescribeSecurityGroups",
+      "ec2:CreateTags"
     ]
     resources = ["*"]
   }
@@ -109,7 +110,7 @@ data "aws_iam_policy_document" "lambda_permissions"{
       "s3:PutObjectAcl"
     ]
     resources = [
-      "arn:aws:s3:::${aws_s3_bucket.centralized_logs.arn}/*"
+      "arn:aws:s3:::${aws_s3_bucket.centralized_logs.bucket}/*"
     ]
   }
 
