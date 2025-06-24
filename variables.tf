@@ -1,3 +1,8 @@
+variable "terraform_admin_username" {
+  description = "IAM username of the Terraform admin user"
+  type = string
+}
+
 variable "environment" {
   description = "Deployment environment"
   type        = string
