@@ -249,3 +249,9 @@ resource "aws_securityhub_standards_subscription" "standards" {
   standards_arn = each.value
   depends_on    = [aws_securityhub_account.main]
 }
+/*
+resource "aws_lambda_function" "name" {
+  function_name = ONE_SEC
+  role = ONE_SEC
+}
+*/

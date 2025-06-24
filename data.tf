@@ -76,7 +76,7 @@ data "aws_iam_policy_document" "config_permissions" {
   }
 }
 
-# IAM Trust Policy for Lambda
+# IAM trust policy document for Lambda EC2 isolation function
 data "aws_iam_policy_document" "assume_role_lambda" {
   statement {
     effect = "Allow"
@@ -90,6 +90,7 @@ data "aws_iam_policy_document" "assume_role_lambda" {
   }
 }
 
+# IAM permission policy document for Lambda EC2 isolation function
 data "aws_iam_policy_document" "lambda_permissions"{
   statement {
     effect = "Allow"

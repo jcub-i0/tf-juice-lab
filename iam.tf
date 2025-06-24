@@ -204,6 +204,7 @@ resource "aws_iam_role" "lambda_execution_role" {
   assume_role_policy = data.aws_iam_policy_document.assume_role_lambda.json
 }
 
+# Lambda Execution Role
 resource "aws_iam_role_policy" "lambda_quarantine_policy" {
   name = "lambda_quarantine_policy"
   role = aws_iam_role.lambda_execution_role.id
