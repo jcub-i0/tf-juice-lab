@@ -244,8 +244,32 @@ resource "aws_securityhub_standards_subscription" "standards" {
   depends_on    = [aws_securityhub_account.main]
 }
 
-/*
-resource "aws_lambda_function" "ec2_isolation" {
-  function_name = 
+# Zip file containing Lambda function code
+data "archive_file" "lambda_zip" {
+  type = "zip"
+  source_file = "${path.module}/lambda/ec2_isolate_function.py"
+  output_path = "${path.module}/lambda/ec2_isolate_function.zip"
 }
-*/
+
+# CREATE LAMBDA FUNCTION TO PERFORM EC2 ISOLATION
+resource "aws_lambda_function" "ec2_isolation" {
+  function_name = "ec2_isolation"
+  description = "Isolate compromised EC2 instance by placing it in Quarantine SG"
+  filename = data.archive_file.lambda_zip.output_path
+  handler = "ec2_isolate_function.lambda_handler"
+
+  runtime = "python3.12"
+  role = aws_iam_role.lambda_execution_role.arn
+
+  environment {
+    variables = {
+        QUARANTINE_SG_ID = aws_security_group.quarantine_sg.id
+    }
+  }
+
+  tags = {
+    Name = "EC2IsolationLambda"
+  }
+
+  depends_on = [aws_iam_role_policy.lambda_quarantine_policy]
+}
