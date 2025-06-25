@@ -283,6 +283,7 @@ resource "aws_instance" "bastion" {
   # Install SSM agent on Bastion (AL2023) instance
   user_data = <<-EOF
 #!/bin/bash
+apt -o Acquire::ForceIPv4=true update
 yum update -y
 yum install -y amazon-ssm-agent
 systemctl enable amazon-ssm-agent
