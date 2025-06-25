@@ -200,14 +200,14 @@ resource "aws_sns_topic_policy" "sns_policy" {
 
 # IAM Trust Policy for Lambda
 resource "aws_iam_role" "lambda_execution_role" {
-  name = "lambda_execution_role"
+  name               = "lambda_execution_role"
   assume_role_policy = data.aws_iam_policy_document.assume_role_lambda.json
 }
 
 # Lambda Execution Role
 resource "aws_iam_role_policy" "lambda_quarantine_policy" {
-  name = "lambda_quarantine_policy"
-  role = aws_iam_role.lambda_execution_role.id
+  name   = "lambda_quarantine_policy"
+  role   = aws_iam_role.lambda_execution_role.id
   policy = data.aws_iam_policy_document.lambda_permissions.json
 }
 
@@ -237,11 +237,11 @@ resource "aws_s3_bucket_policy" "general_purpose_policy" {
 }
 
 resource "aws_lambda_permission" "allow_eventbridge_invoke" {
-  statement_id = "AllowExecutionFromEventBridge"
-  action = "lambda:InvokeFunction"
+  statement_id  = "AllowExecutionFromEventBridge"
+  action        = "lambda:InvokeFunction"
   function_name = aws_lambda_function.ec2_isolation.function_name
-  principal = "events.amazonaws.com"
-  source_arn = aws_cloudwatch_event_rule.securityhub_ec2_isolate.arn
+  principal     = "events.amazonaws.com"
+  source_arn    = aws_cloudwatch_event_rule.securityhub_ec2_isolate.arn
 }
 
 # Attach IAM policy that allows Lambda read access to General Purpose S3 to Lambda execution role
@@ -254,7 +254,7 @@ resource "aws_iam_role_policy" "lambda_general_purpose_s3_read" {
 
 # Create IAM policy that allows Terraform admin user read and write access to General Purpose S3 bucket
 resource "aws_iam_policy" "terraform_s3_write_policy" {
-  name = "terraform_s3_write_policy"
+  name   = "terraform_s3_write_policy"
   policy = data.aws_iam_policy_document.terraform_s3_write.json
 }
 

@@ -82,7 +82,7 @@ data "aws_iam_policy_document" "assume_role_lambda" {
     effect = "Allow"
 
     principals {
-      type = "Service"
+      type        = "Service"
       identifiers = ["lambda.amazonaws.com"]
     }
 
@@ -91,7 +91,7 @@ data "aws_iam_policy_document" "assume_role_lambda" {
 }
 
 # IAM permission policy document for Lambda EC2 isolation function
-data "aws_iam_policy_document" "lambda_permissions"{
+data "aws_iam_policy_document" "lambda_permissions" {
   statement {
     effect = "Allow"
     actions = [

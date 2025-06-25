@@ -393,7 +393,7 @@ resource "aws_s3_bucket" "general_purpose" {
   bucket = "general-purpose-${random_id.random_suffix.hex}"
 
   tags = {
-    Name = "General Purpose"
+    Name        = "General Purpose"
     Environment = var.environment
   }
 }

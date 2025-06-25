@@ -12,7 +12,7 @@ locals {
 }
 
 resource "aws_s3_bucket" "centralized_logs" {
-  bucket        = "juice-shop-logs-${random_id.random_suffix.hex}"
+  bucket = "juice-shop-logs-${random_id.random_suffix.hex}"
 
   tags = {
     Name        = "Juice Shop Logs"
@@ -204,7 +204,7 @@ resource "aws_config_config_rule" "s3_sse_enabled" {
 }
 
 resource "aws_guardduty_detector" "main" {
-  enable = true
+  enable                       = true
   finding_publishing_frequency = "FIFTEEN_MINUTES"
 }
 
@@ -238,7 +238,7 @@ resource "aws_cloudwatch_event_target" "send_to_sns" {
 }
 
 resource "aws_securityhub_account" "main" {
-    depends_on = [aws_guardduty_detector.main]
+  depends_on = [aws_guardduty_detector.main]
 }
 
 resource "aws_securityhub_standards_subscription" "standards" {
@@ -249,55 +249,53 @@ resource "aws_securityhub_standards_subscription" "standards" {
 
 # Zip file containing Lambda function code
 data "archive_file" "lambda_zip" {
-  type = "zip"
+  type        = "zip"
   source_file = "${path.module}/lambda/ec2_isolate_function.py"
   output_path = "${path.module}/lambda/ec2_isolate_function.zip"
 }
 
 # EventBridge Rule to trigger EC2 Isolation Lambda function
 resource "aws_cloudwatch_event_rule" "securityhub_ec2_isolate" {
-  name = "securityhub-ec2-isolate"
+  name        = "securityhub-ec2-isolate"
   description = "Isolate EC2 instances with critical findings"
 
   event_pattern = jsonencode({
-    "source" = ["aws.securityhub"],
-    "detail-type" = ["Security Hub Findings - Imported"],
+    "source" = [
+      "aws.securityhub"
+    ],
+    "detail-type" = [
+      "Security Hub Findings - Imported"
+    ],
     "detail" = {
-        "findings" = [
-            {
-                "Severity" = {
-                    "Label" = ["HIGH", "CRITICAL"]
-                },
-                "Resources" = [
-                    {
-                        "Type" = ["AwsEc2Instance"]
-                    }
-                ]
-            }
-        ]
+      "findings" = {
+        "ResourceType" = ["AwsEc2Instance"],
+        "Severity" = {
+          "Label" = ["HIGH", "CRITICAL"]
+        }
+      }
     }
   })
 }
 
 resource "aws_cloudwatch_event_target" "securityhub_ec2_isolate_target" {
-  rule = aws_cloudwatch_event_rule.securityhub_ec2_isolate.name
+  rule      = aws_cloudwatch_event_rule.securityhub_ec2_isolate.name
   target_id = "isolate-ec2"
-  arn = aws_lambda_function.ec2_isolation.arn
+  arn       = aws_lambda_function.ec2_isolation.arn
 }
 
 # Lambda function to perform EC2 isolation
 resource "aws_lambda_function" "ec2_isolation" {
   function_name = "ec2_isolation"
-  description = "Isolate compromised EC2 instance by placing it in Quarantine SG"
-  filename = data.archive_file.lambda_zip.output_path
-  handler = "ec2_isolate_function.lambda_handler"
+  description   = "Isolate compromised EC2 instance by placing it in Quarantine SG"
+  filename      = data.archive_file.lambda_zip.output_path
+  handler       = "ec2_isolate_function.lambda_handler"
 
   runtime = "python3.12"
-  role = aws_iam_role.lambda_execution_role.arn
+  role    = aws_iam_role.lambda_execution_role.arn
 
   environment {
     variables = {
-        QUARANTINE_SG_ID = aws_security_group.quarantine_sg.id
+      QUARANTINE_SG_ID = aws_security_group.quarantine_sg.id
     }
   }
 
