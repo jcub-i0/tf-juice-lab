@@ -236,6 +236,14 @@ resource "aws_s3_bucket_policy" "general_purpose_policy" {
   })
 }
 
+resource "aws_lambda_permission" "allow_eventbridge_invoke" {
+  statement_id = "AllowExecutionFromEventBridge"
+  action = "lambda:InvokeFunction"
+  function_name = aws_lambda_function.ec2_isolation.function_name
+  principal = "events.amazonaws.com"
+  source_arn = aws_cloudwatch_event_rule.securityhub_ec2_isolate.arn
+}
+
 # Attach IAM policy that allows Lambda read access to General Purpose S3 to Lambda execution role
 resource "aws_iam_role_policy" "lambda_general_purpose_s3_read" {
   name = "lambda_general_purpose_s3_read"
