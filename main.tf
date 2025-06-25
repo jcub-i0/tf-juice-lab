@@ -114,7 +114,7 @@ resource "aws_security_group" "kali_sg" {
     from_port   = 22
     to_port     = 22
     protocol    = "tcp"
-    cidr_blocks = ["${aws_instance.bastion.public_ip}/32"]
+    cidr_blocks = ["${aws_instance.bastion.private_ip}/32"]
     description = "Allow Bastion Host to access Kali"
   }
 
