@@ -236,7 +236,9 @@ resource "aws_cloudwatch_event_target" "send_to_sns" {
   target_id = "SendToSNS"
 }
 
-resource "aws_securityhub_account" "main" {}
+resource "aws_securityhub_account" "main" {
+    depends_on = [aws_guardduty_detector.main]
+}
 
 resource "aws_securityhub_standards_subscription" "standards" {
   for_each      = local.securityhub_standards
@@ -251,7 +253,36 @@ data "archive_file" "lambda_zip" {
   output_path = "${path.module}/lambda/ec2_isolate_function.zip"
 }
 
-# CREATE LAMBDA FUNCTION TO PERFORM EC2 ISOLATION
+# EventBridge Rule to trigger EC2 Isolation Lambda function
+resource "aws_cloudwatch_event_rule" "securityhub_ec2_isolate" {
+  name = "securityhub-ec2-isolate"
+  description = "Isolate EC2 instances with critical findings"
+
+  event_pattern = jsonencode({
+    "source" = [
+        "aws.securityhub"
+        ],
+    "detail-type" = [
+        "Security Hub Findings - Imported"
+        ]
+    detail = {
+        findings = {
+            ResourceType = ["AwsEc2Instance"],
+            Severity = {
+                Label = ["HIGH", "CRITICAL"]
+            }
+        }
+    }
+  })
+}
+
+resource "aws_cloudwatch_event_target" "securityhub_ec2_isolate_target" {
+  rule = aws_cloudwatch_event_rule.securityhub_ec2_isolate.name
+  target_id = "isolate-ec2"
+  arn = aws_lambda_function.ec2_isolation.arn
+}
+
+# Lambda function to perform EC2 isolation
 resource "aws_lambda_function" "ec2_isolation" {
   function_name = "ec2_isolation"
   description = "Isolate compromised EC2 instance by placing it in Quarantine SG"
