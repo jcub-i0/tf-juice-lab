@@ -205,6 +205,7 @@ resource "aws_config_config_rule" "s3_sse_enabled" {
 
 resource "aws_guardduty_detector" "main" {
   enable = true
+  finding_publishing_frequency = "FIFTEEN_MINUTES"
 }
 
 resource "aws_guardduty_detector_feature" "features" {
