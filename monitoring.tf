@@ -260,19 +260,21 @@ resource "aws_cloudwatch_event_rule" "securityhub_ec2_isolate" {
   description = "Isolate EC2 instances with critical findings"
 
   event_pattern = jsonencode({
-    "source" = [
-        "aws.securityhub"
-        ],
-    "detail-type" = [
-        "Security Hub Findings - Imported"
-        ]
-    detail = {
-        findings = {
-            ResourceType = ["AwsEc2Instance"],
-            Severity = {
-                Label = ["HIGH", "CRITICAL"]
+    "source" = ["aws.securityhub"],
+    "detail-type" = ["Security Hub Findings - Imported"],
+    "detail" = {
+        "findings" = [
+            {
+                "Severity" = {
+                    "Label" = ["HIGH", "CRITICAL"]
+                },
+                "Resources" = [
+                    {
+                        "Type" = ["AwsEc2Instance"]
+                    }
+                ]
             }
-        }
+        ]
     }
   })
 }
