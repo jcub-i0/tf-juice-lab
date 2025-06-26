@@ -268,9 +268,11 @@ resource "aws_cloudwatch_event_rule" "securityhub_ec2_isolate" {
     ],
     "detail" = {
       "findings" = {
-        "ResourceType" = ["AwsEc2Instance", "AwsEc2Volume"],
         "Severity" = {
           "Label" = ["HIGH", "CRITICAL"]
+        },
+        "Resources" = {
+            "Type" = ["AwsEc2Instance"]
         }
       }
     }
