@@ -335,7 +335,7 @@ apt install -y \
   sqlmap \
   nikto \
   hydra \
-  nc \
+  netcat-openbsd \
   seclists
 echo "CLI pentesting tools installed: httpie, nmap, whatweb, gobuster, ffuf, sqlmap, nikto, hydra, seclists"
 EOF
