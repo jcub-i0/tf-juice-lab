@@ -119,7 +119,7 @@ resource "aws_cloudwatch_metric_alarm" "unauthorized_api_calls" {
 }
 
 resource "aws_sns_topic" "alerts" {
-  name = "tf-juice-lab-alerts"
+  name = "tf-juice-lab-security-alerts"
 }
 
 ## Consider using a for_each loop for multiple email addresses to be used
