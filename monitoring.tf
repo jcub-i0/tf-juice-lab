@@ -136,8 +136,13 @@ resource "aws_config_configuration_recorder" "config_rec" {
   role_arn = aws_iam_role.config_role.arn
 
   recording_group {
-    all_supported                 = true
-    include_global_resource_types = true
+    all_supported                 = false
+    include_global_resource_types = false
+
+    resource_types = [
+        "AWS::EC2::Instance",
+        "AWS::S3::Bucket"
+    ]
   }
 }
 
