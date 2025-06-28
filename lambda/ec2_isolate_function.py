@@ -1,15 +1,44 @@
 import boto3 # type: ignore
 import logging
 import os
+import datetime
 
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
 
 ec2 = boto3.client('ec2')
 
+
+def map_finding_to_ttp(finding):
+    ttps = []
+    types = finding.get('Types', [])
+
+    for t in types:
+        t_lower = t.lower().strip()
+
+        if 'bruteforce' in t_lower:
+            if 'spray' in t_lower:
+                ttps.append('T1110.003: Brute Force - Password Spraying')
+            else:
+                ttps.append('T1110: Brute Force')
+
+        elif 'command' in t_lower:
+            ttps.append('T1059: Command and Scripting Interpreter')
+
+        elif 'credentialdump' in t_lower:
+            ttps.append('T1003: OS Credential Dumping')
+
+    if not ttps:
+        ttps.append('No known MITRE tactic detected')
+
+    return list(set(ttps))
+        
 def lambda_handler(event, context):
     try:
         finding = event['detail']['findings'][0]
+
+        mitre_ttps = map_finding_to_ttp(finding)
+        logger.info(f'Detected MITRE TTPs: {mitre_ttps}')
 
         for resource in finding.get('Resources', []):
             if resource.get('Type') == 'AwsEc2Instance':
@@ -26,12 +55,18 @@ def lambda_handler(event, context):
                     Groups = [quarantine_sg_id]
                 )
 
+                tags = [
+                    {'Key': 'Quarantine', 'Value': 'True'},
+                    {'Key': 'IsolatedBy', 'Value': 'Lambda-AutoResponse'},
+                    {'Key': 'IsolatedAt', 'Value': datetime.datetime.now(datetime.UTC).isoformat()}
+                ]
+
+                if mitre_ttps:
+                    tags.append({'Key': 'MitreTTPs', 'Value': ','.join(mitre_ttps)})
+                    
                 ec2.create_tags(
                     Resources = [instance_id],
-                    Tags = [
-                        {'Key': 'Quarantine', 'Value': 'True'},
-                        {'Key': 'IsolatedBy', 'Value': 'Lambda-AutoResponse'}
-                    ]
+                    Tags = tags
                 )
 
                 logger.info(f"Instance {instance_id} successfully isolated into SG {quarantine_sg_id}")
@@ -45,3 +80,4 @@ def lambda_handler(event, context):
     except Exception as e:
         logger.error(f'Error isolating instance: {str(e)}')
         raise e
+    
