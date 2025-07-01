@@ -263,6 +263,7 @@ data "archive_file" "lambda_zip" {
 resource "aws_cloudwatch_event_rule" "securityhub_ec2_isolate" {
   name        = "securityhub-ec2-isolate"
   description = "Isolate EC2 instances with critical findings"
+  #state = "DISABLED"
 
   event_pattern = jsonencode({
     "source" = [
@@ -290,7 +291,7 @@ resource "aws_cloudwatch_event_target" "securityhub_ec2_isolate_target" {
   arn       = aws_lambda_function.ec2_isolation.arn
 }
 
-# Lambda function to perform EC2 isolation
+# Lambda function to perform EC2 isolation and tag EC2 resource(s) with MITRE TTP
 resource "aws_lambda_function" "ec2_isolation" {
   function_name = "ec2_isolation"
   description   = "Isolate compromised EC2 instance by placing it in Quarantine SG"
