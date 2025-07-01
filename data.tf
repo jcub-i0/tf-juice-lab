@@ -98,7 +98,8 @@ data "aws_iam_policy_document" "lambda_permissions" {
       "ec2:ModifyInstanceAttribute",
       "ec2:DescribeInstances",
       "ec2:DescribeSecurityGroups",
-      "ec2:CreateTags"
+      "ec2:CreateTags",
+      "ec2:CreateSnapshot"
     ]
     resources = ["*"]
   }
