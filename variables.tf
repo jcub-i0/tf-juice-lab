@@ -59,6 +59,7 @@ variable "guardduty_features" {
   default = [
     "S3_DATA_EVENTS",
     "EBS_MALWARE_PROTECTION",
-    "LAMBDA_NETWORK_LOGS"
+    "LAMBDA_NETWORK_LOGS",
+    "RUNTIME_MONITORING"
   ]
 }
