@@ -241,7 +241,7 @@ resource "aws_iam_role_policy" "lambda_ec2_isolate_policy" {
 }
 
 ### Allow EventBridge to invoke Lambda EC2 Isolation func
-resource "aws_lambda_permission" "allow_eventbridge_invoke" {
+resource "aws_lambda_permission" "allow_eventbridge_invoke_ec2_isolation" {
   statement_id  = "AllowExecutionFromEventBridge"
   action        = "lambda:InvokeFunction"
   function_name = aws_lambda_function.ec2_isolation.function_name
@@ -249,7 +249,7 @@ resource "aws_lambda_permission" "allow_eventbridge_invoke" {
   source_arn    = aws_cloudwatch_event_rule.securityhub_ec2_isolate.arn
 }
 
-### Attach IAM policy that allows Lambda ec2 isolate func read access to General Purpose S3 to the func's execution role
+### Attach IAM policy that allows Lambda ec2 isolate func read access to General Purpose S3
 resource "aws_iam_role_policy" "lambda_general_purpose_s3_read" {
   name   = "lambda_general_purpose_s3_read"
   role   = aws_iam_role.lambda_ec2_isolate_execution_role.id
@@ -257,7 +257,7 @@ resource "aws_iam_role_policy" "lambda_general_purpose_s3_read" {
 }
 
 ## Lambda Auto Stop on Idle IAM resources
-### IAM role for Lambda Auto Stop
+### Enable Lambda Autostop to assume IAM role
 resource "aws_iam_role" "lambda_autostop_execution_role" {
   name               = "lambda_autostop_role"
   assume_role_policy = data.aws_iam_policy_document.assume_role_lambda.json
@@ -267,6 +267,15 @@ resource "aws_iam_role_policy" "lambda_autostop_policy" {
   name   = "lambda_autostop_policy"
   role   = aws_iam_role.lambda_autostop_execution_role.id
   policy = data.aws_iam_policy_document.lambda_ec2_autostop_permissions.json
+}
+
+### Allow EventBridge to invoke Lambda EC2 Autostop function
+resource "aws_lambda_permission" "allow_eventbridge_invoke_ec2_autostop" {
+  statement_id  = "AllowExecutionFromEventBridge"
+  action        = "lambda:InvokeFunction"
+  function_name = aws_lambda_function.lambda_ec2_auto_stop_on_idle_zip.function_name
+  principal     = "events.amazon.com"
+  source_arn    = aws_cloudwatch_event_rule.ec2_autostop_schedule.arn
 }
 
 # Create IAM policy that allows Terraform admin user read and write access to General Purpose S3 bucket
