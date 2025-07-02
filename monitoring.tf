@@ -269,7 +269,6 @@ data "archive_file" "lambda_ec2_auto_stop_on_idle" {
 resource "aws_cloudwatch_event_rule" "securityhub_ec2_isolate" {
   name        = "securityhub-ec2-isolate"
   description = "Isolate EC2 instances with critical findings"
-  #state = "DISABLED"
 
   event_pattern = jsonencode({
     "source" = [
