@@ -262,6 +262,30 @@ data "archive_file" "lambda_ec2_isolate_zip" {
   output_path = "${path.module}/lambda/ec2_isolate/ec2_isolate_function.zip"
 }
 
+### Lambda function to perform EC2 isolation, tag EC2 resource(s) with MITRE TTP, and snapshot EBS volumes before quarantine
+resource "aws_lambda_function" "ec2_isolation" {
+  function_name    = "ec2_isolation"
+  description      = "Isolate compromised EC2 instance by placing it in Quarantine SG"
+  filename         = data.archive_file.lambda_ec2_isolate_zip.output_path
+  handler          = "ec2_isolate_function.lambda_handler"
+  source_code_hash = data.archive_file.lambda_ec2_isolate_zip.output_base64sha256
+
+  runtime = "python3.12"
+  role    = aws_iam_role.lambda_ec2_isolate_execution_role.arn
+
+  environment {
+    variables = {
+      QUARANTINE_SG_ID = aws_security_group.quarantine_sg.id
+    }
+  }
+
+  tags = {
+    Name = "EC2IsolationLambda"
+  }
+
+  depends_on = [aws_iam_role_policy.lambda_ec2_isolate_policy]
+}
+
 ### EventBridge Rule to trigger EC2 Isolation Lambda function
 resource "aws_cloudwatch_event_rule" "securityhub_ec2_isolate" {
   name        = "securityhub-ec2-isolate"
@@ -291,30 +315,6 @@ resource "aws_cloudwatch_event_target" "securityhub_ec2_isolate_target" {
   rule      = aws_cloudwatch_event_rule.securityhub_ec2_isolate.name
   target_id = "isolate-ec2"
   arn       = aws_lambda_function.ec2_isolation.arn
-}
-
-### Lambda function to perform EC2 isolation, tag EC2 resource(s) with MITRE TTP, and snapshot EBS volumes before quarantine
-resource "aws_lambda_function" "ec2_isolation" {
-  function_name    = "ec2_isolation"
-  description      = "Isolate compromised EC2 instance by placing it in Quarantine SG"
-  filename         = data.archive_file.lambda_ec2_isolate_zip.output_path
-  handler          = "ec2_isolate_function.lambda_handler"
-  source_code_hash = data.archive_file.lambda_ec2_isolate_zip.output_base64sha256
-
-  runtime = "python3.12"
-  role    = aws_iam_role.lambda_ec2_isolate_execution_role.arn
-
-  environment {
-    variables = {
-      QUARANTINE_SG_ID = aws_security_group.quarantine_sg.id
-    }
-  }
-
-  tags = {
-    Name = "EC2IsolationLambda"
-  }
-
-  depends_on = [aws_iam_role_policy.lambda_ec2_isolate_policy]
 }
 
 ## Lambda EC2 Autostop on Idle
