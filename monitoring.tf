@@ -342,3 +342,14 @@ resource "aws_lambda_function" "lambda_ec2_auto_stop_on_idle_zip" {
     }
   }
 }
+
+resource "aws_cloudwatch_event_rule" "ec2_autostop_schedule" {
+  name = "ec2-autostop-every-hour"
+  schedule_expression = "rate(1 hour)"
+}
+
+resource "aws_cloudwatch_event_target" "ec2_autostop_target" {
+  rule = aws_cloudwatch_event_rule.ec2_autostop_schedule.name
+  target_id = "trigger-autostop-ec2"
+  arn = aws_lambda_function.lambda_ec2_auto_stop_on_idle_zip.arn
+}
