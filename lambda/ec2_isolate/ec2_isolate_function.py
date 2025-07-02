@@ -12,33 +12,54 @@ def snapshot_attached_volumes(instance_id):
     logger.info(f'Describing volumes for instance {instance_id}')
 
     try:
-        # Get block device mappings for the instance
+        # Get instance details
         reservations = ec2.describe_instances(InstanceIds=[instance_id])['Reservations']
         instances = [i for r in reservations for i in r['Instances']]
 
-        for instance in instances:
-            for device in instance.get('BlockDeviceMappings', []):
-                volume_id = device.get('Ebs', {}).get('VolumeId')
-                device_name = device.get('DeviceName')
-                
-                if volume_id:
-                    logger.info(f'Creating snapshot for volume {volume_id} ({device_name})')
-                    description = f'Snapshot of {volume_id} from instance {instance_id} prior to quarantine operation'
+        if not instances:
+            logger.warning(f'No instance found with ID {instance_id}')
+            return
 
-                    ec2.create_snapshot(
-                        VolumeId = volume_id,
-                        Description = description,
-                        TagSpecifications=[
-                            {
-                                'ResourceType': 'snapshot',
-                                'Tags': [
-                                    {'Key': 'Name', 'Value': f'{instance_id}-{volume_id}'},
-                                    {'Key': 'CreatedBy', 'Value': f'LambdaAutoResponse'},
-                                    {'Key': 'InstanceId', 'Value': f'{instance_id}'}
-                                ]
-                            }
-                        ]
-                    )
+        instance = instances[0]
+
+        # Skip snapshot if instance already quarantined
+        tags = {tag['Key']: tag['Value'] for tag in instance.get('Tags', [])}
+        if tags.get('Quarantine', '').lower() == 'true':
+            logger.info(f'Instance {instance_id} already quarantined; skipping snapshot.')
+            return
+
+        for device in instance.get('BlockDeviceMappings', []):
+            volume_id = device.get('Ebs', {}).get('VolumeId')
+            device_name = device.get('DeviceName')
+
+            if volume_id:
+                logger.info(f'Creating snapshot for volume {volume_id} ({device_name})')
+                description = f'Snapshot of {volume_id} from instance {instance_id} prior to quarantine operation'
+
+                # Create the snapshot
+                response = ec2.create_snapshot(
+                    VolumeId=volume_id,
+                    Description=description
+                )
+
+                snapshot_id = response['SnapshotId']
+                logger.info(f'Snapshot {snapshot_id} created, tagging...')
+
+                # Apply tags separately
+                ec2.create_tags(
+                    Resources=[snapshot_id],
+                    Tags=[
+                        {'Key': 'Name', 'Value': f'{instance_id}-{volume_id}'},
+                        {'Key': 'CreatedBy', 'Value': 'LambdaAutoResponse'},
+                        {'Key': 'InstanceId', 'Value': instance_id}
+                    ]
+                )
+
+                logger.info(f'Snapshot {snapshot_id} for {volume_id} tagged successfully.')
+
+    except Exception as e:
+        logger.error(f'Failed to create snapshot: {str(e)}')
+        raise
 
     except Exception as e:
         logger.error(f'Failed to create snapshot: {str(e)}')
