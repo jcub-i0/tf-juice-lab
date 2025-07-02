@@ -76,7 +76,9 @@ data "aws_iam_policy_document" "config_permissions" {
   }
 }
 
-# IAM trust policy document for Lambda EC2 isolation function
+# Lambda IAM
+
+## IAM trust policy document for Lambda functions
 data "aws_iam_policy_document" "assume_role_lambda" {
   statement {
     effect = "Allow"
@@ -90,8 +92,8 @@ data "aws_iam_policy_document" "assume_role_lambda" {
   }
 }
 
-# IAM permission policy document for Lambda EC2 isolation function
-data "aws_iam_policy_document" "lambda_permissions" {
+## IAM permission policy document for Lambda EC2 isolation function
+data "aws_iam_policy_document" "lambda_ec2_isolate_permissions" {
   statement {
     effect = "Allow"
     actions = [
@@ -116,7 +118,7 @@ data "aws_iam_policy_document" "lambda_permissions" {
   }
 }
 
-# IAM permission policy for EC2 Auto Stop on Idle Lambda function
+### IAM permission policy for EC2 Auto Stop on Idle Lambda function
 data "aws_iam_policy_document" "lambda_ec2_auto_stop_on_idle_permissions" {
   statement {
     effect = "Allow"

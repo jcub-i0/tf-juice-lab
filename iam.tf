@@ -30,6 +30,7 @@ resource "aws_iam_instance_profile" "ssm_profile" {
 }
 
 # S3 Bucket Policies
+## S3 Bucket policy to allow CloudTrail to put objects in Centralized Logs bucket
 resource "aws_s3_bucket_policy" "cloudtrail_policy" {
   bucket = aws_s3_bucket.centralized_logs.bucket
 
@@ -77,6 +78,31 @@ resource "aws_s3_bucket_policy" "cloudtrail_policy" {
   })
 }
 
+## S3 bucket policy to allow Lambda EC2 Isolation func and the Terraform admin user read access to the General Purpose S3 bucket
+resource "aws_s3_bucket_policy" "general_purpose_policy" {
+  bucket = aws_s3_bucket.general_purpose.bucket
+
+  policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [
+      {
+        Effect = "Allow",
+        Principal = {
+          AWS = [
+            aws_iam_role.lambda_ec2_isolate_execution_role.arn,
+            "arn:aws:iam::${data.aws_caller_identity.current.account_id}:user/${var.terraform_admin_username}"
+          ]
+        },
+        Action = [
+          "s3:GetObject",
+          "s3:GetObjectVersion"
+        ],
+        Resource = "${aws_s3_bucket.general_purpose.arn}/*"
+      }
+    ]
+  })
+}
+
 ## Allow CloudTrail to access CloudWatch Logs
 resource "aws_iam_role" "cloudtrail_to_cw" {
   name = "cloudtrail-to-cloudwatch-role"
@@ -116,6 +142,7 @@ resource "aws_iam_role_policy" "cloudtrail_to_cw_policy" {
   })
 }
 
+# Config IAM resources
 ## Create IAM role for AWS Config
 resource "aws_iam_role" "config_role" {
   name               = "config_role"
@@ -134,7 +161,7 @@ resource "aws_iam_role_policy_attachment" "config_attach" {
   policy_arn = "arn:aws:iam::aws:policy/service-role/AWS_ConfigRole"
 }
 
-#Config Remediation
+## Config Remediation
 resource "aws_iam_role" "config_remediation_role" {
   name = "ConfigRemediationRole"
   assume_role_policy = jsonencode({
@@ -198,44 +225,21 @@ resource "aws_sns_topic_policy" "sns_policy" {
   })
 }
 
-# Lambda execution role for lambda ec2 isolation
+# Lambda EC2 Isolation IAM resources
+## Lambda execution role for lambda ec2 isolation
 resource "aws_iam_role" "lambda_ec2_isolate_execution_role" {
   name               = "lambda_ec2_isolate_execution_role"
   assume_role_policy = data.aws_iam_policy_document.assume_role_lambda.json
 }
 
-# Attach permissions to the Lambda ec2 isolation func's Execution Role
+## Attach permissions to the Lambda ec2 isolation func's Execution Role
 resource "aws_iam_role_policy" "lambda_ec2_isolate_policy" {
   name   = "lambda_ec2_isolate_policy"
   role   = aws_iam_role.lambda_ec2_isolate_execution_role.id
-  policy = data.aws_iam_policy_document.lambda_permissions.json
+  policy = data.aws_iam_policy_document.lambda_ec2_isolate_permissions.json
 }
 
-# S3 bucket policy to allow Lambda and the Terraform admin user read access to the General Purpose S3 bucket
-resource "aws_s3_bucket_policy" "general_purpose_policy" {
-  bucket = aws_s3_bucket.general_purpose.bucket
-
-  policy = jsonencode({
-    Version = "2012-10-17",
-    Statement = [
-      {
-        Effect = "Allow",
-        Principal = {
-          AWS = [
-            aws_iam_role.lambda_ec2_isolate_execution_role.arn,
-            "arn:aws:iam::${data.aws_caller_identity.current.account_id}:user/${var.terraform_admin_username}"
-          ]
-        },
-        Action = [
-          "s3:GetObject",
-          "s3:GetObjectVersion"
-        ],
-        Resource = "${aws_s3_bucket.general_purpose.arn}/*"
-      }
-    ]
-  })
-}
-
+## Allow EventBridge to invoke Lambda EC2 Isolation func
 resource "aws_lambda_permission" "allow_eventbridge_invoke" {
   statement_id  = "AllowExecutionFromEventBridge"
   action        = "lambda:InvokeFunction"
@@ -244,7 +248,7 @@ resource "aws_lambda_permission" "allow_eventbridge_invoke" {
   source_arn    = aws_cloudwatch_event_rule.securityhub_ec2_isolate.arn
 }
 
-# Attach IAM policy that allows Lambda ec2 isolate func read access to General Purpose S3 to Lambda execution role
+## Attach IAM policy that allows Lambda ec2 isolate func read access to General Purpose S3 to the func's execution role
 resource "aws_iam_role_policy" "lambda_general_purpose_s3_read" {
   name = "lambda_general_purpose_s3_read"
   role = aws_iam_role.lambda_ec2_isolate_execution_role.id
