@@ -343,6 +343,7 @@ resource "aws_lambda_function" "lambda_ec2_auto_stop_on_idle_zip" {
   }
 }
 
+### EventBridge Rule for Lambda EC2 Autostop
 resource "aws_cloudwatch_event_rule" "ec2_autostop_schedule" {
   name = "ec2-autostop-every-hour"
   schedule_expression = "rate(1 hour)"
