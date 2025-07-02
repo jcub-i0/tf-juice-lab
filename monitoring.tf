@@ -316,5 +316,5 @@ resource "aws_lambda_function" "ec2_isolation" {
     Name = "EC2IsolationLambda"
   }
 
-  depends_on = [aws_iam_role_policy.lambda_quarantine_policy]
+  depends_on = [aws_iam_role_policy.lambda_ec2_isolate_policy]
 }

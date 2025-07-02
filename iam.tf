@@ -205,8 +205,8 @@ resource "aws_iam_role" "lambda_ec2_isolate_execution_role" {
 }
 
 # Attach permissions to the Lambda ec2 isolation func's Execution Role
-resource "aws_iam_role_policy" "lambda_quarantine_policy" {
-  name   = "lambda_quarantine_policy"
+resource "aws_iam_role_policy" "lambda_ec2_isolate_policy" {
+  name   = "lambda_ec2_isolate_policy"
   role   = aws_iam_role.lambda_ec2_isolate_execution_role.id
   policy = data.aws_iam_policy_document.lambda_permissions.json
 }
