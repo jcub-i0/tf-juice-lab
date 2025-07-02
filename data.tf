@@ -114,6 +114,27 @@ data "aws_iam_policy_document" "lambda_permissions" {
       "arn:aws:s3:::${aws_s3_bucket.centralized_logs.bucket}/*"
     ]
   }
+}
+
+# IAM permission policy for EC2 Auto Stop on Idle Lambda function
+data "aws_iam_policy_document" "lambda_ec2_auto_stop_on_idle_permissions" {
+  statement {
+    effect = "Allow"
+    actions = [
+      "ec2:DescribeInstances",
+      "ec2:StopInstances",
+      "ec2:CreateTags"
+    ]
+    resources = ["*"]
+  }
+
+  statement {
+    effect = "Allow"
+    actions = [
+      "cloudwatch:GetMetricStatistics"
+    ]
+    resources = ["*"]
+  }
 
   statement {
     effect = "Allow"
