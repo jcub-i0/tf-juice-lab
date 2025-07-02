@@ -256,7 +256,7 @@ resource "aws_securityhub_standards_subscription" "standards" {
 data "archive_file" "lambda_zip" {
   type        = "zip"
   source_file = "${path.module}/lambda/ec2_isolate/ec2_isolate_function.py"
-  output_path = "${path.module}/lambda/ec2_isoalte/ec2_isolate_function.zip"
+  output_path = "${path.module}/lambda/ec2_isolate/ec2_isolate_function.zip"
 }
 
 # EventBridge Rule to trigger EC2 Isolation Lambda function
