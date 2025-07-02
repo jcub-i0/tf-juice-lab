@@ -325,7 +325,7 @@ data "archive_file" "lambda_ec2_auto_stop_on_idle_zip" {
   output_path = "${path.module}/lambda/ec2_auto_stop_on_idle/ec2_auto_stop_on_idle.zip"
 }
 
-resource "aws_lambda_function" "lambda_ec2_auto_stop_on_idle_zip" {
+resource "aws_lambda_function" "lambda_ec2_auto_stop_on_idle" {
   function_name    = "ec2_autostop"
   description      = "Automatically stop EC2 instance when they have been idle for 60 minutes"
   handler          = "ec2_autostop.lambda_handler"
@@ -352,5 +352,5 @@ resource "aws_cloudwatch_event_rule" "ec2_autostop_schedule" {
 resource "aws_cloudwatch_event_target" "ec2_autostop_target" {
   rule      = aws_cloudwatch_event_rule.ec2_autostop_schedule.name
   target_id = "trigger-autostop-ec2"
-  arn       = aws_lambda_function.lambda_ec2_auto_stop_on_idle_zip.arn
+  arn       = aws_lambda_function.lambda_ec2_auto_stop_on_idle.arn
 }
