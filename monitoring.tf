@@ -304,7 +304,7 @@ resource "aws_lambda_function" "ec2_isolation" {
   handler       = "ec2_isolate_function.lambda_handler"
 
   runtime = "python3.12"
-  role    = aws_iam_role.lambda_execution_role.arn
+  role    = aws_iam_role.lambda_ec2_isolate_execution_role.arn
 
   environment {
     variables = {
