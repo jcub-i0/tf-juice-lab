@@ -259,6 +259,12 @@ data "archive_file" "lambda_ec2_isolate_zip" {
   output_path = "${path.module}/lambda/ec2_isolate/ec2_isolate_function.zip"
 }
 
+data "archive_file" "lambda_ec2_auto_stop_on_idle" {
+    type = "zip"
+    source_file = "${path.module}/lambda/ec2_auto_stop_on_idle/ec2_auto_stop_on_idle.py"
+    output_path = "${path.module}/lambda/ec2_auto_stop_on_idle/ec2_auto_stop_on_idle.zip"
+}
+
 # EventBridge Rule to trigger EC2 Isolation Lambda function
 resource "aws_cloudwatch_event_rule" "securityhub_ec2_isolate" {
   name        = "securityhub-ec2-isolate"
