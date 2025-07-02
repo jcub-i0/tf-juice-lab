@@ -251,21 +251,21 @@ resource "aws_lambda_permission" "allow_eventbridge_invoke" {
 
 ### Attach IAM policy that allows Lambda ec2 isolate func read access to General Purpose S3 to the func's execution role
 resource "aws_iam_role_policy" "lambda_general_purpose_s3_read" {
-  name = "lambda_general_purpose_s3_read"
-  role = aws_iam_role.lambda_ec2_isolate_execution_role.id
+  name   = "lambda_general_purpose_s3_read"
+  role   = aws_iam_role.lambda_ec2_isolate_execution_role.id
   policy = data.aws_iam_policy_document.lambda_general_purpose_s3_read.json
 }
 
 ## Lambda Auto Stop on Idle IAM resources
 ### IAM role for Lambda Auto Stop
 resource "aws_iam_role" "lambda_autostop_execution_role" {
-  name = "lambda_autostop_role"
+  name               = "lambda_autostop_role"
   assume_role_policy = data.aws_iam_policy_document.assume_role_lambda.json
 }
 
 resource "aws_iam_role_policy" "lambda_autostop_policy" {
-  name = "lambda_autostop_policy"
-  role = aws_iam_role.lambda_autostop_execution_role.id
+  name   = "lambda_autostop_policy"
+  role   = aws_iam_role.lambda_autostop_execution_role.id
   policy = data.aws_iam_policy_document.lambda_ec2_autostop_permissions.json
 }
 

@@ -140,8 +140,8 @@ resource "aws_config_configuration_recorder" "config_rec" {
     include_global_resource_types = false
 
     resource_types = [
-        "AWS::EC2::Instance",
-        "AWS::S3::Bucket"
+      "AWS::EC2::Instance",
+      "AWS::S3::Bucket"
     ]
   }
 }
@@ -280,7 +280,7 @@ resource "aws_cloudwatch_event_rule" "securityhub_ec2_isolate" {
           "Label" = ["HIGH", "CRITICAL"]
         },
         "Resources" = {
-            "Type" = ["AwsEc2Instance"]
+          "Type" = ["AwsEc2Instance"]
         }
       }
     }
@@ -295,10 +295,10 @@ resource "aws_cloudwatch_event_target" "securityhub_ec2_isolate_target" {
 
 ### Lambda function to perform EC2 isolation, tag EC2 resource(s) with MITRE TTP, and snapshot EBS volumes before quarantine
 resource "aws_lambda_function" "ec2_isolation" {
-  function_name = "ec2_isolation"
-  description   = "Isolate compromised EC2 instance by placing it in Quarantine SG"
-  filename      = data.archive_file.lambda_ec2_isolate_zip.output_path
-  handler       = "ec2_isolate_function.lambda_handler"
+  function_name    = "ec2_isolation"
+  description      = "Isolate compromised EC2 instance by placing it in Quarantine SG"
+  filename         = data.archive_file.lambda_ec2_isolate_zip.output_path
+  handler          = "ec2_isolate_function.lambda_handler"
   source_code_hash = data.archive_file.lambda_ec2_isolate_zip.output_base64sha256
 
   runtime = "python3.12"
@@ -320,25 +320,25 @@ resource "aws_lambda_function" "ec2_isolation" {
 ## Lambda EC2 Autostop on Idle
 ### Zip file containing EC2 autostop func code
 data "archive_file" "lambda_ec2_auto_stop_on_idle_zip" {
-    type = "zip"
-    source_file = "${path.module}/lambda/ec2_auto_stop_on_idle/ec2_auto_stop_on_idle.py"
-    output_path = "${path.module}/lambda/ec2_auto_stop_on_idle/ec2_auto_stop_on_idle.zip"
+  type        = "zip"
+  source_file = "${path.module}/lambda/ec2_auto_stop_on_idle/ec2_auto_stop_on_idle.py"
+  output_path = "${path.module}/lambda/ec2_auto_stop_on_idle/ec2_auto_stop_on_idle.zip"
 }
 
 resource "aws_lambda_function" "lambda_ec2_auto_stop_on_idle_zip" {
-  function_name = "ec2_autostop"
-  description = "Automatically stop EC2 instance when they have been idle for 60 minutes"
-  handler = "ec2_autostop.lambda_handler"
-  filename = data.archive_file.lambda_ec2_auto_stop_on_idle.output_path
+  function_name    = "ec2_autostop"
+  description      = "Automatically stop EC2 instance when they have been idle for 60 minutes"
+  handler          = "ec2_autostop.lambda_handler"
+  filename         = data.archive_file.lambda_ec2_auto_stop_on_idle.output_path
   source_code_hash = data.archive_file.lambda_ec2_auto_stop_on_idle.output_base64sha256
 
   runtime = "python3.12"
-  role = aws_iam_role.lambda_autostop_execution_role.arn
+  role    = aws_iam_role.lambda_autostop_execution_role.arn
 
   environment {
     variables = {
-        CPU_THRESHOLD = "5"
-        IDLE_PERIOD_MINUTES = "60"
+      CPU_THRESHOLD       = "5"
+      IDLE_PERIOD_MINUTES = "60"
     }
   }
 }
