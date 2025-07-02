@@ -131,7 +131,7 @@ data "aws_iam_policy_document" "lambda_ec2_isolate_permissions" {
 }
 
 ## IAM permission policy for EC2 Auto Stop on Idle Lambda function
-data "aws_iam_policy_document" "lambda_ec2_auto_stop_on_idle_permissions" {
+data "aws_iam_policy_document" "lambda_ec2_autostop_permissions" {
   statement {
     effect = "Allow"
     actions = [
