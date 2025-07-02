@@ -329,8 +329,8 @@ resource "aws_lambda_function" "lambda_ec2_auto_stop_on_idle_zip" {
   function_name    = "ec2_autostop"
   description      = "Automatically stop EC2 instance when they have been idle for 60 minutes"
   handler          = "ec2_autostop.lambda_handler"
-  filename         = data.archive_file.lambda_ec2_auto_stop_on_idle.output_path
-  source_code_hash = data.archive_file.lambda_ec2_auto_stop_on_idle.output_base64sha256
+  filename         = data.archive_file.lambda_ec2_auto_stop_on_idle_zip.output_path
+  source_code_hash = data.archive_file.lambda_ec2_auto_stop_on_idle_zip.output_base64sha256
 
   runtime = "python3.12"
   role    = aws_iam_role.lambda_autostop_execution_role.arn
