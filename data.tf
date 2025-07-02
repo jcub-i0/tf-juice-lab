@@ -77,7 +77,6 @@ data "aws_iam_policy_document" "config_permissions" {
 }
 
 # Lambda IAM
-
 ## IAM trust policy document for Lambda functions
 data "aws_iam_policy_document" "assume_role_lambda" {
   statement {
@@ -89,6 +88,19 @@ data "aws_iam_policy_document" "assume_role_lambda" {
     }
 
     actions = ["sts:AssumeRole"]
+  }
+}
+
+## IAM permission policy to allow Lambda read access to General Purpose S3 bucket
+data "aws_iam_policy_document" "lambda_general_purpose_s3_read" {
+  statement {
+    actions = [
+      "s3:GetObject",
+      "s3:GetObjectVersion"
+    ]
+    resources = [
+      "arn:aws:s3:::${aws_s3_bucket.general_purpose.arn}/*"
+    ]
   }
 }
 
@@ -118,7 +130,7 @@ data "aws_iam_policy_document" "lambda_ec2_isolate_permissions" {
   }
 }
 
-### IAM permission policy for EC2 Auto Stop on Idle Lambda function
+## IAM permission policy for EC2 Auto Stop on Idle Lambda function
 data "aws_iam_policy_document" "lambda_ec2_auto_stop_on_idle_permissions" {
   statement {
     effect = "Allow"
@@ -146,19 +158,6 @@ data "aws_iam_policy_document" "lambda_ec2_auto_stop_on_idle_permissions" {
       "logs:PutLogEvents"
     ]
     resources = ["*"]
-  }
-}
-
-# IAM permission policy to allow Lambda read access to General Purpose S3 bucket
-data "aws_iam_policy_document" "lambda_general_purpose_s3_read" {
-  statement {
-    actions = [
-      "s3:GetObject",
-      "s3:GetObjectVersion"
-    ]
-    resources = [
-      "arn:aws:s3:::${aws_s3_bucket.general_purpose.arn}/*"
-    ]
   }
 }
 
