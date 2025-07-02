@@ -198,16 +198,16 @@ resource "aws_sns_topic_policy" "sns_policy" {
   })
 }
 
-# IAM execution role for lambda ec2 isolation
-resource "aws_iam_role" "lambda_execution_role" {
-  name               = "lambda_execution_role"
+# Lambda execution role for lambda ec2 isolation
+resource "aws_iam_role" "lambda_ec2_isolate_execution_role" {
+  name               = "lambda_ec2_isolate_execution_role"
   assume_role_policy = data.aws_iam_policy_document.assume_role_lambda.json
 }
 
-# Attach permission to the Lambda ec2 isolation func's Execution Role
+# Attach permissions to the Lambda ec2 isolation func's Execution Role
 resource "aws_iam_role_policy" "lambda_quarantine_policy" {
   name   = "lambda_quarantine_policy"
-  role   = aws_iam_role.lambda_execution_role.id
+  role   = aws_iam_role.lambda_ec2_isolate_execution_role.id
   policy = data.aws_iam_policy_document.lambda_permissions.json
 }
 
@@ -222,7 +222,7 @@ resource "aws_s3_bucket_policy" "general_purpose_policy" {
         Effect = "Allow",
         Principal = {
           AWS = [
-            aws_iam_role.lambda_execution_role.arn,
+            aws_iam_role.lambda_ec2_isolate_execution_role.arn,
             "arn:aws:iam::${data.aws_caller_identity.current.account_id}:user/${var.terraform_admin_username}"
           ]
         },
@@ -247,7 +247,7 @@ resource "aws_lambda_permission" "allow_eventbridge_invoke" {
 # Attach IAM policy that allows Lambda read access to General Purpose S3 to Lambda execution role
 resource "aws_iam_role_policy" "lambda_general_purpose_s3_read" {
   name = "lambda_general_purpose_s3_read"
-  role = aws_iam_role.lambda_execution_role.id
+  role = aws_iam_role.lambda_ec2_isolate_execution_role.id
 
   policy = data.aws_iam_policy_document.lambda_general_purpose_s3_read.json
 }
