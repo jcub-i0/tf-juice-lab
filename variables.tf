@@ -63,3 +63,9 @@ variable "guardduty_features" {
     "RUNTIME_MONITORING"
   ]
 }
+
+variable "idle_period_minutes" {
+  description = "Time (in minutes) for an EC2 instance to remain idle before automatically being stopped"
+  type = string
+  default = "60"
+}
