@@ -220,10 +220,10 @@ resource "aws_guardduty_detector_feature" "features" {
   status      = "ENABLED"
 
   lifecycle {
-    ignore_changes = [ 
+    ignore_changes = [
       additional_configuration,
       status
-     ]
+    ]
   }
 }
 
@@ -344,7 +344,7 @@ resource "aws_lambda_function" "ec2_autostop" {
 
   environment {
     variables = {
-      CPU_THRESHOLD       = var.idle_cpu_threshold
+      IDLE_CPU_THRESHOLD  = var.idle_cpu_threshold
       IDLE_PERIOD_MINUTES = var.idle_period_minutes
     }
   }
