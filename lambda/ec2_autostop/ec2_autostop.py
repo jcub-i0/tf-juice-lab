@@ -91,7 +91,7 @@ def lambda_handler(event, context):
                         },
                         {
                             'Key': 'StoppedAt',
-                            'Value': datetime.now(datetime.UTC).isoformat()
+                            'Value': datetime.datetime.now(datetime.UTC)
                         }
                     ]
                 )
