@@ -81,19 +81,22 @@ def lambda_handler(event, context):
                     InstanceIds = [instance_id]
                 )
 
+                # Create tags for ec2.create_tags() function
+                tags = [
+                    {
+                        'Key': 'StoppedBy',
+                        'Value': 'LambdaAutoStop'
+                    },
+                    {
+                        'Key': 'StoppedAt',
+                        'Value': datetime.datetime.now(datetime.UTC).isoformat()
+                    }
+                ]
+
                 # Tag stopped EC2 instance to indicate who stopped it and at what time
                 ec2.create_tags(
                     Resources = [instance_id],
-                    Tags = [
-                        {
-                            'Key': 'StoppedBy',
-                            'Value': 'LambdaAutoStop'
-                        },
-                        {
-                            'Key': 'StoppedAt',
-                            'Value': datetime.datetime.now(datetime.UTC).isoformat()
-                        }
-                    ]
+                    Tags = tags
                 )
             
             # Log that the instance is still active and will not be stopped.
