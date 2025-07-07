@@ -218,6 +218,13 @@ resource "aws_guardduty_detector_feature" "features" {
   detector_id = aws_guardduty_detector.main.id
   name        = each.value
   status      = "ENABLED"
+
+  lifecycle {
+    ignore_changes = [ 
+      additional_configuration,
+      status
+     ]
+  }
 }
 
 # Create EventBridge Rule for AWS GuardDuty
