@@ -273,7 +273,7 @@ resource "aws_iam_role_policy" "lambda_autostop_policy" {
 resource "aws_lambda_permission" "allow_eventbridge_invoke_ec2_autostop" {
   statement_id  = "AllowExecutionFromEventBridge"
   action        = "lambda:InvokeFunction"
-  function_name = aws_lambda_function.lambda_ec2_auto_stop_on_idle.function_name
+  function_name = aws_lambda_function.ec2_autostop.function_name
   principal     = "events.amazonaws.com"
   source_arn    = aws_cloudwatch_event_rule.ec2_autostop_schedule.arn
 }
