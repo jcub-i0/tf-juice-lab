@@ -344,7 +344,7 @@ resource "aws_lambda_function" "ec2_autostop" {
 
   environment {
     variables = {
-      CPU_THRESHOLD       = "5"
+      CPU_THRESHOLD       = var.idle_cpu_threshold
       IDLE_PERIOD_MINUTES = var.idle_period_minutes
     }
   }
