@@ -67,12 +67,12 @@ variable "guardduty_features" {
 
 variable "idle_cpu_threshold" {
   description = "The CPU percentage that's indicative of an idle EC2 instance"
-  type = string
-  default = "5"
+  type        = string
+  default     = "5"
 }
 
 variable "idle_period_minutes" {
   description = "Time (in minutes) for an EC2 instance to remain idle before automatically being stopped"
-  type = string
-  default = "60"
+  type        = string
+  default     = "60"
 }
