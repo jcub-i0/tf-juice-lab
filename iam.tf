@@ -274,6 +274,12 @@ resource "aws_iam_role_policy" "lambda_general_purpose_s3_read" {
   policy = data.aws_iam_policy_document.lambda_general_purpose_s3_read.json
 }
 
+### Attach IAM policy that allows Lambda EC2 Isolate func to publish to SNS Alerts topic
+resource "aws_iam_role_policy_attachment" "lambda_isolate_sns_attach" {
+  role = aws_iam_role.lambda_ec2_isolate_execution_role.name
+  policy_arn = aws_iam_policy.lambda_sns_publish_policy.arn
+}
+
 ## Lambda Auto Stop on Idle IAM resources
 ### Enable Lambda Autostop to assume IAM role
 resource "aws_iam_role" "lambda_autostop_execution_role" {
