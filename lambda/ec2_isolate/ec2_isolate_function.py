@@ -3,6 +3,10 @@ import logging
 import os
 import datetime
 
+# Configure root logger when the Lambda starts
+logging.basicConfig(level=logging.INFO)
+
+# Define logger variable for logging capabilities
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
 
