@@ -226,6 +226,24 @@ resource "aws_sns_topic_policy" "sns_policy" {
 }
 
 # Lambda IAM resources
+
+### Allow Lambda to publish to Alerts SNS topic
+resource "aws_iam_policy" "lambda_sns_publish_policy" {
+  name = "lambda_sns_publish_policy"
+  policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [
+      {
+        Action = [
+          "sns:Publish",
+        ],
+        Effect = "Allow",
+        Resource = aws_sns_topic.alerts.arn
+      }
+    ]
+  })
+}
+
 ## Lambda EC2 Isolation IAM resources
 ### Lambda execution role for lambda ec2 isolation
 resource "aws_iam_role" "lambda_ec2_isolate_execution_role" {
@@ -278,6 +296,12 @@ resource "aws_lambda_permission" "allow_eventbridge_invoke_ec2_autostop" {
   source_arn    = aws_cloudwatch_event_rule.ec2_autostop_schedule.arn
 }
 
+### Attach Lambda SNS publish policy to Lambda Autostop func's execution role
+resource "aws_iam_role_policy_attachment" "lambda_autostop_sns_attach" {
+  role = aws_iam_role.lambda_autostop_execution_role.name
+  policy_arn = aws_iam_policy.lambda_sns_publish_policy.arn
+}
+
 # Create IAM policy that allows Terraform admin user read and write access to General Purpose S3 bucket
 resource "aws_iam_policy" "terraform_s3_write_policy" {
   name   = "terraform_s3_write_policy"
@@ -292,3 +316,4 @@ resource "aws_iam_policy_attachment" "terraform_s3_write_policy_attach" {
   ]
   policy_arn = aws_iam_policy.terraform_s3_write_policy.arn
 }
+
