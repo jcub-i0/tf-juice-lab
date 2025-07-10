@@ -237,7 +237,7 @@ resource "aws_iam_policy" "lambda_sns_publish_policy" {
         Action = [
           "sns:Publish",
         ],
-        Effect = "Allow",
+        Effect   = "Allow",
         Resource = aws_sns_topic.alerts.arn
       }
     ]
@@ -276,7 +276,7 @@ resource "aws_iam_role_policy" "lambda_general_purpose_s3_read" {
 
 ### Attach IAM policy that allows Lambda EC2 Isolate func to publish to SNS Alerts topic
 resource "aws_iam_role_policy_attachment" "lambda_isolate_sns_attach" {
-  role = aws_iam_role.lambda_ec2_isolate_execution_role.name
+  role       = aws_iam_role.lambda_ec2_isolate_execution_role.name
   policy_arn = aws_iam_policy.lambda_sns_publish_policy.arn
 }
 
@@ -304,7 +304,7 @@ resource "aws_lambda_permission" "allow_eventbridge_invoke_ec2_autostop" {
 
 ### Attach Lambda SNS publish policy to Lambda Autostop func's execution role
 resource "aws_iam_role_policy_attachment" "lambda_autostop_sns_attach" {
-  role = aws_iam_role.lambda_autostop_execution_role.name
+  role       = aws_iam_role.lambda_autostop_execution_role.name
   policy_arn = aws_iam_policy.lambda_sns_publish_policy.arn
 }
 
