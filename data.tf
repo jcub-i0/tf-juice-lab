@@ -122,11 +122,19 @@ data "aws_iam_policy_document" "lambda_ec2_isolate_permissions" {
     effect = "Allow"
     actions = [
       "s3:PutObject",
-      "s3:PutObjectAcl"
+      "s3:PutObjectAcl",
+      "s3:PutObjectTagging",
     ]
     resources = [
       "arn:aws:s3:::${aws_s3_bucket.centralized_logs.bucket}/*"
     ]
+  }
+  statement {
+    effect = "Allow"
+    actions = [
+      "cloudtrail:LookupEvents"
+    ]
+    resources = ["*"]
   }
 }
 
