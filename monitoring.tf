@@ -346,6 +346,7 @@ resource "aws_lambda_function" "ec2_autostop" {
     variables = {
       IDLE_CPU_THRESHOLD  = var.idle_cpu_threshold
       IDLE_PERIOD_MINUTES = var.idle_period_minutes
+      SNS_TOPIC_ARN       = aws_sns_topic.alerts.arn
     }
   }
 }
