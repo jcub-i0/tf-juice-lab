@@ -6,7 +6,28 @@ import datetime
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
 
+# Create EC2 client
 ec2 = boto3.client('ec2')
+
+# Define SNS variables
+sns = boto3.client('sns')
+SNS_TOPIC_ARN = os.environ.get('SNS_TOPIC_ARN')
+
+def publish_to_alerts_sns(instance_id):
+    if not SNS_TOPIC_ARN:
+        logger.warning('SNS_TOPIC_ARN not set. Skipping alert notification.')
+        return
+    
+    message = (
+        f"🚨 EC2 instance {instance_id} was automatically isolated after receiving a HIGH/CRITICAL alert. \n\n"
+        f"Timestamp: {datetime.datetime.now(datetime.UTC).isoformat()}"
+    )
+    
+    sns.publish(
+        TopicArn = SNS_TOPIC_ARN,
+        Subject = 'LAMBDA TRIGGERED: EC2 ISOLATE',
+        Message = message
+    )
 
 def snapshot_attached_volumes(instance_id):
     logger.info(f'Describing volumes for instance {instance_id}')
@@ -61,10 +82,6 @@ def snapshot_attached_volumes(instance_id):
         logger.error(f'Failed to create snapshot: {str(e)}')
         raise
 
-    except Exception as e:
-        logger.error(f'Failed to create snapshot: {str(e)}')
-        raise
-
 def map_finding_to_ttp(finding):
     ttps = []
     types = finding.get('Types', [])
@@ -102,6 +119,9 @@ def lambda_handler(event, context):
                 # Extract instance ID from Security Hub event
                 instance_id = resource['Id'].split('/')[-1]
                 quarantine_sg_id = os.environ['QUARANTINE_SG_ID']
+                if not quarantine_sg_id:
+                    logger.error('QUARANTINE_SG_ID not set. Aborting isolation.')
+                    return
 
                 # Snapshot volume before quarantine operation
                 snapshot_attached_volumes(instance_id)
@@ -113,6 +133,9 @@ def lambda_handler(event, context):
                     InstanceId = instance_id,
                     Groups = [quarantine_sg_id]
                 )
+
+                # Publish to SNS Alerts topic
+                publish_to_alerts_sns(instance_id)
 
                 tags = [
                     {'Key': 'Quarantine', 'Value': 'True'},
@@ -134,6 +157,9 @@ def lambda_handler(event, context):
                     'instance_id': instance_id
                 }
             
+            else:
+                logger.info(f'Skipping unsupported resource type: {resource.get('Type')}')
+                
         logger.info('No EC2 instance found in finding. Skipping isolation.')
 
     except Exception as e:
