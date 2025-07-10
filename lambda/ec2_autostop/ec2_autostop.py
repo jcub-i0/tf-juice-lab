@@ -3,6 +3,9 @@ import datetime
 import logging
 import os
 
+# Configure root logger when the Lambda starts
+logging.basicConfig(level=logging.INFO)
+
 # Define environment variables
 idle_cpu_threshold = float(os.environ.get('IDLE_CPU_THRESHOLD', '5'))
 idle_period_minutes = float(os.environ.get('IDLE_PERIOD_MINUTES', '60'))
@@ -10,7 +13,6 @@ idle_period_minutes = float(os.environ.get('IDLE_PERIOD_MINUTES', '60'))
 # Set up logger to log messages at the INFO level or higher
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
-
 logger.info(f'CPU threshold: {idle_cpu_threshold}')
 
 # Create clients to interact with EC2 and CloudWatch services
@@ -25,6 +27,12 @@ def publish_to_alerts_sns(instance_id):
     message = (
         f"🚨 EC2 instance {instance_id} was automatically stopped due to inactivity. \n\n"
         f"Timestamp: {datetime.datetime.now(datetime.UTC).isoformat()}"
+    )
+
+    sns.publish(
+        TopicArn = SNS_TOPIC_ARN,
+        Subject = 'LAMBDA TRIGGERED: EC2 AUTOSTOP',
+        Message = message
     )
 
 # Function that determines if instance has been idle for 60 minutes
@@ -90,6 +98,7 @@ def lambda_handler(event, context):
                 ec2.stop_instances(
                     InstanceIds = [instance_id]
                 )
+                publish_to_alerts_sns(instance_id)
 
                 # Create tags for ec2.create_tags() function
                 tags = [
@@ -117,5 +126,5 @@ def lambda_handler(event, context):
         return {'status': 'success'}
 
     except Exception as e:
-        logging.error(f'Error stopping idle instance(s): {str(e)}')
+        logger.error(f'Error stopping idle instance(s): {str(e)}')
         raise
