@@ -17,6 +17,16 @@ logger.info(f'CPU threshold: {idle_cpu_threshold}')
 ec2 = boto3.client('ec2')
 cloudwatch = boto3.client('cloudwatch')
 
+# Define SNS variables
+sns = boto3.client('sns')
+SNS_TOPIC_ARN = os.environ.get('SNS_TOPIC_ARN')
+
+def send_alert_email(instance_id):
+    message = (
+        f"🚨 EC2 instance {instance_id} was automatically stopped due to inactivity. \n\n"
+        f"Timestamp: {datetime.datetime.now(datetime.UTC).isoformat()}"
+    )
+
 # Function that determines if instance has been idle for 60 minutes
 def is_instance_idle(instance_id):
     end_time = datetime.datetime.now(datetime.UTC)
