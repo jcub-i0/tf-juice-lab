@@ -21,7 +21,7 @@ cloudwatch = boto3.client('cloudwatch')
 sns = boto3.client('sns')
 SNS_TOPIC_ARN = os.environ.get('SNS_TOPIC_ARN')
 
-def send_alert_email(instance_id):
+def publish_to_alerts_sns(instance_id):
     message = (
         f"🚨 EC2 instance {instance_id} was automatically stopped due to inactivity. \n\n"
         f"Timestamp: {datetime.datetime.now(datetime.UTC).isoformat()}"
