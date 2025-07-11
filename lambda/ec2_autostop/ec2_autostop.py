@@ -10,7 +10,7 @@ logging.basicConfig(level=logging.INFO)
 # Define environment variables
 idle_cpu_threshold = float(os.environ.get('IDLE_CPU_THRESHOLD', '5'))
 idle_period_minutes = float(os.environ.get('IDLE_PERIOD_MINUTES', '60'))
-RENOTIFY_AFTER_HOURS = float(os.environ.get('RENOTIFY_AFTER_HOURS', '24'))
+RENOTIFY_AFTER_HOURS = float(os.environ.get('RENOTIFY_AFTER_HOURS', '2'))
 
 # Set up logger to log messages at the INFO level or higher
 logger = logging.getLogger()
