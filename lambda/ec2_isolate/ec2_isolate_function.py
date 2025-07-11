@@ -17,7 +17,7 @@ ec2 = boto3.client('ec2')
 # Define SNS variables
 sns = boto3.client('sns')
 SNS_TOPIC_ARN = os.environ.get('SNS_TOPIC_ARN')
-RENOTIFY_AFTER_HOURS = int(os.environ.get('RENOTIFY_AFTER_HOURS', '1'))
+RENOTIFY_AFTER_HOURS = float(os.environ.get('RENOTIFY_AFTER_HOURS', '1'))
 
 def publish_to_alerts_sns(instance_id):
     if not SNS_TOPIC_ARN:
