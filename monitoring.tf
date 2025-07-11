@@ -282,7 +282,7 @@ resource "aws_lambda_function" "ec2_isolation" {
 
   environment {
     variables = {
-      QUARANTINE_SG_ID = aws_security_group.quarantine_sg.id
+      QUARANTINE_SG_ID     = aws_security_group.quarantine_sg.id
       RENOTIFY_AFTER_HOURS = var.renotify_after_hours_isolate
     }
   }
@@ -345,9 +345,9 @@ resource "aws_lambda_function" "ec2_autostop" {
 
   environment {
     variables = {
-      IDLE_CPU_THRESHOLD  = var.idle_cpu_threshold
-      IDLE_PERIOD_MINUTES = var.idle_period_minutes
-      SNS_TOPIC_ARN       = aws_sns_topic.alerts.arn
+      IDLE_CPU_THRESHOLD   = var.idle_cpu_threshold
+      IDLE_PERIOD_MINUTES  = var.idle_period_minutes
+      SNS_TOPIC_ARN        = aws_sns_topic.alerts.arn
       RENOTIFY_AFTER_HOURS = var.renotify_after_hours_autostop
     }
   }
