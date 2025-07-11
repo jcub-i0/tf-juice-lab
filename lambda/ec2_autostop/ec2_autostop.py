@@ -2,6 +2,7 @@ import boto3 # type: ignore
 import datetime
 import logging
 import os
+from dateutil import parser as date_parser
 
 # Configure root logger when the Lambda starts
 logging.basicConfig(level=logging.INFO)
@@ -9,6 +10,7 @@ logging.basicConfig(level=logging.INFO)
 # Define environment variables
 idle_cpu_threshold = float(os.environ.get('IDLE_CPU_THRESHOLD', '5'))
 idle_period_minutes = float(os.environ.get('IDLE_PERIOD_MINUTES', '60'))
+RENOTIFY_AFTER_HOURS = float(os.environ.get('RENOTIFY_AFTER_HOURS', '24'))
 
 # Set up logger to log messages at the INFO level or higher
 logger = logging.getLogger()
@@ -90,6 +92,27 @@ def lambda_handler(event, context):
         for instance in instances:
             instance_id = instance['InstanceId']
 
+            # Get current tags from EC2 instance
+            tags = {tag['Key']: tag['Value'] for tag in instance.get('Tags', [])}
+
+            # Check if instance already stopped by Lambda
+            if tags.get('StoppedBy', []) == 'LambdaAutoStop':
+                stopped_at_str = tags.get('StoppedAt')
+
+                if stopped_at_str:
+                    try:
+                        # Parse ISO timestamp (string) into a datetime object for time comparisons
+                        stopped_at = date_parser.parse(stopped_at_str)
+                        time_since_stopped = datetime.datetime.now(datetime.UTC) - stopped_at
+
+                        # Do not send another SNS notification if it has been less than 24 hours
+                        if time_since_stopped < datetime.timedelta(hours=RENOTIFY_AFTER_HOURS):
+                            logger.info(f'Instance {instance_id} was stopped {time_since_stopped} hours ago. Skipping re-notification.')
+                            continue
+
+                    except Exception as parse_err:
+                        logger.warning(f'Error parsing StoppedAt tag for instance {instance_id}: {parse_err}')
+
             # Check if each EC2 instance is idle and log it if so
             if is_instance_idle(instance_id):
                 logger.info(f'Stopping idle instance {instance_id}')
@@ -98,6 +121,7 @@ def lambda_handler(event, context):
                 ec2.stop_instances(
                     InstanceIds = [instance_id]
                 )
+
                 publish_to_alerts_sns(instance_id)
 
                 # Create tags for ec2.create_tags() function
