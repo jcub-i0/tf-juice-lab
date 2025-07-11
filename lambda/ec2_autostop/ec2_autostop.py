@@ -26,6 +26,11 @@ sns = boto3.client('sns')
 SNS_TOPIC_ARN = os.environ.get('SNS_TOPIC_ARN')
 
 def publish_to_alerts_sns(instance_id):
+    # Check if SNS_TOPIC_ARN is set
+    if not SNS_TOPIC_ARN:
+        logger.warning('SNS_TOPIC_ARN not set. Skipping alert notification.')
+        return
+
     message = (
         f"🚨 EC2 instance {instance_id} was automatically stopped due to inactivity. \n\n"
         f"Timestamp: {datetime.datetime.now(datetime.UTC).isoformat()}"
