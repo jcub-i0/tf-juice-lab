@@ -17,6 +17,7 @@ ec2 = boto3.client('ec2')
 # Define SNS variables
 sns = boto3.client('sns')
 SNS_TOPIC_ARN = os.environ.get('SNS_TOPIC_ARN')
+RENOTIFY_AFTER_HOURS = int(os.environ.get('RENOTIFY_AFTER_HOURS', '1'))
 
 def publish_to_alerts_sns(instance_id):
     if not SNS_TOPIC_ARN:
@@ -140,7 +141,7 @@ def lambda_handler(event, context):
                 )
 
                 # Pull tags from resource (EC2)
-                tags = {tag['Key']: tag['Value'] for tag in resource.get('Tags')}
+                tags = {tag['Key']: tag['Value'] for tag in resource.get('Tags', [])}
 
                 should_notify = True
 
@@ -150,11 +151,11 @@ def lambda_handler(event, context):
                     if isolated_at_str:
                         try:
 
-                            stopped_at = date_parser.parse(isolated_at_str)
-                            time_since_isolated = datetime.datetime.now(datetime.UTC) - stopped_at
+                            isolated_at = date_parser.parse(isolated_at_str)
+                            time_since_isolated = datetime.datetime.now(datetime.UTC) - isolated_at
 
                             # Do not send another notification unless it has been longer than 'x' hours
-                            if time_since_isolated < datetime.timedelta(hours=1):
+                            if time_since_isolated < datetime.timedelta(hours=RENOTIFY_AFTER_HOURS):
                                 should_notify = False
 
                         except Exception as parse_err:
