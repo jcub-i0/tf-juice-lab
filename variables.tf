@@ -76,3 +76,9 @@ variable "idle_period_minutes" {
   type        = string
   default     = "60"
 }
+
+variable "renotify_after_hours" {
+  description = "Number of hours to wait before Lambda sends additional SNS notification(s)"
+  type = string
+  default = "24"
+}
