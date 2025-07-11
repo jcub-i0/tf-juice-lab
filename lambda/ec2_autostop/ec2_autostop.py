@@ -96,7 +96,7 @@ def lambda_handler(event, context):
             tags = {tag['Key']: tag['Value'] for tag in instance.get('Tags', [])}
 
             # Check if instance already stopped by Lambda
-            if tags.get('StoppedBy', []) == 'LambdaAutoStop':
+            if tags.get('StoppedBy') == 'LambdaAutoStop':
                 stopped_at_str = tags.get('StoppedAt')
 
                 if stopped_at_str:
@@ -105,7 +105,7 @@ def lambda_handler(event, context):
                         stopped_at = date_parser.parse(stopped_at_str)
                         time_since_stopped = datetime.datetime.now(datetime.UTC) - stopped_at
 
-                        # Do not send another SNS notification if it has been less than 24 hours
+                        # Do not send another SNS notification if it has been less than RENOTIFY_AFTER_HOURS hours
                         if time_since_stopped < datetime.timedelta(hours=RENOTIFY_AFTER_HOURS):
                             logger.info(f'Instance {instance_id} was stopped {time_since_stopped} hours ago. Skipping re-notification.')
                             continue

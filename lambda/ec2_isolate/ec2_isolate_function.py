@@ -2,6 +2,7 @@ import boto3 # type: ignore
 import logging
 import os
 import datetime
+from dateutil import parser as date_parser
 
 # Configure root logger when the Lambda starts
 logging.basicConfig(level=logging.INFO)
@@ -122,7 +123,7 @@ def lambda_handler(event, context):
 
                 # Extract instance ID from Security Hub event
                 instance_id = resource['Id'].split('/')[-1]
-                quarantine_sg_id = os.environ['QUARANTINE_SG_ID']
+                quarantine_sg_id = os.environ.get('QUARANTINE_SG_ID')
                 if not quarantine_sg_id:
                     logger.error('QUARANTINE_SG_ID not set. Aborting isolation.')
                     return
@@ -138,8 +139,31 @@ def lambda_handler(event, context):
                     Groups = [quarantine_sg_id]
                 )
 
-                # Publish to SNS Alerts topic
-                publish_to_alerts_sns(instance_id)
+                # Pull tags from resource (EC2)
+                tags = {tag['Key']: tag['Value'] for tag in resource.get('Tags')}
+
+                should_notify = True
+
+                if tags.get('IsolatedBy') == 'Lambda-AutoResponse':
+                    isolated_at_str = tags.get('IsolatedAt')
+
+                    if isolated_at_str:
+                        try:
+
+                            stopped_at = date_parser.parse(isolated_at_str)
+                            time_since_isolated = datetime.datetime.now(datetime.UTC) - stopped_at
+
+                            # Do not send another notification unless it has been longer than 'x' hours
+                            if time_since_isolated < datetime.timedelta(hours=1):
+                                should_notify = False
+
+                        except Exception as parse_err:
+                            logger.warning(f'Error parsing IsolatedAt tag for instance {instance_id}. Error: {parse_err}')
+                            continue
+
+                # Publish to SNS Alerts topic if should_notify=True
+                if should_notify == True:
+                    publish_to_alerts_sns(instance_id)
 
                 tags = [
                     {'Key': 'Quarantine', 'Value': 'True'},
@@ -162,7 +186,7 @@ def lambda_handler(event, context):
                 }
             
             else:
-                logger.info(f'Skipping unsupported resource type: {resource.get('Type')}')
+                logger.info(f'Skipping unsupported resource type: {resource.get("Type")}')
                 
         logger.info('No EC2 instance found in finding. Skipping isolation.')
 
