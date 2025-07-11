@@ -77,8 +77,14 @@ variable "idle_period_minutes" {
   default     = "60"
 }
 
-variable "renotify_after_hours" {
-  description = "Number of hours to wait before Lambda sends additional SNS notification(s)"
+variable "renotify_after_hours_autostop" {
+  description = "Number of hours to wait before AutoStop Lambda sends additional SNS notification(s)"
+  type        = string
+  default     = "2"
+}
+
+variable "renotify_after_hours_isolate" {
+  description = "Number of hours to wait before EC2 Isolation Lambda sends additional SNS notification(s)"
   type = string
-  default = "24"
+  default = "1"
 }
