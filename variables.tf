@@ -85,6 +85,6 @@ variable "renotify_after_hours_autostop" {
 
 variable "renotify_after_hours_isolate" {
   description = "Number of hours to wait before EC2 Isolation Lambda sends additional SNS notification(s)"
-  type = string
-  default = "1"
+  type        = string
+  default     = "1"
 }

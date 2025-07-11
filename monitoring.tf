@@ -284,6 +284,7 @@ resource "aws_lambda_function" "ec2_isolation" {
     variables = {
       QUARANTINE_SG_ID     = aws_security_group.quarantine_sg.id
       RENOTIFY_AFTER_HOURS = var.renotify_after_hours_isolate
+      SNS_TOPIC_ARN        = aws_sns_topic.alerts.arn
     }
   }
 
