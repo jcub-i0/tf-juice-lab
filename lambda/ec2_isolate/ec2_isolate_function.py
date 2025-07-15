@@ -140,8 +140,17 @@ def lambda_handler(event, context):
                     Groups = [quarantine_sg_id]
                 )
 
-                # Pull tags from resource (EC2)
-                tags = {tag['Key']: tag['Value'] for tag in resource.get('Tags', [])}
+                # Pull tags from EC2 directly
+                reservations = ec2.describe_instances(InstanceIds = [instance_id])['Reservations']
+                instances = [i for r in reservations for i in r['Instances']]
+
+                if not instances:
+                    logger.warning(f'No instance found with ID {instance_id}')
+                    return
+                
+                instance = instances[0]
+
+                tags = {tag['Key']: tag['Value'] for tag in instance.get('Tags', []) or []}
 
                 should_notify = True
 
