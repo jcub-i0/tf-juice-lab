@@ -190,6 +190,68 @@ resource "aws_security_group" "quarantine_sg" {
   }
 }
 
+/*
+# CREATE NACLs
+## Create and configure Public NACL and its rules
+resource "aws_network_acl" "public_nacl" {
+  vpc_id = aws_vpc.tf-juice-lab.id
+}
+
+resource "aws_network_acl_rule" "public_nacl" {
+  for_each = toset(var.bastion_allowed_cidrs)
+  network_acl_id = aws_network_acl.public_nacl.id
+  rule_number = 100
+  protocol = "tcp"
+  rule_action = "allow"
+  cidr_block = each.value
+  from_port = 22
+  to_port = 22
+}
+
+resource "aws_network_acl_rule" "public_nacl_ingress_ephemeral" {
+  network_acl_id = aws_network_acl.public_nacl.id
+  rule_number = 125
+  protocol = "tcp"
+  rule_action = "allow"
+  cidr_block = "0.0.0.0/0"
+  from_port = 1024
+  to_port = 65535
+}
+
+resource "aws_network_acl_rule" "public_nacl_egress" {
+  egress = true
+  network_acl_id = aws_network_acl.public_nacl.id
+  rule_number = 100
+  protocol = "tcp"
+  rule_action = "allow"
+  cidr_block = var.public_sub_cidr
+  from_port = 22
+  to_port = 22
+}
+
+resource "aws_network_acl_rule" "public_nacl_egress_3000" {
+  egress = true
+  network_acl_id = aws_network_acl.public_nacl.id
+  rule_number = 125
+  protocol = "tcp"
+  rule_action = "allow"
+  cidr_block = var.private_sub_cidr
+  from_port = 3000
+  to_port = 3000
+}
+
+resource "aws_network_acl_rule" "public_nacl_egress_ssm" {
+  egress = true
+  network_acl_id = aws_network_acl.public_nacl.id
+  rule_number = 150
+  protocol = "tcp"
+  rule_action = "allow"
+  cidr_block = "0.0.0.0/0"
+  from_port = 443
+  to_port = 443
+}
+*/
+
 # CREATE EIP, NATGW, AND IGW
 resource "aws_eip" "natgw_eip" {
   domain = "vpc"
