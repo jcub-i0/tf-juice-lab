@@ -22,6 +22,7 @@ The environment deploys OWASP Juice Shop -- a deliberately vulnerable web applic
 - CloudTrail, GuardDuty, AWS Config, and CloudWatch for logging, threat detection, and compliance
 - IAM roles and policies following the principle of least privilege
 - AWS KMS for encryption of EBS volumes, S3 objects, and RDS databases
+- Lambda functions for automated incident response and budget savings
 
 ## Security Scenarios You Can Practice
 
