@@ -190,11 +190,13 @@ resource "aws_security_group" "quarantine_sg" {
   }
 }
 
-/*
 # CREATE NACLs
 ## Create and configure Public NACL and its rules
 resource "aws_network_acl" "public_nacl" {
   vpc_id = aws_vpc.tf-juice-lab.id
+  tags = {
+    Name = "Public_NACL"
+  }
 }
 
 resource "aws_network_acl_rule" "public_nacl" {
@@ -250,7 +252,6 @@ resource "aws_network_acl_rule" "public_nacl_egress_ssm" {
   from_port = 443
   to_port = 443
 }
-*/
 
 # CREATE EIP, NATGW, AND IGW
 resource "aws_eip" "natgw_eip" {
