@@ -193,7 +193,7 @@ resource "aws_security_group" "quarantine_sg" {
 # CREATE NACLs
 ## Create and configure Public NACL
 resource "aws_network_acl" "public_nacl" {
-  vpc_id = aws_vpc.tf-juice-lab.id
+  vpc_id     = aws_vpc.tf-juice-lab.id
   subnet_ids = [aws_subnet.public.id]
   tags = {
     Name = "Public_NACL"
@@ -202,74 +202,74 @@ resource "aws_network_acl" "public_nacl" {
 
 ### Public NACL ingress rules
 resource "aws_network_acl_rule" "public_nacl_ingress_allowed_ips" {
-  for_each = toset(var.bastion_allowed_cidrs)
+  for_each       = toset(var.bastion_allowed_cidrs)
   network_acl_id = aws_network_acl.public_nacl.id
-  rule_number = 100
-  protocol = "tcp"
-  rule_action = "allow"
-  cidr_block = each.value
-  from_port = 22
-  to_port = 22
+  rule_number    = 100
+  protocol       = "tcp"
+  rule_action    = "allow"
+  cidr_block     = each.value
+  from_port      = 22
+  to_port        = 22
 }
 
 resource "aws_network_acl_rule" "public_nacl_ingress_ephemeral" {
   network_acl_id = aws_network_acl.public_nacl.id
-  rule_number = 125
-  protocol = "tcp"
-  rule_action = "allow"
-  cidr_block = "0.0.0.0/0"
-  from_port = 1024
-  to_port = 65535
+  rule_number    = 125
+  protocol       = "tcp"
+  rule_action    = "allow"
+  cidr_block     = "0.0.0.0/0"
+  from_port      = 1024
+  to_port        = 65535
 }
 
 ### Public NACL egress rules
 resource "aws_network_acl_rule" "public_nacl_egress_ephemeral" {
-  egress = true
+  egress         = true
   network_acl_id = aws_network_acl.public_nacl.id
-  rule_number = 175
-  protocol = "tcp"
-  rule_action = "allow"
-  cidr_block = "0.0.0.0/0"
-  from_port = 1024
-  to_port = 65535
+  rule_number    = 175
+  protocol       = "tcp"
+  rule_action    = "allow"
+  cidr_block     = "0.0.0.0/0"
+  from_port      = 1024
+  to_port        = 65535
 }
 
 resource "aws_network_acl_rule" "public_nacl_egress" {
-  egress = true
+  egress         = true
   network_acl_id = aws_network_acl.public_nacl.id
-  rule_number = 100
-  protocol = "tcp"
-  rule_action = "allow"
-  cidr_block = var.public_sub_cidr
-  from_port = 22
-  to_port = 22
+  rule_number    = 100
+  protocol       = "tcp"
+  rule_action    = "allow"
+  cidr_block     = var.public_sub_cidr
+  from_port      = 22
+  to_port        = 22
 }
 
 resource "aws_network_acl_rule" "public_nacl_egress_3000" {
-  egress = true
+  egress         = true
   network_acl_id = aws_network_acl.public_nacl.id
-  rule_number = 125
-  protocol = "tcp"
-  rule_action = "allow"
-  cidr_block = var.private_sub_cidr
-  from_port = 3000
-  to_port = 3000
+  rule_number    = 125
+  protocol       = "tcp"
+  rule_action    = "allow"
+  cidr_block     = var.private_sub_cidr
+  from_port      = 3000
+  to_port        = 3000
 }
 
 resource "aws_network_acl_rule" "public_nacl_egress_ssm" {
-  egress = true
+  egress         = true
   network_acl_id = aws_network_acl.public_nacl.id
-  rule_number = 150
-  protocol = "tcp"
-  rule_action = "allow"
-  cidr_block = "0.0.0.0/0"
-  from_port = 443
-  to_port = 443
+  rule_number    = 150
+  protocol       = "tcp"
+  rule_action    = "allow"
+  cidr_block     = "0.0.0.0/0"
+  from_port      = 443
+  to_port        = 443
 }
 
 ## Create and configure Private NACL
 resource "aws_network_acl" "private_nacl" {
-  vpc_id = aws_vpc.tf-juice-lab.id
+  vpc_id     = aws_vpc.tf-juice-lab.id
   subnet_ids = [aws_subnet.private.id]
 
   tags = {
@@ -280,44 +280,44 @@ resource "aws_network_acl" "private_nacl" {
 ### Private NACL ingress rules
 resource "aws_network_acl_rule" "private_nacl_ingress_ssh" {
   network_acl_id = aws_network_acl.private_nacl.id
-  rule_number = 100
-  protocol = "tcp"
-  rule_action = "allow"
-  cidr_block = var.public_sub_cidr
-  from_port = 22
-  to_port = 22
+  rule_number    = 100
+  protocol       = "tcp"
+  rule_action    = "allow"
+  cidr_block     = var.public_sub_cidr
+  from_port      = 22
+  to_port        = 22
 }
 
 resource "aws_network_acl_rule" "private_nacl_ingress_juice" {
   network_acl_id = aws_network_acl.private_nacl.id
-  rule_number = 110
-  protocol = "tcp"
-  rule_action = "allow"
-  cidr_block = var.public_sub_cidr
-  from_port = 3000
-  to_port = 3000
+  rule_number    = 110
+  protocol       = "tcp"
+  rule_action    = "allow"
+  cidr_block     = var.public_sub_cidr
+  from_port      = 3000
+  to_port        = 3000
 }
 
 #### Allow return traffic from Internet/Bastion/etc
 resource "aws_network_acl_rule" "private_nacl_ingress_ephemeral" {
   network_acl_id = aws_network_acl.private_nacl.id
-  rule_number = 120
-  protocol = "tcp"
-  rule_action = "allow"
-  cidr_block = "0.0.0.0/0"
-  from_port = 1024
-  to_port = 65535
+  rule_number    = 120
+  protocol       = "tcp"
+  rule_action    = "allow"
+  cidr_block     = "0.0.0.0/0"
+  from_port      = 1024
+  to_port        = 65535
 }
 
 ### Private NACL egress rules
 #### Allow EC2 instances to reach Internet or Bastion Host (all traffic)
 resource "aws_network_acl_rule" "private_nacl_egress_ssh" {
-  egress = true
+  egress         = true
   network_acl_id = aws_network_acl.private_nacl.id
-  rule_number = 150
-  protocol = "-1"
-  rule_action = "allow"
-  cidr_block = "0.0.0.0/0"
+  rule_number    = 150
+  protocol       = "-1"
+  rule_action    = "allow"
+  cidr_block     = "0.0.0.0/0"
 }
 
 # CREATE EIP, NATGW, AND IGW
