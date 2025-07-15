@@ -191,7 +191,7 @@ resource "aws_security_group" "quarantine_sg" {
 }
 
 # CREATE NACLs
-## Create and configure Public NACL and its rules
+## Create and configure Public NACL
 resource "aws_network_acl" "public_nacl" {
   vpc_id = aws_vpc.tf-juice-lab.id
   subnet_ids = [aws_subnet.public.id]
@@ -200,6 +200,7 @@ resource "aws_network_acl" "public_nacl" {
   }
 }
 
+### Public NACL ingress rules
 resource "aws_network_acl_rule" "public_nacl_ingress_allowed_ips" {
   for_each = toset(var.bastion_allowed_cidrs)
   network_acl_id = aws_network_acl.public_nacl.id
@@ -221,6 +222,7 @@ resource "aws_network_acl_rule" "public_nacl_ingress_ephemeral" {
   to_port = 65535
 }
 
+### Public NACL egress rules
 resource "aws_network_acl_rule" "public_nacl_egress_ephemeral" {
   egress = true
   network_acl_id = aws_network_acl.public_nacl.id
@@ -265,7 +267,7 @@ resource "aws_network_acl_rule" "public_nacl_egress_ssm" {
   to_port = 443
 }
 
-## Create and configure Private NACL and its rules
+## Create and configure Private NACL
 resource "aws_network_acl" "private_nacl" {
   vpc_id = aws_vpc.tf-juice-lab.id
   subnet_ids = [aws_subnet.private.id]
