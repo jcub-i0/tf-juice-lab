@@ -200,7 +200,7 @@ resource "aws_network_acl" "public_nacl" {
   }
 }
 
-resource "aws_network_acl_rule" "public_nacl" {
+resource "aws_network_acl_rule" "public_nacl_ingress_allowed_ips" {
   for_each = toset(var.bastion_allowed_cidrs)
   network_acl_id = aws_network_acl.public_nacl.id
   rule_number = 100
@@ -263,6 +263,59 @@ resource "aws_network_acl_rule" "public_nacl_egress_ssm" {
   cidr_block = "0.0.0.0/0"
   from_port = 443
   to_port = 443
+}
+
+## Create and configure Private NACL and its rules
+resource "aws_network_acl" "private_nacl" {
+  vpc_id = aws_vpc.tf-juice-lab.id
+  subnet_ids = [aws_subnet.private.id]
+
+  tags = {
+    Name = "Private_NACL"
+  }
+}
+
+### Private NACL ingress rules
+resource "aws_network_acl_rule" "private_nacl_ingress_ssh" {
+  network_acl_id = aws_network_acl.private_nacl.id
+  rule_number = 100
+  protocol = "tcp"
+  rule_action = "allow"
+  cidr_block = var.public_sub_cidr
+  from_port = 22
+  to_port = 22
+}
+
+resource "aws_network_acl_rule" "private_nacl_ingress_juice" {
+  network_acl_id = aws_network_acl.private_nacl.id
+  rule_number = 110
+  protocol = "tcp"
+  rule_action = "allow"
+  cidr_block = var.public_sub_cidr
+  from_port = 3000
+  to_port = 3000
+}
+
+#### Allow return traffic from Internet/Bastion/etc
+resource "aws_network_acl_rule" "private_nacl_ingress_ephemeral" {
+  network_acl_id = aws_network_acl.private_nacl.id
+  rule_number = 120
+  protocol = "tcp"
+  rule_action = "allow"
+  cidr_block = "0.0.0.0/0"
+  from_port = 1024
+  to_port = 65535
+}
+
+### Private NACL egress rules
+#### Allow EC2 instances to reach Internet or Bastion Host (all traffic)
+resource "aws_network_acl_rule" "private_nacl_egress_ssh" {
+  egress = true
+  network_acl_id = aws_network_acl.private_nacl.id
+  rule_number = 150
+  protocol = "-1"
+  rule_action = "allow"
+  cidr_block = "0.0.0.0/0"
 }
 
 # CREATE EIP, NATGW, AND IGW
