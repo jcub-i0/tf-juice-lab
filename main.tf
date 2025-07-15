@@ -430,7 +430,7 @@ resource "aws_instance" "juice-shop" {
   subnet_id              = aws_subnet.private.id
   key_name               = aws_key_pair.juice_key.key_name
   vpc_security_group_ids = [aws_security_group.juice_sg.id]
-  
+
   metadata_options {
     http_tokens = "required"
   }
