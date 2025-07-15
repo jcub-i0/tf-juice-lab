@@ -280,6 +280,12 @@ resource "aws_instance" "bastion" {
   associate_public_ip_address = true
   iam_instance_profile        = aws_iam_instance_profile.ssm_profile.name
 
+  root_block_device {
+    tags = {
+      Name = "Bastion_Volume"
+    }
+  }
+
   metadata_options {
     http_tokens = "required"
   }
@@ -313,6 +319,9 @@ resource "aws_instance" "kali" {
   root_block_device {
     volume_size = "50"
     volume_type = "gp3"
+    tags = {
+      Name = "Kali_Volume"
+    }
   }
 
   # Install and start SSM agent and install pentesting tools on Kali (Debian) instance
@@ -367,6 +376,10 @@ resource "aws_instance" "juice-shop" {
   root_block_device {
     volume_size = "40"
     volume_type = "gp3"
+    tags = {
+      Name = "JuiceShop_Volume"
+    }
+
   }
 
   user_data = <<EOF
