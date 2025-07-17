@@ -377,7 +377,7 @@ data "archive_file" "ip_enrich" {
 resource "aws_lambda_function" "ip_enrich" {
   filename         = data.archive_file.ip_enrich.output_path
   function_name    = "ip_enrichment"
-  role             = aws_iam_role.lambda_ip_enrich.id
+  role             = aws_iam_role.lambda_ip_enrich.arn
   handler          = "ip_enrich.lambda_handler"
   source_code_hash = data.archive_file.ip_enrich.output_base64sha256
   runtime          = "python3.12"
