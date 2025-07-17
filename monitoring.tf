@@ -389,14 +389,7 @@ resource "aws_cloudwatch_event_rule" "securityhub_finding_event" {
 
   event_pattern = jsonencode({
     "source" = ["aws.securityhub"],
-    "detail-type" = ["Security Hub Findings - Imported"],
-    "detail" = {
-      "findings" = [
-        {
-          "ProductArn" = [{"prefix" = "arn:aws:securityhub"}]
-        }
-      ]
-    }
+    "detail-type" = ["Security Hub Findings - Imported"]
   })
 }
 
