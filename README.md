@@ -18,7 +18,7 @@ The environment deploys OWASP Juice Shop -- a deliberately vulnerable web applic
 - Bastion host (public subnet) for secured access
 - Application host (private subnet) running OWASP Juice Shop
 - Optional Kali Linux EC2 instance for internal testing
-- S3 buckets for Terraform state, logs, and general-purpose storage
+- Encrypted S3 buckets for Terraform state, logs, and general-purpose storage
 - CloudTrail, GuardDuty, AWS Config, and CloudWatch for logging, threat detection, and compliance
 - IAM roles and policies following the principle of least privilege
 - AWS KMS for encryption of EBS volumes, S3 objects, and RDS databases
