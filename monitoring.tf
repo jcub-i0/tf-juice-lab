@@ -374,8 +374,10 @@ data "archive_file" "ip_enrich" {
   output_path = "${path.module}/lambda/ip_enrich/ip_enrich_function.zip"
 }
 
+### Create IP Enrichment Lambda function
 resource "aws_lambda_function" "ip_enrich" {
   filename         = data.archive_file.ip_enrich.output_path
+  description = "Enrich IP address information by querying AbuseIPDB and include that data in SNS notification"
   function_name    = "ip_enrichment"
   role             = aws_iam_role.lambda_ip_enrich.arn
   handler          = "ip_enrich.lambda_handler"
@@ -383,6 +385,7 @@ resource "aws_lambda_function" "ip_enrich" {
   runtime          = "python3.12"
 }
 
+### EventBridge rule that triggers on any Security Hub finding across entire cloud account
 resource "aws_cloudwatch_event_rule" "securityhub_finding_event" {
   name = "SecurityHubFindingEventRule"
   description = "Triggers on new Security Hub findings"
