@@ -185,6 +185,7 @@ data "aws_iam_policy_document" "ip_enrich_permissions" {
     actions = [
       "securityhub:GetFindings"
     ]
+    resources = ["*"]
   }
   statement {
     effect = "Allow"
@@ -193,6 +194,7 @@ data "aws_iam_policy_document" "ip_enrich_permissions" {
       "logs:CreateLogStream",
       "logs:PutLogEvents"
     ]
+    resources = ["*"]
   }
 }
 
