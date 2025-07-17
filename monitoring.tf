@@ -365,3 +365,20 @@ resource "aws_cloudwatch_event_target" "ec2_autostop_target" {
   target_id = "trigger-autostop-ec2"
   arn       = aws_lambda_function.ec2_autostop.arn
 }
+
+## Lambda IP Encrichment function
+### Zip file containing Lambda function code
+data "archive_file" "ip_enrich" {
+  type        = "zip"
+  source_file = "${path.module}/lambda/ip_enrich_function.py"
+  output_path = "${path.module}/lambda/ip_enrich_function.zip"
+}
+
+resource "aws_lambda_function" "ip_enrich" {
+  filename         = data.archive_file.ip_enrich.output_path
+  function_name    = "ip_enrichment"
+  role             = ""
+  handler          = "ip_enrich.lambda_handler"
+  source_code_hash = data.archive_file.ip_enrich.output_base64sha256
+  runtime          = "python3.12"
+}
