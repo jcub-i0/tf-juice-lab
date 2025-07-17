@@ -326,7 +326,7 @@ resource "aws_lambda_permission" "eventbridge_invoke_ip_enrich" {
   action        = "lambda:InvokeFunction"
   function_name = aws_lambda_function.ip_enrich.function_name
   principal     = "events.amazonaws.com"
-  source_arn    = "" # COME BACK TO THIS
+  source_arn    = aws_cloudwatch_event_rule.securityhub_finding_event.arn
 }
 
 ### Attach Lambda SNS Publish policy to IP Enrichment func's execution role
