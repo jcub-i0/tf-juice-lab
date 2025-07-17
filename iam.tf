@@ -308,6 +308,33 @@ resource "aws_iam_role_policy_attachment" "lambda_autostop_sns_attach" {
   policy_arn = aws_iam_policy.lambda_sns_publish_policy.arn
 }
 
+## Lambda IP Enrichment IAM resources
+### IP Enrich execution role
+resource "aws_iam_role" "lambda_ip_enrich" {
+  name               = "lambda_ip_enrich_role"
+  assume_role_policy = data.aws_iam_policy_document.assume_role_lambda.json
+}
+
+resource "aws_iam_role_policy" "lambda_ip_enrich_policy" {
+  name   = "lambda_ip_enrich_policy"
+  role   = aws_iam_role.lambda_ip_enrich.id
+  policy = data.aws_iam_policy_document.ip_enrich_permissions.json
+}
+
+resource "aws_lambda_permission" "eventbridge_invoke_ip_enrich" {
+  statement_id  = "AllowExecutionFromEventBridge"
+  action        = "lambda:InvokeFunction"
+  function_name = aws_lambda_function.ip_enrich.function_name
+  principal     = "events.amazonaws.com"
+  source_arn    = "" # COME BACK TO THIS
+}
+
+### Attach Lambda SNS Publish policy to IP Enrichment func's execution role
+resource "aws_iam_role_policy_attachment" "lambda_ip_enrich_sns_attach" {
+  role       = aws_iam_role.lambda_ip_enrich.id
+  policy_arn = aws_iam_policy.lambda_sns_publish_policy.arn
+}
+
 # Create IAM policy that allows Terraform admin user read and write access to General Purpose S3 bucket
 resource "aws_iam_policy" "terraform_s3_write_policy" {
   name   = "terraform_s3_write_policy"
