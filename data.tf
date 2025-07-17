@@ -178,6 +178,24 @@ data "aws_iam_policy_document" "lambda_ec2_autostop_permissions" {
   }
 }
 
+## Lambda permission policy for IP Enrichment function
+data "aws_iam_policy_document" "ip_enrich_permissions" {
+  statement {
+    effect = "Allow"
+    actions = [
+      "securityhub:GetFindings"
+    ]
+  }
+  statement {
+    effect = "Allow"
+    actions = [
+      "logs:CreateLogGroup",
+      "logs:CreateLogStream",
+      "logs:PutLogEvents"
+    ]
+  }
+}
+
 # IAM policy document granting Terraform read and write access to objects in the General Purpose S3 bucket
 data "aws_iam_policy_document" "terraform_s3_write" {
   version = "2012-10-17"
