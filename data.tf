@@ -136,6 +136,15 @@ data "aws_iam_policy_document" "lambda_ec2_isolate_permissions" {
     ]
     resources = ["*"]
   }
+  statement {
+    effect = "Allow"
+    actions = [
+      "logs:CreateLogGroup",
+      "logs:CreateLogStream",
+      "logs:PutLogEvents"
+    ]
+    resources = ["*"]
+  }
 }
 
 ## IAM permission policy for EC2 Auto Stop on Idle Lambda function
