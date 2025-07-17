@@ -377,8 +377,31 @@ data "archive_file" "ip_enrich" {
 resource "aws_lambda_function" "ip_enrich" {
   filename         = data.archive_file.ip_enrich.output_path
   function_name    = "ip_enrichment"
-  role             = ""
+  role             = aws_iam_role.lambda_ip_enrich.id
   handler          = "ip_enrich.lambda_handler"
   source_code_hash = data.archive_file.ip_enrich.output_base64sha256
   runtime          = "python3.12"
+}
+
+resource "aws_cloudwatch_event_rule" "securityhub_finding_event" {
+  name = "SecurityHubFindingEventRule"
+  description = "Triggers on new Security Hub findings"
+
+  event_pattern = jsonencode({
+    "source" = ["aws.securityhub"],
+    "detail-type" = ["Security Hub Findings - Imported"],
+    "detail" = {
+      "findings" = [
+        {
+          "ProductArn" = [{"prefix" = "arn:aws:securityhub"}]
+        }
+      ]
+    }
+  })
+}
+
+resource "aws_cloudwatch_event_target" "securityhub_finding_event_target_ip_enrich" {
+  rule = aws_cloudwatch_event_rule.securityhub_finding_event.name
+  target_id = "trigger-ip-enrich-lambda"
+  arn = aws_lambda_function.ip_enrich.arn
 }
