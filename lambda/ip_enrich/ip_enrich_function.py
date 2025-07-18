@@ -9,6 +9,7 @@ logger.setLevel(logging.INFO)
 
 
 ABUSE_IPDB_API_KEY = os.environ.get('ABUSE_IPDB_API_KEY')
+SNS_TOPIC_ARN = os.environ.get('SNS_TOPIC_ARN')
 
 # Extract the IP addresses from Security Hub finding
 def extract_ip(finding):
