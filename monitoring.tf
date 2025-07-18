@@ -385,6 +385,7 @@ resource "aws_lambda_function" "ip_enrich" {
   runtime          = "python3.12"
   environment {
     variables = {
+      SNS_TOPIC_ARN = aws_sns_topic.alerts.arn
       ABUSE_IPDB_API_KEY = var.abuse_ipdb_api_key
     }
   }
