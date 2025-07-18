@@ -25,7 +25,7 @@ def extract_ip(finding):
     return ips
 
 # Query AbuseIPDP for IP address data
-def query_abuse_ipdb(ips):
+def query_abuse_ipdb(ip):
     url = 'https://api.abuseipdb.com/api/v2/check'
 
     headers = {
