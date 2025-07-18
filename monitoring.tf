@@ -380,7 +380,7 @@ resource "aws_lambda_function" "ip_enrich" {
   description = "Enrich IP address information by querying AbuseIPDB and include that data in SNS notification"
   function_name    = "ip_enrichment"
   role             = aws_iam_role.lambda_ip_enrich.arn
-  handler          = "ip_enrich.lambda_handler"
+  handler          = "ip_enrich_function.lambda_handler"
   source_code_hash = data.archive_file.ip_enrich.output_base64sha256
   runtime          = "python3.12"
 }
