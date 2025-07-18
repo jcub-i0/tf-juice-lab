@@ -383,6 +383,11 @@ resource "aws_lambda_function" "ip_enrich" {
   handler          = "ip_enrich_function.lambda_handler"
   source_code_hash = data.archive_file.ip_enrich.output_base64sha256
   runtime          = "python3.12"
+  environment {
+    variables = {
+      ABUSE_IPDB_API_KEY = var.abuse_ipdb_api_key
+    }
+  }
 }
 
 ### EventBridge rule that triggers on any Security Hub finding across entire cloud account
