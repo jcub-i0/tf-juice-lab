@@ -39,6 +39,16 @@ def query_abuse_ipdb(ip):
         'maxAgeInDays': '90'
     }
 
+    try:
+        response = requests.get(url, headers=headers, params=params, timeout=10)
+        response.raise_for_status()
+        data = response.json()
+        return data.get('data', {})
+    
+    except Exception as e:
+        logging.error(f'Error querying AbuseIPDB for IP {ip}')
+        return None
+
 def lambda_handler(event, context):
     findings = event['detail']['findings']
 
