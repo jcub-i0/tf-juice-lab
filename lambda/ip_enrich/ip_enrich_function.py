@@ -33,6 +33,11 @@ def query_abuse_ipdb(ip):
         'Key': ABUSE_IPDB_API_KEY
     }
 
+    params = {
+        'ipAddress': ip,
+        'maxAgeInDays': '90'
+    }
+
 def lambda_handler(event, context):
     findings = event['detail']['findings']
 
