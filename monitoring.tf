@@ -389,6 +389,16 @@ resource "aws_lambda_function" "ip_enrich" {
       ABUSE_IPDB_API_KEY = var.abuse_ipdb_api_key
     }
   }
+  layers = [
+    aws_lambda_layer_version.requests.arn
+  ]
+}
+
+### Create Lambda layer so IP Enrichment Lambda can use the requests library
+resource "aws_lambda_layer_version" "requests" {
+  filename = "${path.module}/lambda/ip_enrich/layer/requests-layer.zip"
+  layer_name = "requests"
+  compatible_runtimes = ["python3.12"]
 }
 
 ### EventBridge rule that triggers on any Security Hub finding across entire cloud account

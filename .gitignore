@@ -31,3 +31,12 @@ terraform.rc
 
 # Ignore zip archives generated for Lambda deployment
 *.zip
+
+# Ignore all contents within the layers/ dir
+layer/
+
+# Python __pycache__ and compiled files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
