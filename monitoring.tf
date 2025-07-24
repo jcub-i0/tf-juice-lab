@@ -394,9 +394,15 @@ resource "aws_lambda_function" "ip_enrich" {
   ]
 }
 
+data "archive_file" "layer" {
+  type = "zip"
+  source_dir = "${path.module}/lambda/layer"
+  output_path = "${path.module}/lambda/layer.zip"
+}
+
 ### Create Lambda layer so IP Enrichment Lambda can use the requests library
 resource "aws_lambda_layer_version" "requests" {
-  filename = "${path.module}/lambda/ip_enrich/layer/requests-layer.zip"
+  filename = data.archive_file.layer.output_path
   layer_name = "requests"
   compatible_runtimes = ["python3.12"]
 }
