@@ -405,6 +405,7 @@ resource "aws_lambda_layer_version" "requests" {
   filename = data.archive_file.layer.output_path
   layer_name = "requests"
   compatible_runtimes = ["python3.12"]
+  description = "Layer so Lambda functions can use the 'requests' library"
 }
 
 ### EventBridge rule that triggers on any Security Hub finding across entire cloud account
