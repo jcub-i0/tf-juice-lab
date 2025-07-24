@@ -35,7 +35,7 @@ terraform.rc
 # Ignore all contents within the layers/ dir
 layer/
 
-# Python __pycache__ and compiled files
+# Ignore Python __pycache__ and compiled files
 __pycache__/
 *.pyc
 *.pyo
