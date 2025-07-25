@@ -55,7 +55,11 @@ def publish_to_alerts_sns(data):
         logger.warning(f'SNS topic not set. Skipping alert notification.')
         return
     
-    message = json.dumps(data, indent=2)
+    message = (
+        f"🔍 IP Enrichment Report\n\n"
+        f"Below is the data pertaining to one or more IP addresses associated with a Security Hub finding:\n\n"
+        f"{json.dumps(data, indent=2)}"
+    )
 
     try:
         sns.publish(
