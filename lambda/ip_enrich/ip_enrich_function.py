@@ -103,6 +103,7 @@ def lambda_handler(event, context):
                     'abuseIPDB': {
                         'abuseConfidenceScore': result.get('abuseConfidenceScore'),
                         'countryName': result.get('countryName'),
+                        'countryCode': result.get('countryCode'),
                         'usageType': result.get('usageType'),
                         'domain': result.get('domain'),
                         'hostnames': result.get('hostnames'),
