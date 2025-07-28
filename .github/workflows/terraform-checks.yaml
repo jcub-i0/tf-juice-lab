@@ -30,5 +30,14 @@ jobs:
       - name: Terraform Validate
         run: terraform validate
 
+      - name: Install tflint
+        run: curl -s https://raw.githubusercontent.com/terraform-linters/tflint/master/install_linux.sh | bash
 
+      - name: Initialize and Run tflint
+        run: tflint --init && tflint -f compact
 
+      - name: Install Checkov
+        run: pip install checkov
+
+      - name: Run Checkov scan
+        run: checkov -d .
