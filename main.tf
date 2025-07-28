@@ -1,4 +1,5 @@
 terraform {
+  required_version = "~>1.12.0"
 
   backend "s3" {
     bucket  = "tf-juice-lab-state"
@@ -27,6 +28,10 @@ terraform {
     archive = {
       source  = "hashicorp/archive"
       version = "2.7.1"
+    }
+    null = {
+      source = "hashicorp/null"
+      version = "3.2.4"
     }
   }
 }
