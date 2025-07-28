@@ -377,7 +377,7 @@ data "archive_file" "ip_enrich" {
 ### Create IP Enrichment Lambda function
 resource "aws_lambda_function" "ip_enrich" {
   filename         = data.archive_file.ip_enrich.output_path
-  description = "Enrich IP address information by querying AbuseIPDB and include that data in SNS notification"
+  description      = "Enrich IP address information by querying AbuseIPDB and include that data in SNS notification"
   function_name    = "ip_enrichment"
   role             = aws_iam_role.lambda_ip_enrich.arn
   handler          = "ip_enrich_function.lambda_handler"
@@ -385,7 +385,7 @@ resource "aws_lambda_function" "ip_enrich" {
   runtime          = "python3.12"
   environment {
     variables = {
-      SNS_TOPIC_ARN = aws_sns_topic.alerts.arn
+      SNS_TOPIC_ARN      = aws_sns_topic.alerts.arn
       ABUSE_IPDB_API_KEY = var.abuse_ipdb_api_key
     }
   }
@@ -395,32 +395,32 @@ resource "aws_lambda_function" "ip_enrich" {
 }
 
 data "archive_file" "layer" {
-  type = "zip"
-  source_dir = "${path.module}/lambda/layer"
+  type        = "zip"
+  source_dir  = "${path.module}/lambda/layer"
   output_path = "${path.module}/lambda/layer.zip"
 }
 
 ### Create Lambda layer so IP Enrichment Lambda can use the requests library
 resource "aws_lambda_layer_version" "requests" {
-  filename = data.archive_file.layer.output_path
-  layer_name = "requests"
+  filename            = data.archive_file.layer.output_path
+  layer_name          = "requests"
   compatible_runtimes = ["python3.12"]
-  description = "Layer so Lambda functions can use the 'requests' library"
+  description         = "Layer so Lambda functions can use the 'requests' library"
 }
 
 ### EventBridge rule that triggers on any Security Hub finding across entire cloud account
 resource "aws_cloudwatch_event_rule" "securityhub_finding_event" {
-  name = "SecurityHubFindingEventRule"
+  name        = "SecurityHubFindingEventRule"
   description = "Triggers on new Security Hub findings"
 
   event_pattern = jsonencode({
-    "source" = ["aws.securityhub"],
+    "source"      = ["aws.securityhub"],
     "detail-type" = ["Security Hub Findings - Imported"]
   })
 }
 
 resource "aws_cloudwatch_event_target" "securityhub_finding_event_target_ip_enrich" {
-  rule = aws_cloudwatch_event_rule.securityhub_finding_event.name
+  rule      = aws_cloudwatch_event_rule.securityhub_finding_event.name
   target_id = "trigger-ip-enrich-lambda"
-  arn = aws_lambda_function.ip_enrich.arn
+  arn       = aws_lambda_function.ip_enrich.arn
 }
