@@ -57,7 +57,7 @@ def publish_to_alerts_sns(data):
     
     message = (
         f"🔍 IP Enrichment Report\n\n"
-        f"Below is the data pertaining to one or more IP addresses associated with a Security Hub finding:\n\n"
+        f"Security Hub generated a finding associated with one or more IP addresses. Below is the IP data pulled from AbuseIPDB:\n\n"
         f"{json.dumps(data, indent=2)}"
     )
 
