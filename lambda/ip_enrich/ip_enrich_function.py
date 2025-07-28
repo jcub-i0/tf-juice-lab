@@ -52,39 +52,40 @@ def query_abuse_ipdb(ip):
     
 def format_enrichment_message(data):
     message = (
-    '🔍 IP Enrichment Report\n\n'
-    'A Security Hub finding has one or more IP addresses associated with it. Below is pertinent IP data, pulled from AbuseIPDB:\n\n'
+    "🔍 IP Enrichment Report\n\n"
+    "Security Hub generated a finding with one or more IP addresses associated with it.\n"
+    "Below is the pertinent IP data, pulled from AbuseIPDB:\n\n"
     )
     for entry in data:
+        intel = entry.get('intel',{}).get('abuseIPDB',{})
         message += (
-            f'• IP Address: {entry.get('ip', 'N/A')}\n'
-            f'  - Abuse Score: {entry.get('abuseConfidenceScore', 'N/A')}\n'
-            f'  - Country: {entry.get('countryName', 'N/A')}\n'
-            f'  - Country Code: {entry.get('countryCode', 'N/A')}\n'
-            f'  - Domain: {entry.get('domain')}\n'
-            f'  - Hostname(s): {entry.get('hostnames', 'N/A')}\n'
-            f'  - ISP: {entry.get('isp', 'N/A')}\n'
-            f'  - Is Tor: {entry.get('isTor', 'N/A')}\n'
-            f'  - Last Reported Timestamp: {entry.get('lastReportedAt,' 'N/A')}\n\n'
+            f"🌐 IP Address  : {entry.get('ip', 'N/A')}\n"
+            f"  • Abuse Score  : {intel.get('abuseConfidenceScore', 'N/A')}\n"
+            f"  • Country Code  : {intel.get('countryCode', 'N/A')}\n"
+            f"  • Domain  : {intel.get('domain', 'N/A')}\n"
+            f"  • Hostname(s)  : {', '.join(intel.get('hostnames') or []) or 'N/A'}\n"
+            f"  • ISP  : {intel.get('isp', 'N/A')}\n"
+            f"  • Usage Type  : {intel.get('usageType', 'N/A')}\n"
+            f"  • Is Tor Exit Node  : {intel.get('isTor', 'N/A')}\n"
+            f"  • Number of Reports  : {intel.get('totalReports', 'N/A')}\n"
+            f"  • Last Reported  : {intel.get('lastReportedAt', 'N/A')}\n\n"
         )
-
+    
+    message += (
+        f"\n📄 Raw JSON data from AbuseIPDB: \n\n"
+        f"{json.dumps(data, indent=2)}"
+    )
     return message
 
-def publish_to_alerts_sns(data):
+def publish_to_alerts_sns(data, message):
     if not SNS_TOPIC_ARN:
         logger.warning(f'SNS topic not set. Skipping alert notification.')
         return
-    
-    message = (
-        f"🔍 IP Enrichment Report\n\n"
-        f"Security Hub generated a finding associated with one or more IP addresses. Below is the IP data pulled from AbuseIPDB:\n\n"
-        f"{json.dumps(data, indent=2)}"
-    )
 
     try:
         sns.publish(
             TopicArn = SNS_TOPIC_ARN,
-            Subject = 'AbuseIPDB Lookup Results',
+            Subject = f"🧠 IP Threat Intel Report: ({len(data)}) IP{'s' if len(data) > 1 else ''} Enriched",
             Message = message
         )
         logger.info('SNS notification sent.')
@@ -114,6 +115,7 @@ def lambda_handler(event, context):
 
     for ip in all_ips:
         result = query_abuse_ipdb(ip)
+        print(f'[DEBUG] AbuseIPDB response for {ip}: \n{json.dumps(result, indent=2)}')
 
         if result:
             data.append({
@@ -129,6 +131,7 @@ def lambda_handler(event, context):
                         'hostnames': result.get('hostnames'),
                         'isp': result.get('isp'),
                         'isTor': result.get('isTor'),
+                        'totalReports': result.get('totalReports'),
                         'lastReportedAt': result.get('lastReportedAt')
                     }
 
@@ -136,8 +139,8 @@ def lambda_handler(event, context):
             })
 
     if data:
-        message = json.dumps(data, indent=2)
-        publish_to_alerts_sns(data)
+        message = format_enrichment_message(data)
+        publish_to_alerts_sns(data, message)
 
 
     return {
