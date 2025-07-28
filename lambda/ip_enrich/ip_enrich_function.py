@@ -49,6 +49,23 @@ def query_abuse_ipdb(ip):
     except Exception as e:
         logger.error(f'Error querying AbuseIPDB for IP {ip}: {str(e)}')
         return None
+    
+def format_enrichment_message(data):
+    message = '🔍 IP Enrichment Report\n\n'
+    for entry in data:
+        message += (
+            f'• IP Address: {entry.get('ip', 'N/A')}\n'
+            f'  - Abuse Score: {entry.get('abuseConfidenceScore', 'N/A')}\n'
+            f'  - Country: {entry.get('countryName', 'N/A')}\n'
+            f'  - Country Code: {entry.get('countryCode', 'N/A')}\n'
+            f'  - Domain: {entry.get('domain')}\n'
+            f'  - Hostname(s): {entry.get('hostnames', 'N/A')}\n'
+            f'  - ISP: {entry.get('isp', 'N/A')}\n'
+            f'  - Is Tor: {entry.get('isTor', 'N/A')}\n'
+            f'  - Last Reported Timestamp: {entry.get('lastReportedAt,' 'N/A')}\n\n'
+        )
+
+    return message
 
 def publish_to_alerts_sns(data):
     if not SNS_TOPIC_ARN:
