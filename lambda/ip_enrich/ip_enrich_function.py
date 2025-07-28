@@ -51,7 +51,10 @@ def query_abuse_ipdb(ip):
         return None
     
 def format_enrichment_message(data):
-    message = '🔍 IP Enrichment Report\n\n'
+    message = (
+    '🔍 IP Enrichment Report\n\n'
+    'A Security Hub finding has one or more IP addresses associated with it. Below is pertinent IP data, pulled from AbuseIPDB:\n\n'
+    )
     for entry in data:
         message += (
             f'• IP Address: {entry.get('ip', 'N/A')}\n'
