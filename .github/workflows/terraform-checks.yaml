@@ -4,6 +4,7 @@ name: Terraform CI/CD Pipeline
 permissions: read-all
 
 on:
+  permissions: read-all
   push:
     paths:
       - '**.tf'
