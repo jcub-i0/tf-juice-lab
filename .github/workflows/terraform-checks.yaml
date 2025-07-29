@@ -1,7 +1,8 @@
 
 name: Terraform CI/CD Pipeline
 
-permissions: read
+permissions:
+  contents: read
 
 on:
   push:
