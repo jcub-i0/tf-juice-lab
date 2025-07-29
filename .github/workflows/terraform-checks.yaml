@@ -13,7 +13,7 @@ on:
       - '**.tf'
 
 jobs:
-  terraform:
+  terraform_static_analysis:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
