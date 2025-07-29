@@ -40,4 +40,4 @@ jobs:
         run: pip install checkov
 
       - name: Run Checkov scan
-        run: checkov -d
+        run: checkov -d .
