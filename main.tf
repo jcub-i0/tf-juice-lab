@@ -611,5 +611,3 @@ resource "aws_s3_bucket_versioning" "general_purpose_versioning" {
     status = "Enabled"
   }
 }
-
-## Random comment to test GitHub workflow
