@@ -1,10 +1,10 @@
 
 name: Terraform CI/CD Pipeline
 
-permissions: read-all
+permissions: read
 
 on:
-  permissions: read-all
+  permissions: read
   push:
     paths:
       - '**.tf'
@@ -14,7 +14,7 @@ on:
 
 jobs:
   terraform:
-    permissions: read-all
+    permissions: read
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
