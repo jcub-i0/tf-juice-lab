@@ -1,7 +1,7 @@
 import boto3 # type: ignore
 import os
 import logging
-import requests
+import requests # type: ignore
 import json
 
 logger = logging.getLogger()
