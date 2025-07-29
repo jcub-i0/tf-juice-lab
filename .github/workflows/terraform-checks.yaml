@@ -3,6 +3,15 @@ name: Terraform CI/CD Pipeline
 
 permissions:
   contents: read
+  issues: none
+  pull-requests: none
+  actions: none
+  checks: none
+  deployments: none
+  id-token: none
+  discussions: none
+  packages: none
+  statuses: none
 
 on:
   push:
