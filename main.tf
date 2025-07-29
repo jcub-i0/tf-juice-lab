@@ -610,4 +610,4 @@ resource "aws_s3_bucket_versioning" "general_purpose_versioning" {
   }
 }
 
-## Random comment to test GitHub workflow
+# Random comment to test GitHub workflow
