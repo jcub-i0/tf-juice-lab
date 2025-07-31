@@ -229,7 +229,7 @@ resource "aws_security_group" "quarantine_sg" {
     Name = "quarantine_sg"
   }
 }
-
+/*
 # CREATE NACLs
 ## Create and configure Public NACL
 resource "aws_network_acl" "public_nacl" {
@@ -359,7 +359,7 @@ resource "aws_network_acl_rule" "private_nacl_egress_ssh" {
   rule_action    = "allow"
   cidr_block     = "0.0.0.0/0"
 }
-
+*/
 # CREATE EIP, NATGW, AND IGW
 resource "aws_eip" "natgw_eip" {
   domain = "vpc"
