@@ -499,12 +499,6 @@ resource "aws_instance" "kali" {
 #!/bin/bash
 set -eux
 
-apt -o Acquire::ForceIPv4=true update
-yum update -y
-yum install -y amazon-ssm-agent
-systemctl enable amazon-ssm-agent
-systemctl start amazon-ssm-agent
-
 export DEBIAN_FRONTEND=noninteractive
 
 apt update -y
