@@ -59,16 +59,16 @@ def format_enrichment_message(data):
     for entry in data:
         intel = entry.get('intel',{}).get('abuseIPDB',{})
         message += (
-            f"🌐 IP Address  : {entry.get('ip', 'N/A')}\n"
-            f"  • Abuse Score  : {intel.get('abuseConfidenceScore', 'N/A')}\n"
-            f"  • Country Code  : {intel.get('countryCode', 'N/A')}\n"
-            f"  • Domain  : {intel.get('domain', 'N/A')}\n"
-            f"  • Hostname(s)  : {', '.join(intel.get('hostnames') or []) or 'N/A'}\n"
-            f"  • ISP  : {intel.get('isp', 'N/A')}\n"
-            f"  • Usage Type  : {intel.get('usageType', 'N/A')}\n"
-            f"  • Is Tor Exit Node  : {intel.get('isTor', 'N/A')}\n"
-            f"  • Number of Reports  : {intel.get('totalReports', 'N/A')}\n"
-            f"  • Last Reported  : {intel.get('lastReportedAt', 'N/A')}\n\n"
+            f"🌐 IP Address: {entry.get('ip', 'N/A')}\n"
+            f"  • Abuse Score: {intel.get('abuseConfidenceScore', 'N/A')}\n"
+            f"  • Country Code: {intel.get('countryCode', 'N/A')}\n"
+            f"  • Domain: {intel.get('domain', 'N/A')}\n"
+            f"  • Hostname(s): {', '.join(intel.get('hostnames') or []) or 'N/A'}\n"
+            f"  • ISP: {intel.get('isp', 'N/A')}\n"
+            f"  • Usage Type: {intel.get('usageType', 'N/A')}\n"
+            f"  • Is Tor Exit Node: {intel.get('isTor', 'N/A')}\n"
+            f"  • Number of Reports: {intel.get('totalReports', 'N/A')}\n"
+            f"  • Last Reported: {intel.get('lastReportedAt', 'N/A')}\n\n"
         )
     
     message += (
