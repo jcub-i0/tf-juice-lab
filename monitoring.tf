@@ -20,6 +20,23 @@ resource "aws_s3_bucket" "centralized_logs" {
   }
 }
 
+resource "aws_s3_bucket_lifecycle_configuration" "centralized_logs_lifecycle" {
+  bucket = aws_s3_bucket.centralized_logs.id
+
+  rule {
+    id = "log-expiration"
+    status = "Enabled"
+
+    expiration {
+      days = 90
+    }
+
+    filter {
+      prefix = ""
+    }
+  }
+}
+
 ## Enable SSE encryption on centralized_logs bucket
 resource "aws_s3_bucket_server_side_encryption_configuration" "logs_bucket_encrypt" {
   bucket = aws_s3_bucket.centralized_logs.bucket
