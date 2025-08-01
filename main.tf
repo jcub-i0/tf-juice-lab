@@ -332,7 +332,7 @@ resource "aws_key_pair" "juice_key" {
 
 resource "aws_instance" "bastion" {
   ami                         = data.aws_ami.amz-linux-2023.id
-  instance_type               = "t2.micro"
+  instance_type               = "t3.micro"
   subnet_id                   = aws_subnet.public.id
   vpc_security_group_ids      = [aws_security_group.bastion_sg.id]
   key_name                    = aws_key_pair.bastion_key.key_name
