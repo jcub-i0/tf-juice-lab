@@ -24,7 +24,7 @@ resource "aws_s3_bucket_lifecycle_configuration" "centralized_logs_lifecycle" {
   bucket = aws_s3_bucket.centralized_logs.id
 
   rule {
-    id = "log-expiration"
+    id     = "log-expiration"
     status = "Enabled"
 
     expiration {
