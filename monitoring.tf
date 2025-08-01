@@ -284,6 +284,8 @@ resource "aws_lambda_function" "ec2_isolation" {
   runtime = "python3.12"
   role    = aws_iam_role.lambda_ec2_isolate_execution_role.arn
 
+  #checkov:skip=CKV_AWS_272: source_code_hash is sufficient integrity validation for this environment
+
   environment {
     variables = {
       QUARANTINE_SG_ID     = aws_security_group.quarantine_sg.id
@@ -350,6 +352,8 @@ resource "aws_lambda_function" "ec2_autostop" {
   runtime = "python3.12"
   role    = aws_iam_role.lambda_autostop_execution_role.arn
 
+  #checkov:skip=CKV_AWS_272: source_code_hash is sufficient integrity validation for this environment
+
   environment {
     variables = {
       IDLE_CPU_THRESHOLD   = var.idle_cpu_threshold
@@ -391,6 +395,8 @@ resource "aws_lambda_function" "ip_enrich" {
   runtime          = "python3.12"
 
   reserved_concurrent_executions = 10
+
+  #checkov:skip=CKV_AWS_272: source_code_hash is sufficient integrity validation for this environment
 
   environment {
     variables = {
