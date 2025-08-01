@@ -510,3 +510,25 @@ resource "aws_s3_bucket_versioning" "general_purpose_versioning" {
     status = "Enabled"
   }
 }
+
+resource "aws_s3_bucket_lifecycle_configuration" "general_purpose_lifecycle" {
+  depends_on = [aws_s3_bucket_versioning.general_purpose_versioning]
+
+  bucket = aws_s3_bucket.general_purpose.id
+
+  rule {
+    id = "config"
+    status = "Enabled"
+
+    expiration {
+      days = 90
+    }
+    abort_incomplete_multipart_upload {
+      days_after_initiation = 7
+    }
+
+    filter {
+      prefix = ""
+    }
+  }
+}
