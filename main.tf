@@ -132,11 +132,19 @@ resource "aws_security_group" "juice_sg" {
   }
 
   egress {
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
+    from_port   = 80
+    to_port     = 80
+    protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
-    description = "Allow all outbound traffic"
+    description = "Allow all outbound HTTP traffic"
+  }
+
+  egress {
+    from_port   = 443
+    to_port     = 443
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+    description = "Allow all outbound HTTPS traffic"
   }
 
   tags = {
@@ -158,11 +166,19 @@ resource "aws_security_group" "kali_sg" {
   }
 
   egress {
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
+    from_port   = 80
+    to_port     = 80
+    protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
-    description = "Allow all outbound traffic"
+    description = "Allow all outbound HTTP traffic"
+  }
+
+  egress {
+    from_port   = 443
+    to_port     = 443
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+    description = "Allow all outbound HTTPS traffic"
   }
 
   tags = {
@@ -175,12 +191,17 @@ resource "aws_security_group" "bastion_sg" {
   description = "Allow AWS SSM to control the Bastion Host and allow local machine to run pentests via Kali"
   vpc_id      = aws_vpc.tf-juice-lab.id
 
-  ingress {
-    from_port   = 22
-    to_port     = 22
-    protocol    = "tcp"
-    cidr_blocks = var.bastion_allowed_cidrs
-    description = "Allow local machine to ssh into Bastion instance"
+  dynamic "ingress" {
+    for_each = toset(var.bastion_allowed_cidrs)
+    content {
+      from_port   = 22
+      to_port     = 22
+      protocol    = "tcp"
+      cidr_blocks = [ingress.value]
+      description = "Allow local machine to ssh into Bastion instance"
+    }
+
+    #checkov:skip=CKVAWS_24: SSH only allowed from     
   }
 
   egress {
