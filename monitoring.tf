@@ -157,6 +157,7 @@ resource "aws_config_configuration_recorder_status" "config_rec_stat" {
   name       = aws_config_configuration_recorder.config_rec.name
   is_enabled = true
   depends_on = [aws_config_delivery_channel.config_delivery_channel]
+  #checkov:skip=CKV2_AWS_45: I don't want to pay to record all supported services. Enable it in the aws_config_configuraiton_recorder resource above if you want.
 }
 
 ## Rule that enforces prohibited public access for S3 buckets
