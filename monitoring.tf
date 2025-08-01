@@ -157,7 +157,7 @@ resource "aws_config_configuration_recorder_status" "config_rec_stat" {
   name       = aws_config_configuration_recorder.config_rec.name
   is_enabled = true
   depends_on = [aws_config_delivery_channel.config_delivery_channel]
-  
+
   #checkov:skip=CKV2_AWS_45: Don't want to pay for Config to support all resources Enable it in aws_config_configuration_recorder resource if desired
 }
 
