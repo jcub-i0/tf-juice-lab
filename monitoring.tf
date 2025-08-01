@@ -277,6 +277,8 @@ resource "aws_lambda_function" "ec2_isolation" {
   filename         = data.archive_file.lambda_ec2_isolate_zip.output_path
   handler          = "ec2_isolate_function.lambda_handler"
   source_code_hash = data.archive_file.lambda_ec2_isolate_zip.output_base64sha256
+  
+  reserved_concurrent_executions = 5
 
   runtime = "python3.12"
   role    = aws_iam_role.lambda_ec2_isolate_execution_role.arn
@@ -342,6 +344,8 @@ resource "aws_lambda_function" "ec2_autostop" {
   filename         = data.archive_file.lambda_ec2_autostop_zip.output_path
   source_code_hash = data.archive_file.lambda_ec2_autostop_zip.output_base64sha256
 
+  reserved_concurrent_executions = 5
+
   runtime = "python3.12"
   role    = aws_iam_role.lambda_autostop_execution_role.arn
 
@@ -384,6 +388,9 @@ resource "aws_lambda_function" "ip_enrich" {
   handler          = "ip_enrich_function.lambda_handler"
   source_code_hash = data.archive_file.ip_enrich.output_base64sha256
   runtime          = "python3.12"
+
+  reserved_concurrent_executions = 10
+
   environment {
     variables = {
       SNS_TOPIC_ARN      = aws_sns_topic.alerts.arn
