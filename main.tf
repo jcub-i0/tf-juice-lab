@@ -338,6 +338,7 @@ resource "aws_instance" "bastion" {
   key_name                    = aws_key_pair.bastion_key.key_name
   associate_public_ip_address = true
   iam_instance_profile        = aws_iam_instance_profile.ssm_profile.name
+  monitoring                  = true
 
   #checkov:skip=CKV_AWS_88: Bastion Host requires public IP address for controlled lab SSH chaining from local machine; ingress SG rules are IP-restricted
 
@@ -372,6 +373,7 @@ resource "aws_instance" "kali" {
   key_name               = aws_key_pair.kali_key.key_name
   vpc_security_group_ids = [aws_security_group.kali_sg.id]
   iam_instance_profile   = aws_iam_instance_profile.ssm_profile.name
+  monitoring             = true
 
   metadata_options {
     http_tokens = "required"
@@ -429,6 +431,7 @@ resource "aws_instance" "juice-shop" {
   subnet_id              = aws_subnet.private.id
   key_name               = aws_key_pair.juice_key.key_name
   vpc_security_group_ids = [aws_security_group.juice_sg.id]
+  monitoring             = true
 
   metadata_options {
     http_tokens = "required"
