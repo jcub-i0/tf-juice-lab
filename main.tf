@@ -200,8 +200,6 @@ resource "aws_security_group" "bastion_sg" {
       cidr_blocks = [ingress.value]
       description = "Allow local machine to ssh into Bastion instance"
     }
-
-    #checkov:skip=CKVAWS_24: SSH only allowed from     
   }
 
   egress {
@@ -340,6 +338,8 @@ resource "aws_instance" "bastion" {
   key_name                    = aws_key_pair.bastion_key.key_name
   associate_public_ip_address = true
   iam_instance_profile        = aws_iam_instance_profile.ssm_profile.name
+
+  #checkov:skip=CKV_AWS_88: Bastion Host requires public IP address for controlled lab SSH chaining from local machine; ingress SG rules are IP-restricted
 
   root_block_device {
     tags = {
