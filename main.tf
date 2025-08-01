@@ -517,7 +517,7 @@ resource "aws_s3_bucket_lifecycle_configuration" "general_purpose_lifecycle" {
   bucket = aws_s3_bucket.general_purpose.id
 
   rule {
-    id = "config"
+    id     = "config"
     status = "Enabled"
 
     expiration {
