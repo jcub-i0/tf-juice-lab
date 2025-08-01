@@ -135,6 +135,7 @@ resource "aws_config_configuration_recorder" "config_rec" {
   name     = "TF-Juice-Lab-Config"
   role_arn = aws_iam_role.config_role.arn
 
+  #checkov:skip=CKV2_AWS_45: I don't want to pay to record all supported services. Enable it down below if you want.
   recording_group {
     all_supported                 = false
     include_global_resource_types = false
