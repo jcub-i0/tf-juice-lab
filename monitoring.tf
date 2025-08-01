@@ -67,7 +67,7 @@ resource "aws_cloudtrail" "cloudtrail" {
 
 resource "aws_cloudwatch_log_group" "cloudtrail_logs" {
   name              = "tf-juice-lab-cloudtrail"
-  retention_in_days = 30
+  retention_in_days = 365
 
   tags = {
     Name        = "TF-Juice-Lab CloudTrail Logs"
