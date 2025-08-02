@@ -21,6 +21,8 @@ resource "aws_s3_bucket" "centralized_logs" {
 }
 
 resource "aws_s3_bucket_lifecycle_configuration" "centralized_logs_lifecycle" {
+  depends_on = [aws_s3_bucket_versioning.logs_bucket]
+
   bucket = aws_s3_bucket.centralized_logs.id
 
   rule {
@@ -57,6 +59,13 @@ resource "aws_s3_bucket_versioning" "logs_bucket" {
   versioning_configuration {
     status = "Enabled"
   }
+}
+
+resource "aws_s3_bucket_public_access_block" "centralized_logs_public_block" {
+  bucket = aws_s3_bucket.centralized_logs.id
+
+  block_public_acls   = true
+  block_public_policy = true
 }
 
 resource "aws_cloudtrail" "cloudtrail" {
