@@ -536,6 +536,8 @@ resource "aws_s3_bucket_lifecycle_configuration" "general_purpose_lifecycle" {
 resource "aws_s3_bucket_public_access_block" "general_purpose_public_block" {
   bucket = aws_s3_bucket.general_purpose.id
 
-  block_public_acls   = true
-  block_public_policy = true
+  block_public_acls       = true
+  block_public_policy     = true
+  restrict_public_buckets = true
+  ignore_public_acls      = true
 }

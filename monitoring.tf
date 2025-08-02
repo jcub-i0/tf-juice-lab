@@ -64,8 +64,10 @@ resource "aws_s3_bucket_versioning" "logs_bucket" {
 resource "aws_s3_bucket_public_access_block" "centralized_logs_public_block" {
   bucket = aws_s3_bucket.centralized_logs.id
 
-  block_public_acls   = true
-  block_public_policy = true
+  block_public_acls       = true
+  block_public_policy     = true
+  restrict_public_buckets = true
+  ignore_public_acls      = true
 }
 
 resource "aws_cloudtrail" "cloudtrail" {
