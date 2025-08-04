@@ -1,3 +1,6 @@
+
+# KMS Module for CloudTrail, SNS, SQS, and CloudWatch Log Group
+
 module "kms" {
   source  = "terraform-aws-modules/kms/aws"
   version = "4.0.0"
@@ -22,11 +25,32 @@ module "kms" {
         "kms:GenerateDataKey*",
         "kms:Encrypt",
         "kms:Decrypt",
-        "kms:DescribeKey"
+        "kms:DescribeKey",
+        "kms:CreateGrant"
       ]
       resources = [
         "*"
       ]
+    },
+    {
+        sid = "AllowCloudWatchLogs"
+        effect = "Allow"
+        principals = [
+            {
+                type = "Service"
+                identifiers = ["logs.${data.aws_region.current.name}.amazonaws.com"]
+            }
+        ]
+        actions = [
+            "kms:GenerateDataKey",
+            "kms:Encrypt",
+            "kms:Decrypt",
+            "kms:DescribeKey",
+            "kms:CreateGrant"
+        ]
+        resources = [
+            "*"
+        ]
     },
     {
       sid    = "AllowSnsAndSqs"
@@ -44,7 +68,8 @@ module "kms" {
         "kms:GenerateDataKey",
         "kms:Encrypt",
         "kms:Decrypt",
-        "kms:DescribeKey"
+        "kms:DescribeKey",
+        "kms:CreateGrant"
       ]
       resources = [
         "*"
