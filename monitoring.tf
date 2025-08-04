@@ -176,9 +176,9 @@ resource "aws_sqs_queue" "cloudtrail_log_delivery" {
 
 # Create SNS topic subscription for CloudTrail notifications
 resource "aws_sns_topic_subscription" "cloudtrail_notifications_sub" {
-  topic_arn = aws_sns_topic.cloudtrail_notifications.arn
-  protocol = "sqs"
-  endpoint = aws_sqs_queue.cloudtrail_log_delivery.arn
+  topic_arn            = aws_sns_topic.cloudtrail_notifications.arn
+  protocol             = "sqs"
+  endpoint             = aws_sqs_queue.cloudtrail_log_delivery.arn
   raw_message_delivery = true
 }
 

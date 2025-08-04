@@ -218,11 +218,11 @@ data "aws_iam_policy_document" "terraform_s3_write" {
 # Create IAM policy document to allow CloudTrail SNS topic to publish to CloudTrail SQS qeueue
 data "aws_iam_policy_document" "cloudtrail_sns_to_sqs" {
   statement {
-    sid = "Allow-SNS-SendMessage"
+    sid    = "Allow-SNS-SendMessage"
     effect = "Allow"
 
     principals {
-      type = "Service"
+      type        = "Service"
       identifiers = ["sns.amazonaws.com"]
     }
 
@@ -233,9 +233,9 @@ data "aws_iam_policy_document" "cloudtrail_sns_to_sqs" {
     resources = [aws_sqs_queue.cloudtrail_log_delivery.arn]
 
     condition {
-      test = "ArnEquals"
+      test     = "ArnEquals"
       variable = "aws:SourceArn"
-      values = [aws_sns_topic.cloudtrail_notifications.arn]
+      values   = [aws_sns_topic.cloudtrail_notifications.arn]
     }
   }
 }
