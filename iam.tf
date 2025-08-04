@@ -103,6 +103,12 @@ resource "aws_s3_bucket_policy" "general_purpose_policy" {
   })
 }
 
+## Allow CloudTrail to publish to CloudTrail SQS queue
+resource "aws_sqs_queue_policy" "cloudtrail_sns_to_sqs_policy" {
+  queue_url = aws_sqs_queue.cloudtrail_log_delivery.id
+  policy = data.aws_iam_policy_document.cloudtrail_sns_to_sqs.json
+}
+
 ## Allow CloudTrail to access CloudWatch Logs
 resource "aws_iam_role" "cloudtrail_to_cw" {
   name = "cloudtrail-to-cloudwatch-role"
