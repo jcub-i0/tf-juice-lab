@@ -50,7 +50,7 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "logs_bucket_encry
   rule {
     apply_server_side_encryption_by_default {
       kms_master_key_id = module.kms.key_arn
-      sse_algorithm = "aws:kms"
+      sse_algorithm     = "aws:kms"
     }
   }
 }
