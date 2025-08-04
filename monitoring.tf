@@ -413,7 +413,7 @@ resource "aws_lambda_function" "ec2_autostop" {
 
   reserved_concurrent_executions = 5
   kms_key_arn                    = module.kms.key_arn
-  
+
   # Enable X-Ray tracing
   tracing_config {
     mode = "Active"
