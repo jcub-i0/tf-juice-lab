@@ -276,3 +276,28 @@ data "aws_iam_policy_document" "ec2_isolate_lambda_to_sqs" {
     }
   }
 }
+
+# Create IAM policy document to allow EC2 AutoStop Lambda to publish to EC2 AutoStop SQS DLQ
+data "aws_iam_policy_document" "ec2_autostop_lambda_to_sqs" {
+  statement {
+    sid    = "Allow-Ec2-AutoStop-Lambda-To-Sqs"
+    effect = "Allow"
+
+    principals {
+      type        = "Service"
+      identifiers = ["lambda.amazonaws.com"]
+    }
+
+    actions = [
+      "sqs:SendMessage"
+    ]
+
+    resources = [aws_sqs_queue.ec2_autostop_dlq.arn]
+
+    condition {
+      test     = "ArnEquals"
+      variable = "aws:SourceArn"
+      values   = [aws_lambda_function.ec2_autostop.arn]
+    }
+  }
+}

@@ -429,6 +429,10 @@ resource "aws_lambda_function" "ec2_autostop" {
     mode = "Active"
   }
 
+  dead_letter_config {
+    target_arn = aws_sqs_queue.ec2_autostop_dlq.arn
+  }
+
   runtime = "python3.12"
   role    = aws_iam_role.lambda_autostop_execution_role.arn
 
@@ -454,6 +458,12 @@ resource "aws_cloudwatch_event_target" "ec2_autostop_target" {
   rule      = aws_cloudwatch_event_rule.ec2_autostop_schedule.name
   target_id = "trigger-autostop-ec2"
   arn       = aws_lambda_function.ec2_autostop.arn
+}
+
+### SQS DLQ for EC2 AutoStop Lambda
+resource "aws_sqs_queue" "ec2_autostop_dlq" {
+  name              = "ec2-autostop-lambda-dlq"
+  kms_master_key_id = module.kms.key_arn
 }
 
 ## Lambda IP Encrichment function

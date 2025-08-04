@@ -339,6 +339,12 @@ resource "aws_iam_role_policy_attachment" "lambda_autostop_sns_attach" {
   policy_arn = aws_iam_policy.lambda_sns_publish_policy.arn
 }
 
+### Attach IAM policy to EC2 AutoStop SQS DLQ so Lambda can send it messages
+resource "aws_sqs_queue_policy" "ec2_autostop_lambda_to_sqs" {
+  queue_url = aws_sqs_queue.ec2_autostop_dlq.id
+  policy    = data.aws_iam_policy_document.ec2_autostop_lambda_to_sqs.json
+}
+
 ## Lambda IP Enrichment IAM resources
 ### IP Enrich execution role
 resource "aws_iam_role" "lambda_ip_enrich" {
