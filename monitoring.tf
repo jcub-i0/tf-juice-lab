@@ -49,14 +49,14 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "logs_bucket_encry
 
   rule {
     apply_server_side_encryption_by_default {
-      sse_algorithm = "AES256"
+      kms_master_key_id = module.kms.key_arn
+      sse_algorithm = "aws:kms"
     }
   }
 }
 
 resource "aws_s3_bucket_versioning" "logs_bucket" {
   bucket = aws_s3_bucket.centralized_logs.bucket
-
   versioning_configuration {
     status = "Enabled"
   }
