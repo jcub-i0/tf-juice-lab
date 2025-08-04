@@ -338,6 +338,7 @@ resource "aws_lambda_function" "ec2_isolation" {
   source_code_hash = data.archive_file.lambda_ec2_isolate_zip.output_base64sha256
 
   reserved_concurrent_executions = 5
+  kms_key_arn = module.kms.key_arn
 
   runtime = "python3.12"
   role    = aws_iam_role.lambda_ec2_isolate_execution_role.arn
@@ -406,6 +407,7 @@ resource "aws_lambda_function" "ec2_autostop" {
   source_code_hash = data.archive_file.lambda_ec2_autostop_zip.output_base64sha256
 
   reserved_concurrent_executions = 5
+  kms_key_arn = module.kms.key_arn
 
   runtime = "python3.12"
   role    = aws_iam_role.lambda_autostop_execution_role.arn
@@ -453,6 +455,7 @@ resource "aws_lambda_function" "ip_enrich" {
   runtime          = "python3.12"
 
   reserved_concurrent_executions = 10
+  kms_key_arn = module.kms.key_arn
 
   #checkov:skip=CKV_AWS_272: source_code_hash is sufficient integrity validation for this environment
 
