@@ -491,6 +491,7 @@ resource "aws_s3_bucket" "general_purpose" {
   tags = {
     Name        = "General Purpose"
     Environment = var.environment
+    Purpose     = "Store miscellaneous or shared resources that don't fall under a specific category"
   }
 }
 

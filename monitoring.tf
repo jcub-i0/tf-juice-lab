@@ -17,6 +17,7 @@ resource "aws_s3_bucket" "centralized_logs" {
   tags = {
     Name        = "Juice Shop Logs"
     Environment = var.environment
+    Purpose     = "Store logs"
   }
 }
 
