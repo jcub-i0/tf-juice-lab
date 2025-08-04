@@ -8,6 +8,50 @@ module "kms" {
 
   key_usage = "ENCRYPT_DECRYPT"
 
+  key_statements = [
+    {
+      sid    = "AllowCloudTrailToUseKey"
+      effect = "Allow"
+      principals = [
+        {
+          type        = "Service"
+          identifiers = ["cloudtrail.amazonaws.com"]
+        }
+      ]
+      actions = [
+        "kms:GenerateDataKey*",
+        "kms:Encrypt",
+        "kms:Decrypt",
+        "kms:DescribeKey"
+      ]
+      resources = [
+        "*"
+      ]
+    },
+    {
+      sid    = "AllowSnsAndSqs"
+      effect = "Allow"
+      principals = [
+        {
+          type = "Service"
+          identifiers = [
+            "sns.amazonaws.com",
+            "sqs.amazonaws.com"
+          ]
+        }
+      ]
+      actions = [
+        "kms:GenerateDataKey",
+        "kms:Encrypt",
+        "kms:Decrypt",
+        "kms:DescribeKey"
+      ]
+      resources = [
+        "*"
+      ]
+    }
+  ]
+
   tags = {
     Environment = var.environment
     Project     = "tf-juice-lab"
