@@ -340,6 +340,11 @@ resource "aws_lambda_function" "ec2_isolation" {
   reserved_concurrent_executions = 5
   kms_key_arn                    = module.kms.key_arn
 
+  # Enable X-Ray tracing
+  tracing_config {
+    mode = "Active"
+  }
+
   runtime = "python3.12"
   role    = aws_iam_role.lambda_ec2_isolate_execution_role.arn
 
@@ -408,6 +413,11 @@ resource "aws_lambda_function" "ec2_autostop" {
 
   reserved_concurrent_executions = 5
   kms_key_arn                    = module.kms.key_arn
+  
+  # Enable X-Ray tracing
+  tracing_config {
+    mode = "Active"
+  }
 
   runtime = "python3.12"
   role    = aws_iam_role.lambda_autostop_execution_role.arn
@@ -456,6 +466,11 @@ resource "aws_lambda_function" "ip_enrich" {
 
   reserved_concurrent_executions = 10
   kms_key_arn                    = module.kms.key_arn
+
+  # Enable X-Ray tracing
+  tracing_config {
+    mode = "Active"
+  }
 
   #checkov:skip=CKV_AWS_272: source_code_hash is sufficient integrity validation for this environment
 
