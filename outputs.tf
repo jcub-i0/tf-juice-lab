@@ -28,3 +28,8 @@ output "general_purpose_s3_bucket_name" {
 output "centralized_logs_s3_bucket_name" {
   value = aws_s3_bucket.centralized_logs.bucket
 }
+
+output "kms_key_arn" {
+  description = "KMS Key ARN used for CloudTrail, SNS, etc."
+  value       = module.kms.key_arn
+}
