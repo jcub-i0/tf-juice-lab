@@ -85,6 +85,8 @@ resource "aws_cloudtrail" "cloudtrail" {
   is_multi_region_trail         = true
   enable_log_file_validation    = true
 
+  sns_topic_name = aws_sns_topic.cloudtrail_notifications.arn
+
   cloud_watch_logs_group_arn = "${aws_cloudwatch_log_group.cloudtrail_logs.arn}:*"
   cloud_watch_logs_role_arn  = aws_iam_role.cloudtrail_to_cw.arn
 
@@ -154,13 +156,30 @@ resource "aws_sns_topic" "alerts" {
   name = "tf-juice-lab-security-alerts"
 }
 
-## Consider using a for_each loop for multiple email addresses to be used
 resource "aws_sns_topic_subscription" "alerts_sub" {
   for_each = toset(var.alert_emails)
 
   topic_arn = aws_sns_topic.alerts.arn
   protocol  = "email"
   endpoint  = each.value
+}
+
+# Create SNS topic for CloudTrail notificaitons
+resource "aws_sns_topic" "cloudtrail_notifications" {
+  name = "cloudtrail-log-delivery"
+}
+
+# Create SQS queue for CloudTrail notifications
+resource "aws_sqs_queue" "cloudtrail_log_delivery" {
+  name = "cloudtrail-log-delivery-queue"
+}
+
+# Create SNS topic subscription for CloudTrail notifications
+resource "aws_sns_topic_subscription" "cloudtrail_notifications_sub" {
+  topic_arn = aws_sns_topic.cloudtrail_notifications.arn
+  protocol = "sqs"
+  endpoint = aws_sqs_queue.cloudtrail_log_delivery.arn
+  raw_message_delivery = true
 }
 
 resource "aws_config_configuration_recorder" "config_rec" {
