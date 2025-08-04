@@ -85,7 +85,7 @@ resource "aws_cloudtrail" "cloudtrail" {
   is_multi_region_trail         = true
   enable_log_file_validation    = true
 
-  kms_key_id = module.kms.key_arn
+  kms_key_id     = module.kms.key_arn
   sns_topic_name = aws_sns_topic.cloudtrail_notifications.arn
 
   cloud_watch_logs_group_arn = "${aws_cloudwatch_log_group.cloudtrail_logs.arn}:*"
@@ -103,7 +103,7 @@ resource "aws_cloudtrail" "cloudtrail" {
 resource "aws_cloudwatch_log_group" "cloudtrail_logs" {
   name              = "tf-juice-lab-cloudtrail"
   retention_in_days = 365
-  kms_key_id = module.kms.key_arn
+  kms_key_id        = module.kms.key_arn
 
   tags = {
     Name        = "TF-Juice-Lab CloudTrail Logs"
@@ -155,7 +155,7 @@ resource "aws_cloudwatch_metric_alarm" "unauthorized_api_calls" {
 }
 
 resource "aws_sns_topic" "alerts" {
-  name = "tf-juice-lab-security-alerts"
+  name              = "tf-juice-lab-security-alerts"
   kms_master_key_id = module.kms.key_arn
 }
 
@@ -169,13 +169,13 @@ resource "aws_sns_topic_subscription" "alerts_sub" {
 
 # Create SNS topic for CloudTrail notificaitons
 resource "aws_sns_topic" "cloudtrail_notifications" {
-  name = "cloudtrail-log-delivery"
+  name              = "cloudtrail-log-delivery"
   kms_master_key_id = module.kms.key_arn
 }
 
 # Create SQS queue for CloudTrail notifications
 resource "aws_sqs_queue" "cloudtrail_log_delivery" {
-  name = "cloudtrail-log-delivery-queue"
+  name              = "cloudtrail-log-delivery-queue"
   kms_master_key_id = module.kms.key_arn
 }
 

@@ -33,24 +33,24 @@ module "kms" {
       ]
     },
     {
-        sid = "AllowCloudWatchLogs"
-        effect = "Allow"
-        principals = [
-            {
-                type = "Service"
-                identifiers = ["logs.${data.aws_region.current.name}.amazonaws.com"]
-            }
-        ]
-        actions = [
-            "kms:GenerateDataKey",
-            "kms:Encrypt",
-            "kms:Decrypt",
-            "kms:DescribeKey",
-            "kms:CreateGrant"
-        ]
-        resources = [
-            "*"
-        ]
+      sid    = "AllowCloudWatchLogs"
+      effect = "Allow"
+      principals = [
+        {
+          type        = "Service"
+          identifiers = ["logs.${data.aws_region.current.name}.amazonaws.com"]
+        }
+      ]
+      actions = [
+        "kms:GenerateDataKey",
+        "kms:Encrypt",
+        "kms:Decrypt",
+        "kms:DescribeKey",
+        "kms:CreateGrant"
+      ]
+      resources = [
+        "*"
+      ]
     },
     {
       sid    = "AllowSnsAndSqs"
