@@ -305,6 +305,12 @@ resource "aws_iam_role_policy_attachment" "lambda_isolate_sns_attach" {
   policy_arn = aws_iam_policy.lambda_sns_publish_policy.arn
 }
 
+### Attach IAM policy to EC2 Isolate SQS DLQ so Lambda can send it messages
+resource "aws_sqs_queue_policy" "ec2_isolate_dlq_policy" {
+  queue_url = aws_sqs_queue.ec2_isolation_dlq.id
+  policy    = data.aws_iam_policy_document.ec2_isolate_lambda_to_sqs.json
+}
+
 ## Lambda Auto Stop on Idle IAM resources
 ### Enable Lambda Autostop to assume IAM role
 resource "aws_iam_role" "lambda_autostop_execution_role" {

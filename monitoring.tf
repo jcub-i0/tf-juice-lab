@@ -345,6 +345,10 @@ resource "aws_lambda_function" "ec2_isolation" {
     mode = "Active"
   }
 
+  dead_letter_config {
+    target_arn = aws_sqs_queue.ec2_isolation_dlq.arn
+  }
+
   runtime = "python3.12"
   role    = aws_iam_role.lambda_ec2_isolate_execution_role.arn
 
@@ -394,6 +398,12 @@ resource "aws_cloudwatch_event_target" "securityhub_ec2_isolate_target" {
   rule      = aws_cloudwatch_event_rule.securityhub_ec2_isolate.name
   target_id = "isolate-ec2"
   arn       = aws_lambda_function.ec2_isolation.arn
+}
+
+### SQS DLQ for EC2 Isolation Lambda
+resource "aws_sqs_queue" "ec2_isolation_dlq" {
+  name              = "ec2-isolation-lambda-dlq"
+  kms_master_key_id = module.kms.key_arn
 }
 
 ## Lambda EC2 Autostop on Idle

@@ -148,6 +148,15 @@ data "aws_iam_policy_document" "lambda_ec2_isolate_permissions" {
     ]
     resources = ["*"]
   }
+  statement {
+    effect = "Allow"
+    actions = [
+      "sqs:SendMessage"
+    ]
+    resources = [
+      aws_sqs_queue.ec2_isolation_dlq.arn
+    ]
+  }
 }
 
 ## IAM permission policy for EC2 Auto Stop on Idle Lambda function
@@ -239,6 +248,31 @@ data "aws_iam_policy_document" "cloudtrail_sns_to_sqs" {
       test     = "ArnEquals"
       variable = "aws:SourceArn"
       values   = [aws_sns_topic.cloudtrail_notifications.arn]
+    }
+  }
+}
+
+# Create IAM policy document to allow EC2 Isolation Lambda to publish to EC2 Isolation SQS DLQ
+data "aws_iam_policy_document" "ec2_isolate_lambda_to_sqs" {
+  statement {
+    sid    = "Allow-Ec2-Isolate-Lambda-To-Sqs"
+    effect = "Allow"
+
+    principals {
+      type        = "Service"
+      identifiers = ["lambda.amazonaws.com"]
+    }
+
+    actions = [
+      "sqs:SendMessage"
+    ]
+
+    resources = [aws_sqs_queue.ec2_isolation_dlq.arn]
+
+    condition {
+      test     = "ArnEquals"
+      variable = "aws:SourceArn"
+      values   = [aws_lambda_function.ec2_isolation.arn]
     }
   }
 }
