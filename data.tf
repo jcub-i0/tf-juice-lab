@@ -215,6 +215,13 @@ data "aws_iam_policy_document" "ip_enrich_permissions" {
     ]
     resources = ["*"]
   }
+  statement {
+    effect = "Allow"
+    actions = [
+      "sqs:SendMessage"
+    ]
+    resources = [aws_sqs_queue.ec2_ip_enrich_dlq.arn]
+  }
 }
 
 # IAM policy document granting Terraform read and write access to objects in the General Purpose S3 bucket
@@ -305,6 +312,31 @@ data "aws_iam_policy_document" "ec2_autostop_lambda_to_sqs" {
       test     = "ArnEquals"
       variable = "aws:SourceArn"
       values   = [aws_lambda_function.ec2_autostop.arn]
+    }
+  }
+}
+
+# Create IAM policy document to allow EC2 AutoStop Lambda to publish to EC2 AutoStop SQS DLQ
+data "aws_iam_policy_document" "ec2_ip_enrich_lambda_to_sqs" {
+  statement {
+    sid    = "Allow-Ec2-IpEnrich-Lambda-To-Sqs"
+    effect = "Allow"
+
+    principals {
+      type        = "Service"
+      identifiers = ["lambda.amazonaws.com"]
+    }
+
+    actions = [
+      "sqs:SendMessage"
+    ]
+
+    resources = [aws_sqs_queue.ec2_ip_enrich_dlq.arn]
+
+    condition {
+      test     = "ArnEquals"
+      variable = "aws:SourceArn"
+      values   = [aws_lambda_function.ip_enrich.arn]
     }
   }
 }

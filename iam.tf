@@ -372,6 +372,13 @@ resource "aws_iam_role_policy_attachment" "lambda_ip_enrich_sns_attach" {
   policy_arn = aws_iam_policy.lambda_sns_publish_policy.arn
 }
 
+### Attach IAM policy to EC2 IP Enrich SQS DLQ so Lambda can send it messages
+resource "aws_sqs_queue_policy" "ec2_ip_enrich_lambda_to_sqs" {
+  queue_url = aws_sqs_queue.ec2_ip_enrich_dlq.id
+  policy    = data.aws_iam_policy_document.ec2_ip_enrich_lambda_to_sqs.json
+}
+
+
 # Create IAM policy that allows Terraform admin user read and write access to General Purpose S3 bucket
 resource "aws_iam_policy" "terraform_s3_write_policy" {
   name   = "terraform_s3_write_policy"
