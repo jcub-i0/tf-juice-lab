@@ -417,7 +417,7 @@ resource "aws_sqs_queue_policy" "gen_purp_s3_sns_to_sqs" {
 
 # Attach IAM policy that allows General Purpose S3 to publish to Centralized Logs SNS topic
 resource "aws_sns_topic_policy" "general_purpose_topic_policy" {
-  arn = aws_sns_topic.general_purpose_bucket_notifications.arn
+  arn    = aws_sns_topic.general_purpose_bucket_notifications.arn
   policy = data.aws_iam_policy_document.general_purpose_sns_policy.json
 }
 
@@ -429,6 +429,6 @@ resource "aws_sqs_queue_policy" "centralized_logs_s3_sns_to_sqs" {
 
 # Attach IAM policy that allows Centralized Logs S3 to publish to Centralized Logs SNS topic
 resource "aws_sns_topic_policy" "centralized_logs_topic_policy" {
-  arn = aws_sns_topic.centralized_logs_bucket_notifications.arn
+  arn    = aws_sns_topic.centralized_logs_bucket_notifications.arn
   policy = data.aws_iam_policy_document.centralized_logs_sns_policy.json
 }

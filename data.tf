@@ -370,11 +370,11 @@ data "aws_iam_policy_document" "gen_purp_s3_sns_to_sqs" {
 data "aws_iam_policy_document" "general_purpose_sns_policy" {
   version = "2012-10-17"
   statement {
-    sid = "AllowGeneralPurposeS3Publish"
+    sid    = "AllowGeneralPurposeS3Publish"
     effect = "Allow"
 
     principals {
-      type = "Service"
+      type        = "Service"
       identifiers = ["s3.amazonaws.com"]
     }
 
@@ -385,9 +385,9 @@ data "aws_iam_policy_document" "general_purpose_sns_policy" {
     resources = [aws_sns_topic.general_purpose_bucket_notifications.arn]
 
     condition {
-      test = "ArnEquals"
+      test     = "ArnEquals"
       variable = "aws:SourceArn"
-      values = [aws_s3_bucket.general_purpose.arn]
+      values   = [aws_s3_bucket.general_purpose.arn]
     }
   }
 }
@@ -422,11 +422,11 @@ data "aws_iam_policy_document" "centralized_logs_s3_sns_to_sqs" {
 data "aws_iam_policy_document" "centralized_logs_sns_policy" {
   version = "2012-10-17"
   statement {
-    sid = "AllowCentralizedLogsS3Publish"
+    sid    = "AllowCentralizedLogsS3Publish"
     effect = "Allow"
 
     principals {
-      type = "Service"
+      type        = "Service"
       identifiers = ["s3.amazonaws.com"]
     }
 
@@ -435,9 +435,9 @@ data "aws_iam_policy_document" "centralized_logs_sns_policy" {
     resources = [aws_sns_topic.centralized_logs_bucket_notifications.arn]
 
     condition {
-      test = "ArnEquals"
+      test     = "ArnEquals"
       variable = "aws:SourceArn"
-      values = [aws_s3_bucket.centralized_logs.arn]
+      values   = [aws_s3_bucket.centralized_logs.arn]
     }
   }
 }
