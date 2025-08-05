@@ -73,7 +73,7 @@ resource "aws_s3_bucket_public_access_block" "centralized_logs_public_block" {
 
 resource "aws_cloudtrail" "cloudtrail" {
   depends_on = [
-    aws_s3_bucket_policy.cloudtrail_policy,
+    aws_s3_bucket_policy.centralized_logs_policy,
     aws_iam_role.cloudtrail_to_cw,
     aws_iam_role_policy.cloudtrail_to_cw_policy,
     aws_cloudwatch_log_group.cloudtrail_logs

@@ -31,7 +31,7 @@ resource "aws_iam_instance_profile" "ssm_profile" {
 
 # S3 Bucket Policies
 ## S3 Bucket policy to allow CloudTrail to put objects in Centralized Logs bucket
-resource "aws_s3_bucket_policy" "cloudtrail_policy" {
+resource "aws_s3_bucket_policy" "centralized_logs_policy" {
   bucket = aws_s3_bucket.centralized_logs.bucket
 
   policy = jsonencode({
