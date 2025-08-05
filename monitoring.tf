@@ -86,7 +86,7 @@ resource "aws_cloudtrail" "cloudtrail" {
   enable_log_file_validation    = true
 
   kms_key_id     = module.kms.key_arn
-  sns_topic_name = aws_sns_topic.cloudtrail_notifications.arn
+  sns_topic_name = aws_sns_topic.cloudtrail_notifications.name
 
   cloud_watch_logs_group_arn = "${aws_cloudwatch_log_group.cloudtrail_logs.arn}:*"
   cloud_watch_logs_role_arn  = aws_iam_role.cloudtrail_to_cw.arn
