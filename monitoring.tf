@@ -271,6 +271,7 @@ resource "aws_guardduty_detector" "main" {
   enable                       = true
   finding_publishing_frequency = "FIFTEEN_MINUTES"
   region                       = var.aws_region
+  #checkov:skip=CKV2_AWS_3: This check applies to environments using AWS Organizations, which this one does not
 }
 
 resource "aws_guardduty_detector_feature" "features" {
