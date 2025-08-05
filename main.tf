@@ -110,6 +110,14 @@ resource "aws_route_table_association" "public_assc" {
 
 # CREATE SECURITY GROUPS
 
+## Default securuity group restricts all traffic
+resource "aws_default_security_group" "default" {
+  vpc_id = aws_vpc.tf-juice-lab.id
+  tags = {
+    Name = "default_sg"
+  }
+}
+
 resource "aws_security_group" "juice_sg" {
   name        = "juice-sg"
   description = "Allow traffic from Kali"
