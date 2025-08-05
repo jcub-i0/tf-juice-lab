@@ -1,4 +1,4 @@
-# CREATE MONITORING/SECURITY RESOURCES
+# MONITORING/SECURITY RESOURCES
 
 locals {
   # SecurityHub standards for securityhub_standards_subscriptions resource to loop through
@@ -10,7 +10,13 @@ locals {
     #pci_dss = "arn:aws:securityhub:${var.aws_region}::standards/pci-dss/v/3.2.1"
   }
 }
-
+/*
+# Enable VPC Flow Logs and send them to specific CloudWatch Logs Group
+## VPC Flow Log resource
+resource "aws_flow_log" "main_vpc" {
+  
+}
+*/
 resource "aws_s3_bucket" "centralized_logs" {
   bucket = "juice-shop-logs-${random_id.random_suffix.hex}"
 
@@ -204,7 +210,8 @@ resource "aws_s3_bucket_notification" "general_purpose" {
 
   depends_on = [
     aws_s3_bucket.general_purpose,
-    aws_sns_topic.general_purpose_bucket_notifications
+    aws_sns_topic.general_purpose_bucket_notifications,
+    aws_sns_topic_policy.general_purpose_topic_policy
   ]
 }
 
@@ -234,7 +241,8 @@ resource "aws_s3_bucket_notification" "centralized_logs" {
   }
   depends_on = [
     aws_s3_bucket.centralized_logs,
-    aws_sns_topic.centralized_logs_bucket_notifications
+    aws_sns_topic.centralized_logs_bucket_notifications,
+    aws_sns_topic_policy.centralized_logs_topic_policy
   ]
 }
 
