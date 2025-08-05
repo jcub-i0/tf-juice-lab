@@ -2,7 +2,7 @@
 # KMS Module for CloudTrail, SNS, SQS, and CloudWatch Log Group
 
 module "kms" {
-  source  = "git::https://github.com/terraform-aws-modules/terraform-aws-kms.git?ref=210736c7aaf2394a68e5f85de4e29169ac126363"
+  source = "git::https://github.com/terraform-aws-modules/terraform-aws-kms.git?ref=210736c7aaf2394a68e5f85de4e29169ac126363"
 
   aliases             = ["tf-juice-lab"]
   description         = "KMS key for encrypting CloudTrail, CloudWatch, SNS, SQS"
