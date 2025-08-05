@@ -100,6 +100,7 @@ resource "aws_s3_bucket_policy" "general_purpose_policy" {
     Version = "2012-10-17",
     Statement = [
       {
+        Sid    = "Allow EC2 Isolation Lambda func access to General Purpose S3 bucket"
         Effect = "Allow",
         Principal = {
           AWS = [
@@ -408,3 +409,26 @@ resource "aws_iam_policy_attachment" "terraform_s3_write_policy_attach" {
   policy_arn = aws_iam_policy.terraform_s3_write_policy.arn
 }
 
+# Attach IAM policy that allows General Purpose S3 Notifications SNS to send messages to SQS
+resource "aws_sqs_queue_policy" "gen_purp_s3_sns_to_sqs" {
+  queue_url = aws_sqs_queue.general_purpose_s3_event_queue.id
+  policy    = data.aws_iam_policy_document.gen_purp_s3_sns_to_sqs.json
+}
+
+# Attach IAM policy that allows General Purpose S3 to publish to Centralized Logs SNS topic
+resource "aws_sns_topic_policy" "general_purpose_topic_policy" {
+  arn = aws_sns_topic.general_purpose_bucket_notifications.arn
+  policy = data.aws_iam_policy_document.general_purpose_sns_policy.json
+}
+
+# Attach IAM policy that allows Centralized Logs S3 Notifications SNS to send messages to SQS
+resource "aws_sqs_queue_policy" "centralized_logs_s3_sns_to_sqs" {
+  queue_url = aws_sqs_queue.centralized_logs_s3_event_queue.id
+  policy    = data.aws_iam_policy_document.centralized_logs_s3_sns_to_sqs.json
+}
+
+# Attach IAM policy that allows Centralized Logs S3 to publish to Centralized Logs SNS topic
+resource "aws_sns_topic_policy" "centralized_logs_topic_policy" {
+  arn = aws_sns_topic.centralized_logs_bucket_notifications.arn
+  policy = data.aws_iam_policy_document.centralized_logs_sns_policy.json
+}

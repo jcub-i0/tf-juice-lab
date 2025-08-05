@@ -341,3 +341,103 @@ data "aws_iam_policy_document" "ec2_ip_enrich_lambda_to_sqs" {
     }
   }
 }
+
+# General Purpose SQS policy
+data "aws_iam_policy_document" "gen_purp_s3_sns_to_sqs" {
+  version = "2012-10-17"
+  statement {
+    sid    = "AllowGeneralPurposeS3SnsToMessageSqs"
+    effect = "Allow"
+
+    principals {
+      type        = "Service"
+      identifiers = ["sns.amazonaws.com"]
+    }
+
+    actions = [
+      "sqs:SendMessage"
+    ]
+    resources = [aws_sqs_queue.general_purpose_s3_event_queue.arn]
+    condition {
+      test     = "ArnEquals"
+      variable = "aws:SourceArn"
+      values   = [aws_sns_topic.general_purpose_bucket_notifications.arn]
+    }
+  }
+}
+
+# SNS policy allowing Genreal Purpose S3 to publish events to General Purpose SNS topic
+data "aws_iam_policy_document" "general_purpose_sns_policy" {
+  version = "2012-10-17"
+  statement {
+    sid = "AllowGeneralPurposeS3Publish"
+    effect = "Allow"
+
+    principals {
+      type = "Service"
+      identifiers = ["s3.amazonaws.com"]
+    }
+
+    actions = [
+      "sns:Publish"
+    ]
+
+    resources = [aws_sns_topic.general_purpose_bucket_notifications.arn]
+
+    condition {
+      test = "ArnEquals"
+      variable = "aws:SourceArn"
+      values = [aws_s3_bucket.general_purpose.arn]
+    }
+  }
+}
+
+# Centralized Logs SQS Policy
+data "aws_iam_policy_document" "centralized_logs_s3_sns_to_sqs" {
+  version = "2012-10-17"
+  statement {
+    sid    = "AllowCentralizedLogsS3SnsToMessageSqs"
+    effect = "Allow"
+
+    principals {
+      type        = "Service"
+      identifiers = ["sns.amazonaws.com"]
+    }
+
+    actions = [
+      "sqs:SendMessage"
+    ]
+
+    resources = [aws_sqs_queue.centralized_logs_s3_event_queue.arn]
+
+    condition {
+      test     = "ArnEquals"
+      variable = "aws:SourceArn"
+      values   = [aws_sns_topic.centralized_logs_bucket_notifications.arn]
+    }
+  }
+}
+
+# SNS topic policy allowing Centralized Logs S3 to publish events to Centralized Logs SNS topic
+data "aws_iam_policy_document" "centralized_logs_sns_policy" {
+  version = "2012-10-17"
+  statement {
+    sid = "AllowCentralizedLogsS3Publish"
+    effect = "Allow"
+
+    principals {
+      type = "Service"
+      identifiers = ["s3.amazonaws.com"]
+    }
+
+    actions = ["sns:Publish"]
+
+    resources = [aws_sns_topic.centralized_logs_bucket_notifications.arn]
+
+    condition {
+      test = "ArnEquals"
+      variable = "aws:SourceArn"
+      values = [aws_s3_bucket.centralized_logs.arn]
+    }
+  }
+}

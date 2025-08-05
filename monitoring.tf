@@ -187,6 +187,68 @@ resource "aws_sns_topic_subscription" "cloudtrail_notifications_sub" {
   raw_message_delivery = true
 }
 
+# Create SNS topic for S3 event notifications
+resource "aws_sns_topic" "general_purpose_bucket_notifications" {
+  name              = "general-purpose-s3-notifications"
+  kms_master_key_id = module.kms.key_arn
+}
+
+resource "aws_s3_bucket_notification" "general_purpose" {
+  bucket = aws_s3_bucket.general_purpose.bucket
+
+  topic {
+    topic_arn     = aws_sns_topic.general_purpose_bucket_notifications.arn
+    events        = ["s3:ObjectCreated:*"]
+    filter_prefix = "logs/"
+  }
+
+  depends_on = [
+    aws_s3_bucket.general_purpose,
+    aws_sns_topic.general_purpose_bucket_notifications
+  ]
+}
+
+resource "aws_sqs_queue" "general_purpose_s3_event_queue" {
+  name              = "general-purpose-s3-events"
+  kms_master_key_id = module.kms.key_arn
+}
+
+resource "aws_sns_topic_subscription" "general_purpose_bucket_notifications_sub" {
+  topic_arn = aws_sns_topic.general_purpose_bucket_notifications.arn
+  protocol  = "sqs"
+  endpoint  = aws_sqs_queue.general_purpose_s3_event_queue.arn
+}
+
+resource "aws_sns_topic" "centralized_logs_bucket_notifications" {
+  name              = "centralized-logs-s3-notifications"
+  kms_master_key_id = module.kms.key_arn
+}
+
+resource "aws_s3_bucket_notification" "centralized_logs" {
+  bucket = aws_s3_bucket.centralized_logs.bucket
+
+  topic {
+    topic_arn     = aws_sns_topic.centralized_logs_bucket_notifications.arn
+    events        = ["s3:ObjectCreated:*"]
+    filter_prefix = "logs/"
+  }
+  depends_on = [
+    aws_s3_bucket.centralized_logs,
+    aws_sns_topic.centralized_logs_bucket_notifications
+  ]
+}
+
+resource "aws_sqs_queue" "centralized_logs_s3_event_queue" {
+  name              = "centralized-logs-s3-notifications"
+  kms_master_key_id = module.kms.key_arn
+}
+
+resource "aws_sns_topic_subscription" "centralized_logs_bucket_notifications_sub" {
+  topic_arn = aws_sns_topic.centralized_logs_bucket_notifications.arn
+  protocol  = "sqs"
+  endpoint  = aws_sqs_queue.centralized_logs_s3_event_queue.arn
+}
+
 resource "aws_config_configuration_recorder" "config_rec" {
   name     = "TF-Juice-Lab-Config"
   role_arn = aws_iam_role.config_role.arn
