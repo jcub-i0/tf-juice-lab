@@ -188,6 +188,13 @@ data "aws_iam_policy_document" "lambda_ec2_autostop_permissions" {
     ]
     resources = ["*"]
   }
+  statement {
+    effect = "Allow"
+    actions = [
+      "sqs:SendMessage"
+    ]
+    resources = [aws_sqs_queue.ec2_autostop_dlq.arn]
+  }
 }
 
 ## Lambda permission policy for IP Enrichment function
