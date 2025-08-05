@@ -551,3 +551,10 @@ resource "aws_s3_bucket_public_access_block" "general_purpose_public_block" {
   restrict_public_buckets = true
   ignore_public_acls      = true
 }
+
+resource "aws_s3_bucket_logging" "general_purpose_logging" {
+  bucket = aws_s3_bucket.general_purpose.bucket
+
+  target_bucket = aws_s3_bucket.centralized_logs.bucket
+  target_prefix = "s3-access-logs/${aws_s3_bucket.general_purpose.bucket}/"
+}

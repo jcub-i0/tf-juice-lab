@@ -73,6 +73,20 @@ resource "aws_s3_bucket_policy" "cloudtrail_policy" {
         }
         Action   = "s3:GetBucketAcl"
         Resource = aws_s3_bucket.centralized_logs.arn
+      },
+      {
+        Sid    = "AllowS3AccessLogging"
+        Effect = "Allow"
+        Principal = {
+          Service = "logging.s3.amazonaws.com"
+        }
+        Action   = "s3:PutObject"
+        Resource = "${aws_s3_bucket.centralized_logs.arn}/s3-access-logs/*"
+        Condition = {
+          StringEquals = {
+            "aws:SourceAccount" = data.aws_caller_identity.current.account_id
+          }
+        }
       }
     ]
   })
