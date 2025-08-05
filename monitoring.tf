@@ -535,14 +535,15 @@ resource "aws_cloudwatch_event_rule" "securityhub_finding_event" {
   })
 }
 
-### SQS DLQ for EC2 IP Enrichment Lambda
-resource "aws_sqs_queue" "ec2_ip_enrich_dlq" {
-  name              = "ec2-ip-enrich-lambda-dlq"
-  kms_master_key_id = module.kms.key_arn
-}
-
+### EventBridge Target to send events to (target=SNS)
 resource "aws_cloudwatch_event_target" "securityhub_finding_event_target_ip_enrich" {
   rule      = aws_cloudwatch_event_rule.securityhub_finding_event.name
   target_id = "trigger-ip-enrich-lambda"
   arn       = aws_lambda_function.ip_enrich.arn
+}
+
+### SQS DLQ for EC2 IP Enrichment Lambda
+resource "aws_sqs_queue" "ec2_ip_enrich_dlq" {
+  name              = "ec2-ip-enrich-lambda-dlq"
+  kms_master_key_id = module.kms.key_arn
 }
