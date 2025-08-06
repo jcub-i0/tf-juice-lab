@@ -447,7 +447,7 @@ data "aws_iam_policy_document" "vpc_flow_logs_assume_role" {
   statement {
     actions = ["sts:AssumeRole"]
     principals {
-      type = "Service"
+      type        = "Service"
       identifiers = ["vpc-flow-logs.amazonaws.com"]
     }
   }
