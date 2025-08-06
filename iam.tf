@@ -439,7 +439,7 @@ resource "aws_iam_role" "vpc_flow_logs" {
 }
 
 resource "aws_iam_role_policy" "vpc_flow_logs_inline" {
-  name = "vpc-flow-logs-policy"
-  role = aws_iam_role.vpc_flow_logs.id
+  name   = "vpc-flow-logs-policy"
+  role   = aws_iam_role.vpc_flow_logs.id
   policy = data.aws_iam_policy_document.vpc_flow_logs_inline_policy.json
 }
