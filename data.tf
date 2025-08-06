@@ -452,3 +452,17 @@ data "aws_iam_policy_document" "vpc_flow_logs_assume_role" {
     }
   }
 }
+
+data "aws_iam_policy_document" "vpc_flow_logs_inline_policy" {
+  statement {
+    effect = "Allow"
+    actions = [
+      "logs:CreateLogGroup",
+      "logs:CreateLogStream",
+      "logs:PutLogEvents",
+      "logs:DescribeLogGroups",
+      "logs:DescribeLogStreams"
+    ]
+    resources = ["*"]
+  }
+}
