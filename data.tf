@@ -441,3 +441,14 @@ data "aws_iam_policy_document" "centralized_logs_sns_policy" {
     }
   }
 }
+
+# IAM Policies for VPC Flow Logs to be sent to Flow Logs CloudWatch Log Group
+data "aws_iam_policy_document" "vpc_flow_logs_assume_role" {
+  statement {
+    actions = ["sts:AssumeRole"]
+    principals {
+      type = "Service"
+      identifiers = ["vpc-flow-logs.amazonaws.com"]
+    }
+  }
+}
