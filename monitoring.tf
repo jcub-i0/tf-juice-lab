@@ -19,11 +19,14 @@ resource "aws_flow_log" "main_vpc" {
   log_destination      = aws_cloudwatch_log_group.flow_logs_group.arn
   traffic_type         = "ALL"
   vpc_id               = aws_vpc.tf-juice-lab.id
+  
 }
 
 ## Create CloudWatch Log Group for VPC Flow Logs
 resource "aws_cloudwatch_log_group" "flow_logs_group" {
   name = "/aws/vpc/flow-logs"
+  retention_in_days = 365
+  kms_key_id = module.kms.key_arn
 }
 
 resource "aws_s3_bucket" "centralized_logs" {
