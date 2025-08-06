@@ -10,13 +10,12 @@ locals {
     #pci_dss = "arn:aws:securityhub:${var.aws_region}::standards/pci-dss/v/3.2.1"
   }
 }
-/*
-# Enable VPC Flow Logs and send them to specific CloudWatch Logs Group
-## VPC Flow Log resource
-resource "aws_flow_log" "main_vpc" {
-  
+
+## Create CloudWatch Log Group for VPC Flow Logs
+resource "aws_cloudwatch_log_group" "flow_logs_group" {
+  name = "/aws/vpc/flow-logs"
 }
-*/
+
 resource "aws_s3_bucket" "centralized_logs" {
   bucket = "juice-shop-logs-${random_id.random_suffix.hex}"
 
