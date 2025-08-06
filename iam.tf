@@ -432,19 +432,8 @@ resource "aws_iam_policy_attachment" "terraform_s3_write_policy_attach" {
   policy_arn = aws_iam_policy.terraform_s3_write_policy.arn
 }
 
-
 # IAM Policies for VPC Flow Logs to be sent to Flow Logs CloudWatch Log Group
 resource "aws_iam_role" "vpc_flow_logs" {
   name = "vpc-flow-logs-role"
-
-  assume_role_policy = jsonencode({
-    Version = "2012-10-17"
-    Statement = [{
-      Action = "sts:AssumeRole"
-      Effect = "Allow"
-      Principal = {
-        Service = "vpc-flow-logs.amazonaws.com"
-      }
-    }]
-  })
+  assume_role_policy = data.aws_iam_policy_document.vpc_flow_logs_assume_role
 }
