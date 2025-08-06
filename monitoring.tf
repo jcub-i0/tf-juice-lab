@@ -11,6 +11,15 @@ locals {
   }
 }
 
+# Enable VPC Flow Logs and send them to specific CloudWatch Logs Group
+## VPC Flow Log resource
+resource "aws_flow_log" "main_vpc" {
+  iam_role_arn    = aws_iam_role.vpc_flow_logs.arn
+  log_destination = aws_cloudwatch_log_group.flow_logs_group.arn
+  traffic_type    = "ALL"
+  vpc_id          = aws_vpc.tf-juice-lab.id
+}
+
 ## Create CloudWatch Log Group for VPC Flow Logs
 resource "aws_cloudwatch_log_group" "flow_logs_group" {
   name = "/aws/vpc/flow-logs"
