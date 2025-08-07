@@ -11,38 +11,38 @@ module "kms" {
 
   key_statements = [
     {
-        sid = "AllowCloudTrailPublishToSNSEncrypted"
-        effect = "Allow"
-        principals = [
-            {
-                type = "Service"
-                identifiers = ["cloudtrail.amazonaws.com"]
-            }
-        ]
-        actions = [
-            "kms:GenerateDataKey*",
-            "kms:Encrypt",
-            "kms:Decrypt",
-            "kms:DescribeKey"
-        ]
-        resources = ["*"]
+      sid    = "AllowCloudTrailPublishToSNSEncrypted"
+      effect = "Allow"
+      principals = [
+        {
+          type        = "Service"
+          identifiers = ["cloudtrail.amazonaws.com"]
+        }
+      ]
+      actions = [
+        "kms:GenerateDataKey*",
+        "kms:Encrypt",
+        "kms:Decrypt",
+        "kms:DescribeKey"
+      ]
+      resources = ["*"]
     },
     {
-        sid = "AllowSnsDecrypt"
-        effect = "Allow"
-        principals = [
-            {
-                type = "Service"
-                identifiers = ["sns.amazonaws.com"]
-            }
-        ]
-        actions = [
-            "kms:Decrypt",
-            "kms:GenerateDataKey*",
-            "kms:Encrypt",
-            "kms:Decrypt"
-        ]
-        resources = ["*"]
+      sid    = "AllowSnsDecrypt"
+      effect = "Allow"
+      principals = [
+        {
+          type        = "Service"
+          identifiers = ["sns.amazonaws.com"]
+        }
+      ]
+      actions = [
+        "kms:Decrypt",
+        "kms:GenerateDataKey*",
+        "kms:Encrypt",
+        "kms:Decrypt"
+      ]
+      resources = ["*"]
     },
     {
       sid    = "AllowCloudWatchLogs"
