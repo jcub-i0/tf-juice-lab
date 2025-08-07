@@ -72,6 +72,17 @@ resource "aws_subnet" "private" {
   }
 }
 
+resource "aws_subnet" "lambda_private" {
+  vpc_id            = aws_vpc.tf-juice-lab.id
+  cidr_block        = var.lambda_sub_cidr
+  availability_zone = var.lambda_sub_az
+
+  tags = {
+    Name      = "Lambda Private Subnet"
+    Terraform = "true"
+  }
+}
+
 # CREATE AND ASSOCIATE ROUTE TABLES
 
 resource "aws_route_table" "private" {
