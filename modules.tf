@@ -1,4 +1,3 @@
-
 # KMS Module for CloudTrail, SNS, SQS, and CloudWatch Log Group
 
 module "kms" {
@@ -12,23 +11,38 @@ module "kms" {
 
   key_statements = [
     {
-      sid    = "AllowCloudTrailToUseKey"
-      effect = "Allow"
-      principals = [
-        {
-          type        = "Service"
-          identifiers = ["cloudtrail.amazonaws.com"]
-        }
-      ]
-      actions = [
-        "kms:GenerateDataKey*",
-        "kms:Encrypt",
-        "kms:DescribeKey",
-        "kms:CreateGrant"
-      ]
-      resources = [
-        "*"
-      ]
+        sid = "AllowCloudTrailPublishToSNSEncrypted"
+        effect = "Allow"
+        principals = [
+            {
+                type = "Service"
+                identifiers = ["cloudtrail.amazonaws.com"]
+            }
+        ]
+        actions = [
+            "kms:GenerateDataKey*",
+            "kms:Encrypt",
+            "kms:Decrypt",
+            "kms:DescribeKey"
+        ]
+        resources = ["*"]
+    },
+    {
+        sid = "AllowSnsDecrypt"
+        effect = "Allow"
+        principals = [
+            {
+                type = "Service"
+                identifiers = ["sns.amazonaws.com"]
+            }
+        ]
+        actions = [
+            "kms:Decrypt",
+            "kms:GenerateDataKey*",
+            "kms:Encrypt",
+            "kms:Decrypt"
+        ]
+        resources = ["*"]
     },
     {
       sid    = "AllowCloudWatchLogs"
@@ -72,6 +86,58 @@ module "kms" {
       resources = [
         "*"
       ]
+    },
+    {
+      sid    = "AllowEc2IsolateLambdaRole"
+      effect = "Allow"
+      principals = [
+        {
+          type        = "AWS"
+          identifiers = [aws_iam_role.lambda_ec2_isolate_execution_role.arn]
+        }
+      ]
+      actions = [
+        "kms:Encrypt",
+        "kms:Decrypt",
+        "kms:GenerateDataKey*",
+        "kms:DescribeKey"
+      ]
+      resources = ["*"]
+    },
+    {
+      sid    = "AllowEc2AutostopLambdaRole"
+      effect = "Allow"
+
+      principals = [
+        {
+          type        = "AWS"
+          identifiers = [aws_iam_role.lambda_autostop_execution_role.arn]
+        }
+      ]
+      actions = [
+        "kms:Encrypt",
+        "kms:Decrypt",
+        "kms:GenerateDataKey*",
+        "kms:DescribeKey"
+      ]
+      resources = ["*"]
+    },
+    {
+      sid    = "AllowIpEnrichLambdaRole"
+      effect = "Allow"
+      principals = [
+        {
+          type        = "AWS"
+          identifiers = [aws_iam_role.lambda_ip_enrich.arn]
+        }
+      ]
+      actions = [
+        "kms:Encrypt",
+        "kms:Decrypt",
+        "kms:GenerateDataKey*",
+        "kms:DescribeKey"
+      ]
+      resources = ["*"]
     }
   ]
 
