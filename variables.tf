@@ -43,6 +43,18 @@ variable "private_sub_az" {
   default     = "us-east-1a"
 }
 
+variable "lambda_sub_cidr" {
+  description = "CIDR address for the Lambda Private Subnet"
+  type        = string
+  default     = "10.0.0.0/24"
+}
+
+variable "lambda_sub_az" {
+  description = "Availability Zone for the Lambda Private Subnet"
+  type        = string
+  default     = "us-east-1a"
+}
+
 variable "bastion_allowed_cidrs" {
   description = "The CIDR(s) of the local machine(s) allowed to access the Bastion Host instance"
   type        = list(string)
