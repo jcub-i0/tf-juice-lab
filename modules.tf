@@ -23,7 +23,6 @@ module "kms" {
       actions = [
         "kms:GenerateDataKey*",
         "kms:Encrypt",
-        "kms:Decrypt",
         "kms:DescribeKey",
         "kms:CreateGrant"
       ]
