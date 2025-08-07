@@ -442,6 +442,7 @@ resource "aws_instance" "juice-shop" {
   subnet_id              = aws_subnet.private.id
   key_name               = aws_key_pair.juice_key.key_name
   vpc_security_group_ids = [aws_security_group.juice_sg.id]
+  iam_instance_profile   = aws_iam_instance_profile.ssm_profile.name
   monitoring             = true
 
   #checkov:skip=CKV_AWS_135: This instance is EBS optimized, despite what Checkov says; t3 instance types are EBS optimized.  
