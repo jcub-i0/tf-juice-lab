@@ -1,5 +1,3 @@
-
-
 # Interface VPC Endpoints for EC2 Isolation Lambda function's needs
 resource "aws_vpc_endpoint" "ec2" {
   vpc_id              = aws_vpc.tf-juice-lab.id
@@ -64,6 +62,7 @@ resource "aws_vpc_endpoint" "cloudtrail" {
   private_dns_enabled = true
 }
 
+# Gateway VPC Endpoint
 resource "aws_vpc_endpoint" "s3" {
   vpc_id            = aws_vpc.tf-juice-lab.id
   service_name      = "com.amazonaws.${var.aws_region}.s3"
