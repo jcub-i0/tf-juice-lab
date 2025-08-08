@@ -311,11 +311,11 @@ resource "aws_security_group" "lambda_ec2_autostop_sg" {
   vpc_id      = aws_vpc.tf-juice-lab.id
 
   egress {
-    from_port   = 443
-    to_port     = 443
-    protocol    = "tcp"
+    from_port       = 443
+    to_port         = 443
+    protocol        = "tcp"
     security_groups = [aws_security_group.vpc_endpoints_sg.id]
-    description = "Allow Lambda EC2 Autostop function to only communicate with VPC endpoints inside main VPC"
+    description     = "Allow Lambda EC2 Autostop function to only communicate with VPC endpoints inside main VPC"
   }
 
   tags = {
