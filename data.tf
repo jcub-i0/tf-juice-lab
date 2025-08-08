@@ -111,6 +111,17 @@ data "aws_iam_policy_document" "lambda_general_purpose_s3_read" {
 ## IAM permission policy document for Lambda EC2 isolation function
 data "aws_iam_policy_document" "lambda_ec2_isolate_permissions" {
   statement {
+    sid    = "KMSDecryptEncrypt"
+    effect = "Allow"
+    actions = [
+      "kms:Encrypt",
+      "kms:Decrypt",
+      "kms:GenerateDataKey",
+      "kms:DescribeKey"
+    ]
+    resources = [module.kms.key_arn]
+  }
+  statement {
     sid    = "EC2IsolationActions"
     effect = "Allow"
     actions = [
@@ -190,6 +201,17 @@ data "aws_iam_policy_document" "lambda_ec2_isolate_permissions" {
 ## IAM permission policy for EC2 Auto Stop on Idle Lambda function
 data "aws_iam_policy_document" "lambda_ec2_autostop_permissions" {
   statement {
+    sid    = "KMSDecryptEncrypt"
+    effect = "Allow"
+    actions = [
+      "kms:Encrypt",
+      "kms:Decrypt",
+      "kms:GenerateDataKey",
+      "kms:DescribeKey"
+    ]
+    resources = [module.kms.key_arn]
+  }
+  statement {
     effect = "Allow"
     actions = [
       "ec2:DescribeInstances",
@@ -227,6 +249,17 @@ data "aws_iam_policy_document" "lambda_ec2_autostop_permissions" {
 
 ## Lambda permission policy for IP Enrichment function
 data "aws_iam_policy_document" "ip_enrich_permissions" {
+  statement {
+    sid = "KMSDecryptEncrypt"
+    effect = "Allow"
+    actions = [
+      "kms:Encrypt",
+      "kms:Decrypt",
+      "kms:GenerateDataKey",
+      "kms:DescribeKey"
+    ]
+    resources = [module.kms.key_arn]
+  }
   statement {
     effect = "Allow"
     actions = [
