@@ -62,6 +62,15 @@ resource "aws_vpc_endpoint" "cloudtrail" {
   private_dns_enabled = true
 }
 
+resource "aws_vpc_endpoint" "monitoring" {
+  vpc_id              = aws_vpc.tf-juice-lab.id
+  service_name        = "com.amazonaws.${var.aws_region}.monitoring"
+  vpc_endpoint_type   = "Interface"
+  subnet_ids          = [aws_subnet.lambda_private.id]
+  security_group_ids  = [aws_security_group.vpc_endpoints_sg.id]
+  private_dns_enabled = true
+}
+
 # Gateway VPC Endpoint
 resource "aws_vpc_endpoint" "s3" {
   vpc_id            = aws_vpc.tf-juice-lab.id
