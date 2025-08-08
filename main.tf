@@ -293,10 +293,11 @@ resource "aws_security_group" "lambda_ec2_isolation_sg" {
   vpc_id      = aws_vpc.tf-juice-lab.id
 
   egress {
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
+    from_port       = 443
+    to_port         = 443
+    protocol        = "tcp"
+    security_groups = [aws_security_group.vpc_endpoints_sg.id]
+    description     = "Allow Lambda EC2 Isolation function to only communicate with VPC endpoints inside main VPC"
   }
 
   tags = {
@@ -344,11 +345,20 @@ resource "aws_security_group" "vpc_endpoints_sg" {
   description = "Allow Lambda subnets to talk to AWS services over HTTPS"
   vpc_id      = aws_vpc.tf-juice-lab.id
 
+  ingress {
+    from_port   = 443
+    to_port     = 443
+    protocol    = "tcp"
+    cidr_blocks = [aws_subnet.lambda_private.cidr_block]
+    description = "Allow Lambda functions to communicate with VPC endpoints"
+  }
+
   egress {
     from_port   = 443
     to_port     = 443
     protocol    = "tcp"
-    cidr_blocks = [var.vpc_cidr]
+    cidr_blocks = [aws_subnet.lambda_private.cidr_block]
+    description = "Allow VPC endpoints to communicate with Lambda functions"
   }
 
   tags = {
