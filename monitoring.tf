@@ -419,6 +419,10 @@ resource "aws_lambda_function" "ec2_isolation" {
   filename         = data.archive_file.lambda_ec2_isolate_zip.output_path
   handler          = "ec2_isolate_function.lambda_handler"
   source_code_hash = data.archive_file.lambda_ec2_isolate_zip.output_base64sha256
+  vpc_config {
+    subnet_ids         = [aws_subnet.lambda_private.id]
+    security_group_ids = [aws_security_group.lambda_ec2_isolation_sg.id]
+  }
 
   reserved_concurrent_executions = 5
   kms_key_arn                    = module.kms.key_arn
