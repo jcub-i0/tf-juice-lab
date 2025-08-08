@@ -512,7 +512,7 @@ resource "aws_lambda_function" "ec2_autostop" {
   kms_key_arn                    = module.kms.key_arn
 
   vpc_config {
-    subnet_ids = [aws_subnet.lambda_private.id]
+    subnet_ids         = [aws_subnet.lambda_private.id]
     security_group_ids = [aws_security_group.lambda_ec2_autostop_sg.id]
   }
 

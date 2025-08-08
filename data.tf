@@ -245,6 +245,16 @@ data "aws_iam_policy_document" "lambda_ec2_autostop_permissions" {
     ]
     resources = [aws_sqs_queue.ec2_autostop_dlq.arn]
   }
+  statement {
+    sid    = "AllowEC2NetworkInterfaces"
+    effect = "Allow"
+    actions = [
+      "ec2:CreateNetworkInterface",
+      "ec2:DescribeNetworkInterfaces",
+      "ec2:DeleteNetworkInterface"
+    ]
+    resources = ["*"]
+  }
 }
 
 ## Lambda permission policy for IP Enrichment function
