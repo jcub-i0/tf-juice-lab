@@ -608,10 +608,6 @@ resource "random_id" "random_suffix" {
 resource "aws_s3_bucket" "general_purpose" {
   bucket = "general-purpose-${random_id.random_suffix.hex}"
 
-  lifecycle {
-    prevent_destroy = true
-  }
-
   tags = {
     Name        = "General Purpose"
     Environment = var.environment
