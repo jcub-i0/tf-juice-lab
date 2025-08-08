@@ -225,7 +225,9 @@ data "aws_iam_policy_document" "lambda_ec2_autostop_permissions" {
   statement {
     effect = "Allow"
     actions = [
-      "cloudwatch:GetMetricStatistics"
+      "cloudwatch:GetMetricStatistics",
+      "cloudwatch:ListMetrics",
+      "cloudwatch:GetMetricData"
     ]
     resources = ["*"]
   }
