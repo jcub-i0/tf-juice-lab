@@ -329,10 +329,11 @@ resource "aws_security_group" "lambda_ip_enrich_sg" {
   vpc_id      = aws_vpc.tf-juice-lab.id
 
   egress {
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
+    from_port   = 443
+    to_port     = 443
+    protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
+    description = "Allow Lambda IP Enrichment to reach out to AbuseIPDB for IP address data"
   }
 
   tags = {
