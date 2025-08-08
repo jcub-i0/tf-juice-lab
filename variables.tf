@@ -46,7 +46,7 @@ variable "private_sub_az" {
 variable "lambda_sub_cidr" {
   description = "CIDR address for the Lambda Private Subnet"
   type        = string
-  default     = "10.0.0.0/24"
+  default     = "10.0.2.0/24"
 }
 
 variable "lambda_sub_az" {
