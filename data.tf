@@ -146,11 +146,13 @@ data "aws_iam_policy_document" "lambda_ec2_isolate_permissions" {
     resources = ["*"]
   }
   statement {
-    sid       = "SNSPublish"
-    actions   = ["sns:Publish"]
+    sid    = "SNSPublish"
+    effect = "Allow"
+    actions = [
+      "sns:Publish"
+    ]
     resources = [aws_sns_topic.alerts.arn]
   }
-
   statement {
     sid = "SecurityHubRead"
     actions = [
@@ -220,7 +222,6 @@ data "aws_iam_policy_document" "lambda_ec2_autostop_permissions" {
     ]
     resources = ["*"]
   }
-
   statement {
     effect = "Allow"
     actions = [
@@ -228,7 +229,6 @@ data "aws_iam_policy_document" "lambda_ec2_autostop_permissions" {
     ]
     resources = ["*"]
   }
-
   statement {
     effect = "Allow"
     actions = [
@@ -271,6 +271,23 @@ data "aws_iam_policy_document" "ip_enrich_permissions" {
     resources = [module.kms.key_arn]
   }
   statement {
+    sid    = "AllowSecurityHubRead"
+    effect = "Allow"
+    actions = [
+      "securityhub:GetFindings"
+    ]
+    resources = ["*"]
+  }
+  statement {
+    effect = "Allow"
+    actions = [
+      "s3:PutObject",
+      "s3:PutObjectAcl",
+      "s3:PutObjectTagging",
+    ]
+    resources = ["*"]
+  }
+  statement {
     effect = "Allow"
     actions = [
       "securityhub:GetFindings"
@@ -285,6 +302,14 @@ data "aws_iam_policy_document" "ip_enrich_permissions" {
       "logs:PutLogEvents"
     ]
     resources = ["*"]
+  }
+  statement {
+    sid    = "SNSPublish"
+    effect = "Allow"
+    actions = [
+      "sns:Publish"
+    ]
+    resources = [aws_sns_topic.alerts.arn]
   }
   statement {
     effect = "Allow"
