@@ -239,6 +239,14 @@ data "aws_iam_policy_document" "lambda_ec2_autostop_permissions" {
     resources = ["*"]
   }
   statement {
+    sid    = "SNSPublish"
+    effect = "Allow"
+    actions = [
+      "sns:Publish"
+    ]
+    resources = [aws_sns_topic.alerts.arn]
+  }
+  statement {
     effect = "Allow"
     actions = [
       "sqs:SendMessage"
