@@ -41,7 +41,9 @@ provider "aws" {
 }
 
 resource "aws_vpc" "tf-juice-lab" {
-  cidr_block = var.vpc_cidr
+  cidr_block           = var.vpc_cidr
+  enable_dns_support   = true
+  enable_dns_hostnames = true
   tags = {
     Name      = "TF-Juice-Lab"
     Terraform = "true"
@@ -132,7 +134,7 @@ resource "aws_route_table_association" "public_assc" {
 }
 
 resource "aws_route_table_association" "lambda_assc" {
-  subnet_id = aws_subnet.lambda_private.id
+  subnet_id      = aws_subnet.lambda_private.id
   route_table_id = aws_route_table.lambda.id
 }
 
@@ -282,6 +284,75 @@ resource "aws_security_group" "quarantine_sg" {
 
   tags = {
     Name = "quarantine_sg"
+  }
+}
+
+resource "aws_security_group" "lambda_ec2_isolation_sg" {
+  name        = "lambda-ec2-isolation-sg"
+  description = "Security Group for EC2 Isolation Lambda function"
+  vpc_id      = aws_vpc.tf-juice-lab.id
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags = {
+    Name = "lambda_ec2_isolation"
+  }
+}
+
+resource "aws_security_group" "lambda_ec2_autostop_sg" {
+  name        = "lambda-ec2-autostop-sg"
+  description = "Security Group for EC2 Autostop function"
+  vpc_id      = aws_vpc.tf-juice-lab.id
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags = {
+    Name = "lambda_ec2_autostop"
+  }
+}
+
+resource "aws_security_group" "lambda_ip_enrich_sg" {
+  name        = "lambda-ip-enrich-sg"
+  description = "Security Group for IP Enrichment Lambda function"
+  vpc_id      = aws_vpc.tf-juice-lab.id
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags = {
+    Name = "lambda_ip_enrichment"
+  }
+}
+
+# Security Group for all VPC endpoints
+resource "aws_security_group" "vpc_endpoints_sg" {
+  name        = "vpc-endpoints-sg"
+  description = "Allow Lambda subnets to talk to AWS services over HTTPS"
+  vpc_id      = aws_vpc.tf-juice-lab.id
+
+  egress {
+    from_port   = 443
+    to_port     = 443
+    protocol    = "tcp"
+    cidr_blocks = [var.vpc_cidr]
+  }
+
+  tags = {
+    Name = "vpc_endpoints_sg"
   }
 }
 
