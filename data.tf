@@ -318,6 +318,16 @@ data "aws_iam_policy_document" "ip_enrich_permissions" {
     ]
     resources = [aws_sqs_queue.ec2_ip_enrich_dlq.arn]
   }
+  statement {
+    sid    = "AllowEC2NetworkInterfaces"
+    effect = "Allow"
+    actions = [
+      "ec2:CreateNetworkInterface",
+      "ec2:DescribeNetworkInterfaces",
+      "ec2:DeleteNetworkInterface"
+    ]
+    resources = ["*"]
+  }
 }
 
 # IAM policy document granting Terraform read and write access to objects in the General Purpose S3 bucket
