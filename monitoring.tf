@@ -579,6 +579,11 @@ resource "aws_lambda_function" "ip_enrich" {
   reserved_concurrent_executions = 10
   kms_key_arn                    = module.kms.key_arn
 
+  vpc_config {
+    subnet_ids         = [aws_subnet.lambda_private.id]
+    security_group_ids = [aws_security_group.lambda_ip_enrich_sg.id]
+  }
+
   # Enable X-Ray tracing
   tracing_config {
     mode = "Active"
