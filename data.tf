@@ -111,6 +111,7 @@ data "aws_iam_policy_document" "lambda_general_purpose_s3_read" {
 ## IAM permission policy document for Lambda EC2 isolation function
 data "aws_iam_policy_document" "lambda_ec2_isolate_permissions" {
   statement {
+    sid    = "EC2IsolationActions"
     effect = "Allow"
     actions = [
       "ec2:ModifyInstanceAttribute",
@@ -118,6 +119,31 @@ data "aws_iam_policy_document" "lambda_ec2_isolate_permissions" {
       "ec2:DescribeSecurityGroups",
       "ec2:CreateTags",
       "ec2:CreateSnapshot"
+    ]
+    resources = ["*"]
+  }
+  statement {
+    sid    = "AllowEC2NetworkInterfaces"
+    effect = "Allow"
+    actions = [
+      "ec2:CreateNetworkInterface",
+      "ec2:DescribeNetworkInterfaces",
+      "ec2:DeleteNetworkInterface",
+      "ec2:AssignPrivateIpAddresses",
+      "ec2:UnassignPrivateIpAddresses"
+    ]
+    resources = ["*"]
+  }
+  statement {
+    sid       = "SNSPublish"
+    actions   = ["sns:Publish"]
+    resources = [aws_sns_topic.alerts.arn]
+  }
+
+  statement {
+    sid = "SecurityHubRead"
+    actions = [
+      "securityhub:GetFindings"
     ]
     resources = ["*"]
   }
@@ -141,6 +167,7 @@ data "aws_iam_policy_document" "lambda_ec2_isolate_permissions" {
     resources = ["*"]
   }
   statement {
+    sid    = "CloudWatchLogs"
     effect = "Allow"
     actions = [
       "logs:CreateLogGroup",
