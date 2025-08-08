@@ -32,6 +32,10 @@ resource "aws_cloudwatch_log_group" "flow_logs_group" {
 resource "aws_s3_bucket" "centralized_logs" {
   bucket = "juice-shop-logs-${random_id.random_suffix.hex}"
 
+  lifecycle {
+    prevent_destroy = true
+  }
+
   tags = {
     Name        = "Juice Shop Logs"
     Environment = var.environment
