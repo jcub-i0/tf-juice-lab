@@ -250,7 +250,7 @@ data "aws_iam_policy_document" "lambda_ec2_autostop_permissions" {
 ## Lambda permission policy for IP Enrichment function
 data "aws_iam_policy_document" "ip_enrich_permissions" {
   statement {
-    sid = "KMSDecryptEncrypt"
+    sid    = "KMSDecryptEncrypt"
     effect = "Allow"
     actions = [
       "kms:Encrypt",
