@@ -511,6 +511,11 @@ resource "aws_lambda_function" "ec2_autostop" {
   reserved_concurrent_executions = 5
   kms_key_arn                    = module.kms.key_arn
 
+  vpc_config {
+    subnet_ids = [aws_subnet.lambda_private.id]
+    security_group_ids = [aws_security_group.lambda_ec2_autostop_sg.id]
+  }
+
   # Enable X-Ray tracing
   tracing_config {
     mode = "Active"
