@@ -199,6 +199,7 @@ data "aws_iam_policy_document" "lambda_ec2_isolate_permissions" {
       aws_sqs_queue.ec2_isolation_dlq.arn
     ]
   }
+  #checkov:skip=CKV_AWS_111: ec2:ModifyInstanceAttribute requires "*" resource due to AWS API limitations
 }
 
 ## IAM permission policy for EC2 Auto Stop on Idle Lambda function
