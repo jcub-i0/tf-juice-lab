@@ -582,4 +582,5 @@ data "aws_iam_policy_document" "vpc_flow_logs_inline_policy" {
     resources = ["*"]
   }
   #checkov:skip=CKV_AWS_111: CloudWatch Logs actions require "*" resource due to AWS API limitations
+  #checkov:skip=CKV_AWS_356: CloudWatch Logs actions require "*" resource due to AWS API limitations
 }
