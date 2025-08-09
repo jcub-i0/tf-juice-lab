@@ -338,7 +338,7 @@ data "aws_iam_policy_document" "ip_enrich_permissions" {
     resources = ["*"]
   }
   #checkov:skip=CKV_AWS_356: ec2 network interface actions require "*" resource due to AWS API limitations
-
+  #checkov:skip=CKV_AWS_111: CloudWatch Logs actions require "*" resource due to AWS API limitations
 }
 
 # IAM policy document granting Terraform read and write access to objects in the General Purpose S3 bucket
