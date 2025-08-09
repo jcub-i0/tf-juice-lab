@@ -78,6 +78,7 @@ data "aws_iam_policy_document" "config_permissions" {
     resources = ["*"]
   }
   #checkov:skip=CKV_AWS_356: AWS Config requires wildcard resource access for full resource monitoring
+  #checkov:skip=CDV_AWS_111: AWS Config requires wildcard resource access for full resource monitoring and remediation
 }
 
 # Lambda IAM
