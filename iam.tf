@@ -268,6 +268,7 @@ resource "aws_iam_role_policy" "config_remediation_policy" {
       }
     ]
   })
+  #checkov:skip=CKV_AWS_355: This policy requires "*" because the remediation must apply to any S3 bucket in the account
 }
 
 # Permit EventBridge to publish to "Alerts" SNS topic
