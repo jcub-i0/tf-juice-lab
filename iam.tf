@@ -236,6 +236,11 @@ resource "aws_iam_role" "config_remediation_role" {
         Service = "ssm.amazonaws.com"
       },
       Action = "sts:AssumeRole"
+      Condition = {
+        StringEquals = {
+          "aws:SourceAccount" = var.account_id
+        }
+      }
     }]
   })
 }
@@ -269,6 +274,7 @@ resource "aws_iam_role_policy" "config_remediation_policy" {
     ]
   })
   #checkov:skip=CKV_AWS_355: This policy requires "*" because the remediation must apply to any S3 bucket in the account
+  #checkov:skip=CKV_AWS_289 Remediation requires ability to modify bucket policy/public access for any bucket in account
 }
 
 # Permit EventBridge to publish to "Alerts" SNS topic
