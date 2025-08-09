@@ -306,13 +306,6 @@ data "aws_iam_policy_document" "ip_enrich_permissions" {
   statement {
     effect = "Allow"
     actions = [
-      "securityhub:GetFindings"
-    ]
-    resources = ["*"]
-  }
-  statement {
-    effect = "Allow"
-    actions = [
       "logs:CreateLogGroup",
       "logs:CreateLogStream",
       "logs:PutLogEvents"
