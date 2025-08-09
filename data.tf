@@ -301,7 +301,7 @@ data "aws_iam_policy_document" "ip_enrich_permissions" {
       "s3:PutObjectAcl",
       "s3:PutObjectTagging",
     ]
-    resources = ["*"]
+    resources = ["arn:aws:s3:::${aws_s3_bucket.centralized_logs.bucket}/*"]
   }
   statement {
     effect = "Allow"
@@ -344,7 +344,7 @@ data "aws_iam_policy_document" "ip_enrich_permissions" {
     ]
     resources = ["*"]
   }
-  #checkov:skip=CKV_AWS_356 Reason: ec2 network interface actions require "*" resource due to AWS API limitations
+  #checkov:skip=CKV_AWS_356: ec2 network interface actions require "*" resource due to AWS API limitations
 
 }
 
