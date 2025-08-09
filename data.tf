@@ -269,6 +269,8 @@ data "aws_iam_policy_document" "lambda_ec2_autostop_permissions" {
     ]
     resources = ["*"]
   }
+  #checkov:skip=CKV_AWS_111: ec2:StopInstances and related actions require "*" resource due to AWS API limitations
+  #checkov:skip=CKV_AWS_356: Required "*" resource for EC2 stop and network interface action due to AWS API limitations
 }
 
 ## Lambda permission policy for IP Enrichment function
