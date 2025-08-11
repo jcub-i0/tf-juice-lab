@@ -113,6 +113,6 @@ variable "account_id" {
 
 variable "secondary_aws_region" {
   description = "The AWS region for backup resources"
-  type = string
-  default = "us-west-1"
+  type        = string
+  default     = "us-west-1"
 }
