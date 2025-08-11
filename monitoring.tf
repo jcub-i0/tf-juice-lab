@@ -457,7 +457,7 @@ resource "aws_lambda_function" "ec2_isolation" {
   depends_on = [
     aws_iam_role_policy.lambda_ec2_isolate_policy,
     aws_sqs_queue_policy.ec2_isolate_dlq_policy
-    ]
+  ]
 }
 
 ### EventBridge Rule to trigger EC2 Isolation Lambda function
