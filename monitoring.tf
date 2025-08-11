@@ -419,6 +419,7 @@ resource "aws_lambda_function" "ec2_isolation" {
   filename         = data.archive_file.lambda_ec2_isolate_zip.output_path
   handler          = "ec2_isolate_function.lambda_handler"
   source_code_hash = data.archive_file.lambda_ec2_isolate_zip.output_base64sha256
+
   vpc_config {
     subnet_ids         = [aws_subnet.lambda_private.id]
     security_group_ids = [aws_security_group.lambda_ec2_isolation_sg.id]
@@ -453,7 +454,10 @@ resource "aws_lambda_function" "ec2_isolation" {
     Name = "EC2IsolationLambda"
   }
 
-  depends_on = [aws_iam_role_policy.lambda_ec2_isolate_policy]
+  depends_on = [
+    aws_iam_role_policy.lambda_ec2_isolate_policy,
+    aws_sqs_queue_policy.ec2_isolate_dlq_policy
+    ]
 }
 
 ### EventBridge Rule to trigger EC2 Isolation Lambda function
@@ -515,6 +519,10 @@ resource "aws_lambda_function" "ec2_autostop" {
     subnet_ids         = [aws_subnet.lambda_private.id]
     security_group_ids = [aws_security_group.lambda_ec2_autostop_sg.id]
   }
+
+  depends_on = [
+    aws_sqs_queue_policy.ec2_autostop_lambda_to_sqs
+  ]
 
   # Enable X-Ray tracing
   tracing_config {
