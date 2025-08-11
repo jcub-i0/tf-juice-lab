@@ -440,8 +440,8 @@ data "aws_iam_policy_document" "ip_enrich_lambda_to_sqs" {
     effect = "Allow"
 
     principals {
-      type        = "Service"
-      identifiers = ["lambda.amazonaws.com"]
+      type        = "AWS"
+      identifiers = [aws_iam_role.lambda_ip_enrich.arn]
     }
 
     actions = [
@@ -449,12 +449,6 @@ data "aws_iam_policy_document" "ip_enrich_lambda_to_sqs" {
     ]
 
     resources = [aws_sqs_queue.ip_enrich_dlq.arn]
-
-    condition {
-      test     = "ArnEquals"
-      variable = "aws:SourceArn"
-      values   = [aws_lambda_function.ip_enrich.arn]
-    }
   }
 }
 
