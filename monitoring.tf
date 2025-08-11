@@ -30,7 +30,7 @@ resource "aws_cloudwatch_log_group" "flow_logs_group" {
 }
 
 resource "aws_s3_bucket" "centralized_logs" {
-  bucket = "tf-juice-shop-logs-${random_id.random_suffix.hex}"
+  bucket = "juice-shop-logs-${random_id.random_suffix.hex}"
 
   tags = {
     Name        = "TF-Juice-Lab Logs"
@@ -578,6 +578,10 @@ resource "aws_lambda_function" "ip_enrich" {
 
   reserved_concurrent_executions = 10
   kms_key_arn                    = module.kms.key_arn
+
+  depends_on = [
+    aws_sqs_queue_policy.ip_enrich_lambda_to_sqs
+  ]
 
   vpc_config {
     subnet_ids         = [aws_subnet.lambda_private.id]
