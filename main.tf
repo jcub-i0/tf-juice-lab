@@ -40,6 +40,11 @@ provider "aws" {
   region = var.aws_region
 }
 
+provider "aws" {
+  alias  = "secondary"
+  region = var.secondary_aws_region
+}
+
 resource "aws_vpc" "tf-juice-lab" {
   cidr_block           = var.vpc_cidr
   enable_dns_support   = true
@@ -605,6 +610,7 @@ resource "random_id" "random_suffix" {
   byte_length = 4
 }
 
+# General Purpose S3 bucket
 resource "aws_s3_bucket" "general_purpose" {
   bucket = "general-purpose-${random_id.random_suffix.hex}"
 
@@ -670,3 +676,15 @@ resource "aws_s3_bucket_logging" "general_purpose_logging" {
   target_bucket = aws_s3_bucket.centralized_logs.bucket
   target_prefix = "s3-access-logs/${aws_s3_bucket.general_purpose.bucket}/"
 }
+
+## General Purpose S3 bucket CRR
+resource "aws_s3_bucket" "general_purpose_replica" {
+  bucket = "general-purpose-replica-${random_id.random_suffix.hex}"
+
+  tags = {
+    Name        = "General Purpose Replica"
+    Environment = var.environment
+    Purpose     = "CRR for General Purpose S3 bucket"
+  }
+}
+
