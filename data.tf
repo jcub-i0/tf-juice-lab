@@ -201,7 +201,6 @@ data "aws_iam_policy_document" "lambda_ec2_isolate_permissions" {
   }
   #checkov:skip=CKV_AWS_111: ec2:ModifyInstanceAttribute requires "*" resource due to AWS API limitations
   #checkov:skip=CKV_AWS_356: ec2:ModifyInstanceAttribute and related actions require "*" resource due to AWS API constraints
-
 }
 
 ## IAM permission policy for EC2 Auto Stop on Idle Lambda function
@@ -390,8 +389,8 @@ data "aws_iam_policy_document" "ec2_isolate_lambda_to_sqs" {
     effect = "Allow"
 
     principals {
-      type        = "Service"
-      identifiers = ["lambda.amazonaws.com"]
+      type        = "AWS"
+      identifiers = [aws_iam_role.lambda_ec2_isolate_execution_role.arn]
     }
 
     actions = [
@@ -399,12 +398,6 @@ data "aws_iam_policy_document" "ec2_isolate_lambda_to_sqs" {
     ]
 
     resources = [aws_sqs_queue.ec2_isolation_dlq.arn]
-
-    condition {
-      test     = "ArnEquals"
-      variable = "aws:SourceArn"
-      values   = [aws_lambda_function.ec2_isolation.arn]
-    }
   }
 }
 
@@ -415,8 +408,8 @@ data "aws_iam_policy_document" "ec2_autostop_lambda_to_sqs" {
     effect = "Allow"
 
     principals {
-      type        = "Service"
-      identifiers = ["lambda.amazonaws.com"]
+      type        = "AWS"
+      identifiers = [aws_iam_role.lambda_autostop_execution_role.arn]
     }
 
     actions = [
@@ -424,12 +417,6 @@ data "aws_iam_policy_document" "ec2_autostop_lambda_to_sqs" {
     ]
 
     resources = [aws_sqs_queue.ec2_autostop_dlq.arn]
-
-    condition {
-      test     = "ArnEquals"
-      variable = "aws:SourceArn"
-      values   = [aws_lambda_function.ec2_autostop.arn]
-    }
   }
 }
 
