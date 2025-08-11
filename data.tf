@@ -325,7 +325,7 @@ data "aws_iam_policy_document" "ip_enrich_permissions" {
     actions = [
       "sqs:SendMessage"
     ]
-    resources = [aws_sqs_queue.ec2_ip_enrich_dlq.arn]
+    resources = [aws_sqs_queue.ip_enrich_dlq.arn]
   }
   statement {
     sid    = "AllowEC2NetworkInterfaces"
@@ -433,8 +433,8 @@ data "aws_iam_policy_document" "ec2_autostop_lambda_to_sqs" {
   }
 }
 
-# Create IAM policy document to allow EC2 AutoStop Lambda to publish to EC2 AutoStop SQS DLQ
-data "aws_iam_policy_document" "ec2_ip_enrich_lambda_to_sqs" {
+# Create IAM policy document to allow IP Enrichment Lambda to publish to IP Enrichmnet SQS DLQ
+data "aws_iam_policy_document" "ip_enrich_lambda_to_sqs" {
   statement {
     sid    = "Allow-Ec2-IpEnrich-Lambda-To-Sqs"
     effect = "Allow"
@@ -448,7 +448,7 @@ data "aws_iam_policy_document" "ec2_ip_enrich_lambda_to_sqs" {
       "sqs:SendMessage"
     ]
 
-    resources = [aws_sqs_queue.ec2_ip_enrich_dlq.arn]
+    resources = [aws_sqs_queue.ip_enrich_dlq.arn]
 
     condition {
       test     = "ArnEquals"

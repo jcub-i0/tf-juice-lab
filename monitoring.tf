@@ -590,7 +590,7 @@ resource "aws_lambda_function" "ip_enrich" {
   }
 
   dead_letter_config {
-    target_arn = aws_sqs_queue.ec2_ip_enrich_dlq.arn
+    target_arn = aws_sqs_queue.ip_enrich_dlq.arn
   }
 
   #checkov:skip=CKV_AWS_272: source_code_hash is sufficient integrity validation for this environment
@@ -639,7 +639,7 @@ resource "aws_cloudwatch_event_target" "securityhub_finding_event_target_ip_enri
 }
 
 ### SQS DLQ for EC2 IP Enrichment Lambda
-resource "aws_sqs_queue" "ec2_ip_enrich_dlq" {
+resource "aws_sqs_queue" "ip_enrich_dlq" {
   name              = "ec2-ip-enrich-lambda-dlq"
   kms_master_key_id = module.kms.key_arn
 }
