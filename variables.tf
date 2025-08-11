@@ -110,3 +110,9 @@ variable "account_id" {
   description = "The Terraform user's AWS account ID"
   type        = string
 }
+
+variable "secondary_aws_region" {
+  description = "The AWS region for backup resources"
+  type = string
+  default = "us-west-1"
+}
