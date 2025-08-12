@@ -187,7 +187,7 @@ module "general_purpose_replica_bucket" {
   }
 
   logging = {
-    target_bucket = aws_s3_bucket.centralized_logs_replica_bucket.id
+    target_bucket = module.centralized_logs_replica_bucket.s3_bucket_id
     target_prefix = "log/general-purpose-replica/"
   }
 
