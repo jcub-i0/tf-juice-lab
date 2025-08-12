@@ -194,6 +194,42 @@ resource "aws_iam_role_policy" "general_purpose_replication_policy" {
   })
 }
 
+## IAM policy for General Purpose Replica bucket to allow General Purpose S3 to perform CRR
+resource "aws_iam_role_policy" "centralized_logs_replication_policy" {
+  role = aws_iam_role.replication_role.id
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Action = [
+          "s3:GetObjectVersion",
+          "s3:GetObjectVersionAcl",
+          "s3:GetObjectVersionForReplication",
+          "s3:ListBucket"
+        ]
+        Resource = [
+          aws_s3_bucket.centralized_logs.arn,
+          "${aws_s3_bucket.centralized_logs.arn}/*"
+        ]
+      },
+      {
+        Effect = "Allow"
+        Action = [
+          "s3:ReplicateObject",
+          "s3:ReplicateDelete",
+          "s3:ReplicateTags",
+        ]
+        Resource = [
+          module.centralized_logs_replica_bucket.s3_bucket_arn,
+          "${module.centralized_logs_replica_bucket.s3_bucket_arn}/*"
+        ]
+      }
+    ]
+  })
+}
+
 ## Allow CloudTrail to publish to CloudTrail Notifications SNS Topic
 resource "aws_sns_topic_policy" "cloudtrail_sns_policy" {
   arn = aws_sns_topic.cloudtrail_notifications.arn
