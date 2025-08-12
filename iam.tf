@@ -194,7 +194,7 @@ resource "aws_iam_role_policy" "general_purpose_replication_policy" {
   })
 }
 
-## IAM policy for General Purpose Replica bucket to allow General Purpose S3 to perform CRR
+## IAM policy for Centralized Logs Replica bucket to allow Centralized Logs S3 to perform CRR
 resource "aws_iam_role_policy" "centralized_logs_replication_policy" {
   role = aws_iam_role.replication_role.id
 
