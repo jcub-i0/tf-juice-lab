@@ -11,7 +11,7 @@ terraform {
   required_providers {
     aws = {
       source  = "hashicorp/aws"
-      version = "~>6.0.0"
+      version = "~>6.6.0"
     }
     tls = {
       source  = "hashicorp/tls"
@@ -677,14 +677,27 @@ resource "aws_s3_bucket_logging" "general_purpose_logging" {
   target_prefix = "s3-access-logs/${aws_s3_bucket.general_purpose.bucket}/"
 }
 
-## General Purpose S3 bucket CRR
-resource "aws_s3_bucket" "general_purpose_replica" {
-  bucket = "general-purpose-replica-${random_id.random_suffix.hex}"
+### CRR Configuration for General Purpose S3 bucket
+resource "aws_s3_bucket_replication_configuration" "general_pupose_replication" {
+  bucket = aws_s3_bucket.general_purpose.bucket
 
-  tags = {
-    Name        = "General Purpose Replica"
-    Environment = var.environment
-    Purpose     = "CRR for General Purpose S3 bucket"
+  role = aws_iam_role.replication_role.arn
+
+  rule {
+    id     = "general-purpose-crr"
+    status = "Enabled"
+
+    destination {
+      bucket        = module.general_purpose_replica_bucket.s3_bucket_arn
+      storage_class = "STANDARD_IA"
+    }
+
+    filter {
+      prefix = ""
+    }
+
+    delete_marker_replication {
+      status = "Enabled"
+    }
   }
 }
-
