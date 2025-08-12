@@ -87,6 +87,27 @@ resource "aws_s3_bucket_policy" "centralized_logs_policy" {
             "aws:SourceAccount" = data.aws_caller_identity.current.account_id
           }
         }
+      },
+      {
+        Sid    = "AllowReplicationRoleReadFromLogsSource"
+        Effect = "Allow"
+        Principal = {
+          AWS = aws_iam_role.replication_role.arn
+        }
+        Action = [
+          "s3:GetObjectVersion",
+          "s3:GetObjectVersionAcl",
+          "s3:GetObjectVersionForReplication",
+          "s3:GetObjectLegalHold",
+          "s3:GetObjectRetention",
+          "s3:GetObjectTagging",
+          "s3:ListBucket",
+          "s3:ListBucketVersions"
+        ]
+        Resource = [
+          aws_s3_bucket.centralized_logs.arn,
+          "${aws_s3_bucket.centralized_logs.arn}/*"
+        ]
       }
     ]
   })
@@ -113,6 +134,27 @@ resource "aws_s3_bucket_policy" "general_purpose_policy" {
           "s3:GetObjectVersion"
         ],
         Resource = "${aws_s3_bucket.general_purpose.arn}/*"
+      },
+      {
+        Sid    = "AllowReplicationRoleReadFromSource"
+        Effect = "Allow"
+        Principal = {
+          AWS = aws_iam_role.replication_role.arn
+        }
+        Action = [
+          "s3:GetObjectVersion",
+          "s3:GetObjectVersionAcl",
+          "s3:GetObjectVersionForReplication",
+          "s3:GetObjectLegalHold",
+          "s3:GetObjectRetention",
+          "s3:GetObjectTagging",
+          "s3:ListBucket",
+          "s3:ListBucketVersions"
+        ]
+        Resource = [
+          aws_s3_bucket.general_purpose.arn,
+          "${aws_s3_bucket.general_purpose.arn}/*"
+        ]
       }
     ]
   })
@@ -218,10 +260,79 @@ resource "aws_iam_role_policy" "replication_policy" {
           module.centralized_logs_replica_bucket.s3_bucket_arn,
           "${module.centralized_logs_replica_bucket.s3_bucket_arn}/*"
         ]
+      },
+      {
+        Effect = "Allow"
+        Action = [
+          "kms:Decrypt",
+          "kms:Encrypt",
+          "kms:ReEncrypt*",
+          "kms:GenerateDataKey*",
+          "kms:DescribeKey"
+        ]
+        Resource = [
+          module.kms.key_arn,
+          module.kms_replica_secondary_region.key_arn
+        ]
       }
     ]
   })
 }
+
+resource "aws_s3_bucket_policy" "general_purpose_replica_policy" {
+  provider = aws.secondary
+  bucket   = module.general_purpose_replica_bucket.s3_bucket_id
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Sid    = "AllowReplicationRoleWriteToReplica"
+        Effect = "Allow"
+        Principal = {
+          AWS = aws_iam_role.replication_role.arn
+        }
+        Action = [
+          "s3:ReplicateObject",
+          "s3:ReplicateDelete",
+          "s3:ReplicateTags"
+        ]
+        Resource = [
+          module.general_purpose_replica_bucket.s3_bucket_arn,
+          "${module.general_purpose_replica_bucket.s3_bucket_arn}/*"
+        ]
+      }
+    ]
+  })
+}
+
+resource "aws_s3_bucket_policy" "centralized_logs_replica_policy" {
+  provider = aws.secondary
+  bucket   = module.centralized_logs_replica_bucket.s3_bucket_id
+
+  policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [
+      {
+        Sid    = "AllowReplicationRoleWriteToLogsReplica"
+        Effect = "Allow"
+        Principal = {
+          AWS = aws_iam_role.replication_role.arn
+        }
+        Action = [
+          "s3:ReplicateObject",
+          "s3:ReplicateDelete",
+          "s3:ReplicateTags"
+        ]
+        Resource = [
+          module.centralized_logs_replica_bucket.s3_bucket_arn,
+          "${module.centralized_logs_replica_bucket.s3_bucket_arn}/*"
+        ]
+      }
+    ]
+  })
+}
+
 
 ## Allow CloudTrail to publish to CloudTrail Notifications SNS Topic
 resource "aws_sns_topic_policy" "cloudtrail_sns_policy" {
