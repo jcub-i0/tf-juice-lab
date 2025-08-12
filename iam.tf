@@ -130,16 +130,67 @@ resource "aws_sns_topic_policy" "general_purpose_topic_policy" {
   policy = data.aws_iam_policy_document.general_purpose_sns_policy.json
 }
 
-## Attach IAM policy that allows Centralized Logs S3 Notifications SNS to send messages to SQS
+### Attach IAM policy that allows Centralized Logs S3 Notifications SNS to send messages to SQS
 resource "aws_sqs_queue_policy" "centralized_logs_s3_sns_to_sqs" {
   queue_url = aws_sqs_queue.centralized_logs_s3_event_queue.id
   policy    = data.aws_iam_policy_document.centralized_logs_s3_sns_to_sqs.json
 }
 
-## Attach IAM policy that allows Centralized Logs S3 to publish to Centralized Logs SNS topic
+### Attach IAM policy that allows Centralized Logs S3 to publish to Centralized Logs SNS topic
 resource "aws_sns_topic_policy" "centralized_logs_topic_policy" {
   arn    = aws_sns_topic.centralized_logs_bucket_notifications.arn
   policy = data.aws_iam_policy_document.centralized_logs_sns_policy.json
+}
+
+## S3 Bucket policy for General Purpose Replica S3
+resource "aws_iam_role" "replication_role" {
+  name = "s3-replication-role"
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [{
+      Action = "sts:AssumeRole"
+      Effect = "Allow"
+      Principal = {
+        Service = "s3.amazonaws.com"
+      }
+    }]
+  })
+}
+
+resource "aws_iam_role_policy" "general_purpose_replication_policy" {
+  role = aws_iam_role.replication_role.id
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Action = [
+          "s3:GetObjectVersion",
+          "s3:GetObjectVersionAcl",
+          "s3:GetObjectVersionForReplication",
+          "s3:ListBucket"
+        ]
+        Resource = [
+          aws_s3_bucket.general_purpose.arn,
+          "${aws_s3_bucket.general_purpose.arn}/*"
+        ]
+      },
+      {
+        Effect = "Allow"
+        Action = [
+          "s3:ReplicateObject",
+          "s3:ReplicateDelete",
+          "s3:ReplicateTags",
+        ]
+        Resource = [
+          module.general_purpose_replica_bucket.s3_bucket_arn,
+          "${module.general_purpose_replica_bucket.s3_bucket_arn}/*"
+        ]
+      }
+    ]
+  })
 }
 
 ## Allow CloudTrail to publish to CloudTrail Notifications SNS Topic
