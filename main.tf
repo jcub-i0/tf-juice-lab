@@ -678,7 +678,7 @@ resource "aws_s3_bucket_logging" "general_purpose_logging" {
 }
 
 ### CRR Configuration for General Purpose S3 bucket
-resource "aws_s3_bucket_replication_configuration" "general_pupose_replication" {
+resource "aws_s3_bucket_replication_configuration" "general_purpose_replication" {
   bucket = aws_s3_bucket.general_purpose.bucket
 
   role = aws_iam_role.replication_role.arn
