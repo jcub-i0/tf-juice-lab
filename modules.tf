@@ -171,13 +171,13 @@ module "kms_replica_secondary_region" {
   providers = {
     aws = aws.secondary
   }
-    enable_key_rotation = true
+  enable_key_rotation = true
 
   key_usage = "ENCRYPT_DECRYPT"
 
   key_statements = [
 
-      {
+    {
       sid    = "AllowReplicationRoleKMS"
       effect = "Allow"
       principals = [
