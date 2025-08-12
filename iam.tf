@@ -159,12 +159,13 @@ resource "aws_iam_role" "replication_role" {
 }
 
 ## IAM policy for General Purpose Replica bucket to allow General Purpose S3 to perform CRR
-resource "aws_iam_role_policy" "general_purpose_replication_policy" {
+resource "aws_iam_role_policy" "replication_policy" {
   role = aws_iam_role.replication_role.id
 
   policy = jsonencode({
     Version = "2012-10-17"
     Statement = [
+      # Permissions for General Purpose source bucket
       {
         Effect = "Allow"
         Action = [
@@ -178,6 +179,7 @@ resource "aws_iam_role_policy" "general_purpose_replication_policy" {
           "${aws_s3_bucket.general_purpose.arn}/*"
         ]
       },
+      # Permissions for General Purpose Replica bucket
       {
         Effect = "Allow"
         Action = [
@@ -189,18 +191,8 @@ resource "aws_iam_role_policy" "general_purpose_replication_policy" {
           module.general_purpose_replica_bucket.s3_bucket_arn,
           "${module.general_purpose_replica_bucket.s3_bucket_arn}/*"
         ]
-      }
-    ]
-  })
-}
-
-## IAM policy for Centralized Logs Replica bucket to allow Centralized Logs S3 to perform CRR
-resource "aws_iam_role_policy" "centralized_logs_replication_policy" {
-  role = aws_iam_role.replication_role.id
-
-  policy = jsonencode({
-    Version = "2012-10-17"
-    Statement = [
+      },
+      # Permissions for Centralized Logs source bucket
       {
         Effect = "Allow"
         Action = [
@@ -214,6 +206,7 @@ resource "aws_iam_role_policy" "centralized_logs_replication_policy" {
           "${aws_s3_bucket.centralized_logs.arn}/*"
         ]
       },
+      # Permissions for Centralized Logs Replica bucket
       {
         Effect = "Allow"
         Action = [
