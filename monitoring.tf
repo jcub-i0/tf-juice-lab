@@ -90,7 +90,7 @@ resource "aws_s3_bucket_public_access_block" "centralized_logs_public_block" {
 }
 
 resource "aws_s3_bucket_replication_configuration" "centralized_logs_replication" {
-  bucket = aws_s3_bucket.general_purpose.bucket
+  bucket = aws_s3_bucket.centralized_logs.bucket
   role   = aws_iam_role.replication_role.arn
 
   depends_on = [module.centralized_logs_replica_bucket]
