@@ -89,6 +89,30 @@ resource "aws_s3_bucket_public_access_block" "centralized_logs_public_block" {
   ignore_public_acls      = true
 }
 
+resource "aws_s3_bucket_replication_configuration" "centralized_logs_replication" {
+  bucket = aws_s3_bucket.general_purpose.bucket
+
+  role = aws_iam_role.replication_role.arn
+
+  rule {
+    id     = "centralized-logs-crr"
+    status = "Enabled"
+
+    destination {
+      bucket        = module.centralized_logs_replica_bucket.s3_bucket_arn
+      storage_class = "STANDARD_IA"
+    }
+
+    filter {
+      prefix = ""
+    }
+
+    delete_marker_replication {
+      status = "Enabled"
+    }
+  }
+}
+
 resource "aws_cloudtrail" "cloudtrail" {
   depends_on = [
     aws_s3_bucket_policy.centralized_logs_policy,
