@@ -691,10 +691,23 @@ resource "aws_s3_bucket_replication_configuration" "general_purpose_replication"
     destination {
       bucket        = module.general_purpose_replica_bucket.s3_bucket_arn
       storage_class = "STANDARD_IA"
+      encryption_configuration {
+        replica_kms_key_id = module.kms_replica_secondary_region.key_arn
+      }
     }
 
     filter {
       prefix = ""
+    }
+
+    source_selection_criteria {
+      replica_modifications {
+        status = "Enabled"
+      }
+      sse_kms_encrypted_objects {
+        status = "Enabled"
+
+      }
     }
 
     delete_marker_replication {
