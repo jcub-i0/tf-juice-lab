@@ -11,6 +11,24 @@ module "kms" {
 
   key_statements = [
     {
+      sid    = "AllowS3UseOfKmsKey"
+      effect = "Allow"
+      principals = [
+        {
+          type        = "Service"
+          identifiers = ["s3.amazonaws.com"]
+        }
+      ]
+      actions = [
+        "kms:Encrypt",
+        "kms:Decrypt",
+        "kms:GenerateDataKey",
+        "kms:DescribeKey",
+        "kms:CreateGrant"
+      ]
+      resources = ["*"]
+    },
+    {
       sid    = "AllowCloudTrailPublishToSNSEncrypted"
       effect = "Allow"
       principals = [
