@@ -165,6 +165,39 @@ module "kms" {
   }
 }
 
+# KMS key for replica bucket (var.secondary_aws_region)
+module "kms_replica_secondary_region" {
+  source = "git::https://github.com/terraform-aws-modules/terraform-aws-kms.git?ref=210736c7aaf2394a68e5f85de4e29169ac126363"
+  providers = {
+    aws = aws.secondary
+  }
+    enable_key_rotation = true
+
+  key_usage = "ENCRYPT_DECRYPT"
+
+  key_statements = [
+
+      {
+      sid    = "AllowReplicationRoleKMS"
+      effect = "Allow"
+      principals = [
+        {
+          type        = "AWS"
+          identifiers = [aws_iam_role.replication_role.arn]
+        }
+      ]
+      actions = [
+        "kms:Decrypt",
+        "kms:Encrypt",
+        "kms:ReEncrypt*",
+        "kms:GenerateDataKey*",
+        "kms:DescribeKey"
+      ]
+      resources = ["*"]
+    }
+  ]
+}
+
 # S3 Modules for S3 CRR
 ## General Purpose Replica
 module "general_purpose_replica_bucket" {
