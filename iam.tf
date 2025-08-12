@@ -142,7 +142,7 @@ resource "aws_sns_topic_policy" "centralized_logs_topic_policy" {
   policy = data.aws_iam_policy_document.centralized_logs_sns_policy.json
 }
 
-## S3 Bucket policy for General Purpose Replica S3
+## S3 Bucket policy for replica buckets
 resource "aws_iam_role" "replication_role" {
   name = "s3-replication-role"
 
@@ -158,6 +158,7 @@ resource "aws_iam_role" "replication_role" {
   })
 }
 
+## IAM policy for General Purpose Replica bucket to allow General Purpose S3 to perform CRR
 resource "aws_iam_role_policy" "general_purpose_replication_policy" {
   role = aws_iam_role.replication_role.id
 
