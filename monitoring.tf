@@ -20,6 +20,10 @@ resource "aws_flow_log" "main_vpc" {
   traffic_type         = "ALL"
   vpc_id               = aws_vpc.tf-juice-lab.id
 
+  tags = {
+    Name = "TF-Juice-Lab VPC Flow Logs"
+  }
+
 }
 
 ## Create CloudWatch Log Group for VPC Flow Logs
