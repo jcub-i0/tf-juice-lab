@@ -1,106 +1,19 @@
-resource "aws_vpc" "tf-juice-lab" {
-  cidr_block           = var.vpc_cidr
-  enable_dns_support   = true
-  enable_dns_hostnames = true
-  tags = {
-    Name      = "TF-Juice-Lab"
-    Terraform = "true"
-  }
-}
-
-# CREATE PUBLIC AND PRIVATE SUBNETS
-
-resource "aws_subnet" "public" {
-  vpc_id            = aws_vpc.tf-juice-lab.id
-  cidr_block        = var.public_sub_cidr
-  availability_zone = var.public_sub_az
-
-  tags = {
-    Name      = "Public Subnet"
-    Terraform = "true"
-  }
-}
-
-resource "aws_subnet" "private" {
-  vpc_id            = aws_vpc.tf-juice-lab.id
-  cidr_block        = var.private_sub_cidr
-  availability_zone = var.private_sub_az
-
-  tags = {
-    Name      = "Private Subnet"
-    Terraform = "true"
-  }
-}
-
-resource "aws_subnet" "lambda_private" {
-  vpc_id            = aws_vpc.tf-juice-lab.id
-  cidr_block        = var.lambda_sub_cidr
-  availability_zone = var.lambda_sub_az
-
-  tags = {
-    Name      = "Lambda Private Subnet"
-    Terraform = "true"
-  }
-}
-
-# CREATE AND ASSOCIATE ROUTE TABLES
-
-resource "aws_route_table" "private" {
-  vpc_id = aws_vpc.tf-juice-lab.id
-
-  route {
-    cidr_block     = "0.0.0.0/0"
-    nat_gateway_id = aws_nat_gateway.natgw.id
-  }
-  tags = {
-    Name = "Private RT"
-  }
-}
-
-resource "aws_route_table" "public" {
-  vpc_id = aws_vpc.tf-juice-lab.id
-
-  route {
-    cidr_block = "0.0.0.0/0"
-    gateway_id = aws_internet_gateway.igw.id
-  }
-  tags = {
-    Name = "Public RT"
-  }
-}
-
-resource "aws_route_table" "lambda" {
-  vpc_id = aws_vpc.tf-juice-lab.id
-
-  route {
-    cidr_block     = "0.0.0.0/0"
-    nat_gateway_id = aws_nat_gateway.natgw.id
-  }
-  tags = {
-    Name = "Lambda RT"
-  }
-}
-
-resource "aws_route_table_association" "private_assc" {
-  subnet_id      = aws_subnet.private.id
-  route_table_id = aws_route_table.private.id
-}
-
-resource "aws_route_table_association" "public_assc" {
-  subnet_id      = aws_subnet.public.id
-  route_table_id = aws_route_table.public.id
-}
-
-resource "aws_route_table_association" "lambda_assc" {
-  subnet_id      = aws_subnet.lambda_private.id
-  route_table_id = aws_route_table.lambda.id
+module "network" {
+  source           = "./modules/network"
+  vpc_cidr         = var.vpc_cidr
+  public_sub_cidr  = var.public_sub_cidr
+  public_sub_az    = var.public_sub_az
+  private_sub_cidr = var.private_sub_cidr
+  private_sub_az   = var.private_sub_az
+  lambda_sub_cidr  = var.lambda_sub_cidr
+  lambda_sub_az    = var.lambda_sub_az
 }
 
 # CREATE SECURITY GROUPS
 
 ## Default securuity group restricts all traffic
 resource "aws_default_security_group" "default" {
-  vpc_id = aws_vpc.tf-juice-lab.id
+  vpc_id = module.network.vpc_id
   tags = {
     Name = "default_sg"
   }
@@ -109,7 +22,7 @@ resource "aws_default_security_group" "default" {
 resource "aws_security_group" "juice_sg" {
   name        = "juice-sg"
   description = "Allow traffic from Kali"
-  vpc_id      = aws_vpc.tf-juice-lab.id
+  vpc_id      = module.network.vpc_id
 
   ingress {
     from_port   = 22
@@ -151,7 +64,7 @@ resource "aws_security_group" "juice_sg" {
 resource "aws_security_group" "kali_sg" {
   name        = "kali-sg"
   description = "Allow SSH and pentest outbound traffic"
-  vpc_id      = aws_vpc.tf-juice-lab.id
+  vpc_id      = module.network.vpc_id
 
   ingress {
     from_port   = 22
@@ -185,7 +98,7 @@ resource "aws_security_group" "kali_sg" {
 resource "aws_security_group" "bastion_sg" {
   name        = "bastion-sg"
   description = "Allow AWS SSM to control the Bastion Host and allow local machine to run pentests via Kali"
-  vpc_id      = aws_vpc.tf-juice-lab.id
+  vpc_id      = module.network.vpc_id
 
   dynamic "ingress" {
     for_each = toset(var.bastion_allowed_cidrs)
@@ -230,7 +143,7 @@ resource "aws_security_group" "bastion_sg" {
 resource "aws_security_group" "quarantine_sg" {
   name        = "quarantine-sg"
   description = "Security Group to send compromised EC2 instances to for isolation"
-  vpc_id      = aws_vpc.tf-juice-lab.id
+  vpc_id      = module.network.vpc_id
 
   egress {
     from_port   = 443
@@ -248,7 +161,7 @@ resource "aws_security_group" "quarantine_sg" {
 resource "aws_security_group" "lambda_ec2_isolation_sg" {
   name        = "lambda-ec2-isolation-sg"
   description = "Security Group for EC2 Isolation Lambda function"
-  vpc_id      = aws_vpc.tf-juice-lab.id
+  vpc_id      = module.network.vpc_id
 
   egress {
     from_port       = 443
@@ -266,7 +179,7 @@ resource "aws_security_group" "lambda_ec2_isolation_sg" {
 resource "aws_security_group" "lambda_ec2_autostop_sg" {
   name        = "lambda-ec2-autostop-sg"
   description = "Security Group for EC2 Autostop function"
-  vpc_id      = aws_vpc.tf-juice-lab.id
+  vpc_id      = module.network.vpc_id
 
   egress {
     from_port       = 443
@@ -284,7 +197,7 @@ resource "aws_security_group" "lambda_ec2_autostop_sg" {
 resource "aws_security_group" "lambda_ip_enrich_sg" {
   name        = "lambda-ip-enrich-sg"
   description = "Security Group for IP Enrichment Lambda function"
-  vpc_id      = aws_vpc.tf-juice-lab.id
+  vpc_id      = module.network.vpc_id
 
   egress {
     from_port   = 443
@@ -303,13 +216,13 @@ resource "aws_security_group" "lambda_ip_enrich_sg" {
 resource "aws_security_group" "vpc_endpoints_sg" {
   name        = "vpc-endpoints-sg"
   description = "Allow Lambda subnets to talk to AWS services over HTTPS"
-  vpc_id      = aws_vpc.tf-juice-lab.id
+  vpc_id      = module.network.vpc_id
 
   ingress {
     from_port   = 443
     to_port     = 443
     protocol    = "tcp"
-    cidr_blocks = [aws_subnet.lambda_private.cidr_block]
+    cidr_blocks = [module.network.lambda_sub_cidr]
     description = "Allow Lambda functions to communicate with VPC endpoints"
   }
 
@@ -317,35 +230,12 @@ resource "aws_security_group" "vpc_endpoints_sg" {
     from_port   = 443
     to_port     = 443
     protocol    = "tcp"
-    cidr_blocks = [aws_subnet.lambda_private.cidr_block]
+    cidr_blocks = [module.network.lambda_sub_cidr]
     description = "Allow VPC endpoints to communicate with Lambda functions"
   }
 
   tags = {
     Name = "vpc_endpoints_sg"
-  }
-}
-
-# CREATE EIP, NATGW, AND IGW
-resource "aws_eip" "natgw_eip" {
-  domain = "vpc"
-}
-
-resource "aws_nat_gateway" "natgw" {
-  allocation_id = aws_eip.natgw_eip.id
-  subnet_id     = aws_subnet.public.id
-
-  tags = {
-    Name = "NATGW"
-  }
-  depends_on = [aws_internet_gateway.igw]
-}
-
-resource "aws_internet_gateway" "igw" {
-  vpc_id = aws_vpc.tf-juice-lab.id
-
-  tags = {
-    Name = "IGW"
   }
 }
 
@@ -410,7 +300,7 @@ resource "aws_key_pair" "juice_key" {
 resource "aws_instance" "bastion" {
   ami                         = data.aws_ami.amz-linux-2023.id
   instance_type               = "t3.micro"
-  subnet_id                   = aws_subnet.public.id
+  subnet_id                   = module.network.public_subnet_id
   vpc_security_group_ids      = [aws_security_group.bastion_sg.id]
   key_name                    = aws_key_pair.bastion_key.key_name
   associate_public_ip_address = true
@@ -447,7 +337,7 @@ EOF
 resource "aws_instance" "kali" {
   ami                    = data.aws_ami.kali-linux.id
   instance_type          = "t3.medium"
-  subnet_id              = aws_subnet.private.id
+  subnet_id              = module.network.private_subnet_id
   key_name               = aws_key_pair.kali_key.key_name
   vpc_security_group_ids = [aws_security_group.kali_sg.id]
   iam_instance_profile   = aws_iam_instance_profile.ssm_profile.name
@@ -508,7 +398,7 @@ EOF
 resource "aws_instance" "juice-shop" {
   ami                    = data.aws_ami.ubuntu.id
   instance_type          = "t3.medium"
-  subnet_id              = aws_subnet.private.id
+  subnet_id              = module.network.private_subnet_id
   key_name               = aws_key_pair.juice_key.key_name
   vpc_security_group_ids = [aws_security_group.juice_sg.id]
   iam_instance_profile   = aws_iam_instance_profile.ssm_profile.name
