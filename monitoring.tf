@@ -18,7 +18,7 @@ resource "aws_flow_log" "main_vpc" {
   log_destination_type = "cloud-watch-logs"
   log_destination      = aws_cloudwatch_log_group.flow_logs_group.arn
   traffic_type         = "ALL"
-  vpc_id               = aws_vpc.tf-juice-lab.id
+  vpc_id               = module.network.vpc_id
 
   tags = {
     Name = "TF-Juice-Lab VPC Flow Logs"
@@ -463,7 +463,7 @@ resource "aws_lambda_function" "ec2_isolation" {
   source_code_hash = data.archive_file.lambda_ec2_isolate_zip.output_base64sha256
 
   vpc_config {
-    subnet_ids         = [aws_subnet.lambda_private.id]
+    subnet_ids         = [module.network.lambda_subnet_id]
     security_group_ids = [aws_security_group.lambda_ec2_isolation_sg.id]
   }
 
@@ -558,7 +558,7 @@ resource "aws_lambda_function" "ec2_autostop" {
   kms_key_arn                    = module.kms.key_arn
 
   vpc_config {
-    subnet_ids         = [aws_subnet.lambda_private.id]
+    subnet_ids         = [module.network.lambda_subnet_id]
     security_group_ids = [aws_security_group.lambda_ec2_autostop_sg.id]
   }
 
@@ -634,7 +634,7 @@ resource "aws_lambda_function" "ip_enrich" {
   ]
 
   vpc_config {
-    subnet_ids         = [aws_subnet.lambda_private.id]
+    subnet_ids         = [module.network.lambda_subnet_id]
     security_group_ids = [aws_security_group.lambda_ip_enrich_sg.id]
   }
 
