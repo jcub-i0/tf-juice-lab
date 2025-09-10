@@ -9,6 +9,8 @@ module "network" {
   lambda_sub_az    = var.lambda_sub_az
 }
 
+# NEED TO CREATE "compute" MODULE
+
 resource "aws_security_group" "quarantine_sg" {
   name        = "quarantine-sg"
   description = "Security Group to send compromised EC2 instances to for isolation"
