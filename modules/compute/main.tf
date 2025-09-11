@@ -358,6 +358,10 @@ resource "aws_iam_role" "ssm_role" {
   })
 }
 
+data "aws_iam_policy" "ssm_core" {
+  name = "AmazonSSMManagedInstanceCore"
+}
+
 resource "aws_iam_role_policy_attachment" "ssm_core_attach" {
   role       = aws_iam_role.ssm_role.name
   policy_arn = data.aws_iam_policy.ssm_core.arn
