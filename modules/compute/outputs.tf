@@ -53,9 +53,3 @@ output "kali_key_name" {
 output "juice_key_name" {
   value = aws_key_pair.juice_key.key_name
 }
-
-# SSM IAM instance profile
-
-output "ssm_instance_profile" {
-  value = aws_iam_instance_profile.ssm_profile.name
-}
