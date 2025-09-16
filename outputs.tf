@@ -3,15 +3,15 @@ output "current_region" {
 }
 
 output "bastion_public_ip" {
-  value = aws_instance.bastion.public_ip
+  value = module.compute.bastion_public_ip
 }
 
 output "kali_private_ip" {
-  value = aws_instance.kali.private_ip
+  value = module.compute.kali_private_ip
 }
 
 output "juice_private_ip" {
-  value = aws_instance.juice-shop.private_ip
+  value = module.compute.juice_private_ip
 }
 
 output "enabled_securityhub_standards" {
