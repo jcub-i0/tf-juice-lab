@@ -1,6 +1,6 @@
 # CREATE SECURITY GROUPS
 
-## Default securuity group restricts all traffic
+## Default security group restricts all traffic
 resource "aws_default_security_group" "default" {
   vpc_id = module.network.vpc_id
   tags = {
