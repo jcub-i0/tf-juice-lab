@@ -1,5 +1,5 @@
 variable "vpc_cidr" {
-  type    = string
+  type = string
 }
 
 variable "public_sub_cidr" {

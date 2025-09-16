@@ -23,7 +23,7 @@ output "public_route_table_id" {
 }
 
 output "lambda_route_table_id" {
-    value = aws_route_table.lambda.id
+  value = aws_route_table.lambda.id
 }
 
 output "natgw_id" {
