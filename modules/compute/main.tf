@@ -227,7 +227,7 @@ resource "aws_instance" "bastion" {
   vpc_security_group_ids      = [aws_security_group.bastion_sg.id]
   key_name                    = aws_key_pair.bastion_key.key_name
   associate_public_ip_address = true
-  iam_instance_profile        = aws_iam_instance_profile.ssm_profile.name
+  iam_instance_profile        = var.ssm_instance_profile_name
   monitoring                  = true
 
   #checkov:skip=CKV_AWS_88: Bastion Host requires public IP address for controlled lab SSH chaining from local machine; ingress SG rules are IP-restricted
@@ -263,7 +263,7 @@ resource "aws_instance" "kali" {
   subnet_id              = var.private_subnet_id
   key_name               = aws_key_pair.kali_key.key_name
   vpc_security_group_ids = [aws_security_group.kali_sg.id]
-  iam_instance_profile   = aws_iam_instance_profile.ssm_profile.name
+  iam_instance_profile   = var.ssm_instance_profile_name
   monitoring             = true
 
   #checkov:skip=CKV_AWS_135: This instance is EBS optimized, despite what Checkov says; t3 instance types are EBS optimized.
@@ -324,7 +324,7 @@ resource "aws_instance" "juice-shop" {
   subnet_id              = var.private_subnet_id
   key_name               = aws_key_pair.juice_key.key_name
   vpc_security_group_ids = [aws_security_group.juice_sg.id]
-  iam_instance_profile   = aws_iam_instance_profile.ssm_profile.name
+  iam_instance_profile   = var.ssm_instance_profile_name
   monitoring             = true
 
   #checkov:skip=CKV_AWS_135: This instance is EBS optimized, despite what Checkov says; t3 instance types are EBS optimized.  
@@ -369,37 +369,4 @@ EOF
   tags = {
     Name = "JuiceShop"
   }
-}
-
-## Create SSM IAM Role
-resource "aws_iam_role" "ssm_role" {
-  name = "EC2-SSM-Role"
-
-  assume_role_policy = jsonencode({
-    Version = "2012-10-17",
-    Statement = [
-      {
-        Action = "sts:AssumeRole"
-        Effect = "Allow"
-        Sid    = ""
-        Principal = {
-          Service = "ec2.amazonaws.com"
-        }
-      },
-    ]
-  })
-}
-
-data "aws_iam_policy" "ssm_core" {
-  name = "AmazonSSMManagedInstanceCore"
-}
-
-resource "aws_iam_role_policy_attachment" "ssm_core_attach" {
-  role       = aws_iam_role.ssm_role.name
-  policy_arn = data.aws_iam_policy.ssm_core.arn
-}
-
-resource "aws_iam_instance_profile" "ssm_profile" {
-  name = "EC2-SSM-Profile"
-  role = aws_iam_role.ssm_role.name
 }
