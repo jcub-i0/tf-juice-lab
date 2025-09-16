@@ -1,3 +1,18 @@
+variable "vpc_id" {
+  description = "The VPC ID from the network module"
+  type        = string
+}
+
+variable "public_subnet_id" {
+  description = "The public subnet ID for the bastion host"
+  type        = string
+}
+
+variable "private_subnet_id" {
+  description = "The private subnet ID for Kali and Juice Shop instances"
+  type        = string
+}
+
 variable "private_sub_cidr" {
   description = "CIDR address for the Private Subnet"
   type        = string
