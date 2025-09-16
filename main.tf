@@ -9,7 +9,14 @@ module "network" {
   lambda_sub_az    = var.lambda_sub_az
 }
 
-# NEED TO CREATE "compute" MODULE
+module "compute" {
+  source                = "./modules/compute"
+  vpc_id                = module.network.vpc_id
+  public_subnet_id      = module.network.public_subnet_id
+  private_subnet_id     = module.network.private_subnet_id
+  private_sub_cidr      = var.private_sub_cidr
+  bastion_allowed_cidrs = var.bastion_allowed_cidrs
+}
 
 resource "aws_security_group" "quarantine_sg" {
   name        = "quarantine-sg"
