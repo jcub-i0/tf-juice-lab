@@ -2,7 +2,7 @@
 
 ## Default security group restricts all traffic
 resource "aws_default_security_group" "default" {
-  vpc_id = module.network.vpc_id
+  vpc_id = var.vpc_id
   tags = {
     Name = "default_sg"
   }
@@ -11,7 +11,7 @@ resource "aws_default_security_group" "default" {
 resource "aws_security_group" "juice_sg" {
   name        = "juice-sg"
   description = "Allow traffic from Kali"
-  vpc_id      = module.network.vpc_id
+  vpc_id      = var.vpc_id
 
   ingress {
     from_port   = 22
@@ -53,7 +53,7 @@ resource "aws_security_group" "juice_sg" {
 resource "aws_security_group" "kali_sg" {
   name        = "kali-sg"
   description = "Allow SSH and pentest outbound traffic"
-  vpc_id      = module.network.vpc_id
+  vpc_id      = var.vpc_id
 
   ingress {
     from_port   = 22
@@ -87,7 +87,7 @@ resource "aws_security_group" "kali_sg" {
 resource "aws_security_group" "bastion_sg" {
   name        = "bastion-sg"
   description = "Allow AWS SSM to control the Bastion Host and allow local machine to run pentests via Kali"
-  vpc_id      = module.network.vpc_id
+  vpc_id      = var.vpc_id
 
   dynamic "ingress" {
     for_each = toset(var.bastion_allowed_cidrs)
@@ -223,7 +223,7 @@ data "aws_ami" "kali-linux" {
 resource "aws_instance" "bastion" {
   ami                         = data.aws_ami.amz-linux-2023.id
   instance_type               = "t3.micro"
-  subnet_id                   = module.network.public_subnet_id
+  subnet_id                   = var.public_subnet_id
   vpc_security_group_ids      = [aws_security_group.bastion_sg.id]
   key_name                    = aws_key_pair.bastion_key.key_name
   associate_public_ip_address = true
@@ -260,7 +260,7 @@ EOF
 resource "aws_instance" "kali" {
   ami                    = data.aws_ami.kali-linux.id
   instance_type          = "t3.medium"
-  subnet_id              = module.network.private_subnet_id
+  subnet_id              = var.private_subnet_id
   key_name               = aws_key_pair.kali_key.key_name
   vpc_security_group_ids = [aws_security_group.kali_sg.id]
   iam_instance_profile   = aws_iam_instance_profile.ssm_profile.name
@@ -321,7 +321,7 @@ EOF
 resource "aws_instance" "juice-shop" {
   ami                    = data.aws_ami.ubuntu.id
   instance_type          = "t3.medium"
-  subnet_id              = module.network.private_subnet_id
+  subnet_id              = var.private_subnet_id
   key_name               = aws_key_pair.juice_key.key_name
   vpc_security_group_ids = [aws_security_group.juice_sg.id]
   iam_instance_profile   = aws_iam_instance_profile.ssm_profile.name
