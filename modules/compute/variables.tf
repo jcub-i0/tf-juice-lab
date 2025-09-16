@@ -22,3 +22,8 @@ variable "bastion_allowed_cidrs" {
   description = "The CIDR(s) of the local machine(s) allowed to access the Bastion Host instance"
   type        = list(string)
 }
+
+variable "ssm_instance_profile_name" {
+  description = "Value of the 'name' attribute for the SSM instance profile"
+  type        = string
+}
