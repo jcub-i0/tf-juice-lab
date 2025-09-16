@@ -10,12 +10,18 @@ module "network" {
 }
 
 module "compute" {
-  source                = "./modules/compute"
-  vpc_id                = module.network.vpc_id
-  public_subnet_id      = module.network.public_subnet_id
-  private_subnet_id     = module.network.private_subnet_id
-  private_sub_cidr      = var.private_sub_cidr
-  bastion_allowed_cidrs = var.bastion_allowed_cidrs
+  source                    = "./modules/compute"
+  vpc_id                    = module.network.vpc_id
+  public_subnet_id          = module.network.public_subnet_id
+  private_subnet_id         = module.network.private_subnet_id
+  private_sub_cidr          = var.private_sub_cidr
+  bastion_allowed_cidrs     = var.bastion_allowed_cidrs
+  ssm_instance_profile_name = module.iam.ssm_instance_profile_name
+}
+
+module "iam" {
+  source = "./modules/iam"
+
 }
 
 resource "aws_security_group" "quarantine_sg" {
