@@ -183,7 +183,7 @@ module "kms_replica_secondary_region" {
       principals = [
         {
           type        = "AWS"
-          identifiers = [aws_iam_role.replication_role.arn]
+          identifiers = [module.iam.replication_role_arn]
         }
       ]
       actions = [
