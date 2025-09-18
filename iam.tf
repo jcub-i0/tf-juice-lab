@@ -96,7 +96,7 @@ resource "aws_s3_bucket_policy" "general_purpose_policy" {
         Effect = "Allow",
         Principal = {
           AWS = [
-            aws_iam_role.lambda_ec2_isolate_execution_role.arn,
+            module.iam.lambda_ec2_isolate_execution_role_arn,
             "arn:aws:iam::${data.aws_caller_identity.current.account_id}:user/${var.terraform_admin_username}"
           ]
         },
