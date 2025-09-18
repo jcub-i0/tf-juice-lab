@@ -20,8 +20,9 @@ module "compute" {
 }
 
 module "iam" {
-  source = "./modules/iam"
-
+  source                   = "./modules/iam"
+  terraform_admin_username = var.terraform_admin_username
+  account_id               = var.account_id
 }
 
 resource "aws_security_group" "quarantine_sg" {
