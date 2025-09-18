@@ -63,7 +63,7 @@ resource "aws_s3_bucket_policy" "centralized_logs_policy" {
         Sid    = "AllowReplicationRoleReadFromLogsSource"
         Effect = "Allow"
         Principal = {
-          AWS = aws_iam_role.replication_role.arn
+          AWS = module.iam.replication_role_arn
         }
         Action = [
           "s3:GetObjectVersion",
@@ -110,7 +110,7 @@ resource "aws_s3_bucket_policy" "general_purpose_policy" {
         Sid    = "AllowReplicationRoleReadFromSource"
         Effect = "Allow"
         Principal = {
-          AWS = aws_iam_role.replication_role.arn
+          AWS = module.iam.replication_role_arn
         }
         Action = [
           "s3:GetObjectVersion",
@@ -166,7 +166,7 @@ resource "aws_s3_bucket_policy" "general_purpose_replica_policy" {
         Sid    = "AllowReplicationRoleWriteToReplica"
         Effect = "Allow"
         Principal = {
-          AWS = aws_iam_role.replication_role.arn
+          AWS = module.iam.replication_role_arn
         }
         Action = [
           "s3:ReplicateObject",
@@ -193,7 +193,7 @@ resource "aws_s3_bucket_policy" "centralized_logs_replica_policy" {
         Sid    = "AllowReplicationRoleWriteToLogsReplica"
         Effect = "Allow"
         Principal = {
-          AWS = aws_iam_role.replication_role.arn
+          AWS = module.iam.replication_role_arn
         }
         Action = [
           "s3:ReplicateObject",
