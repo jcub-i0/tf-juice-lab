@@ -480,7 +480,7 @@ resource "aws_lambda_function" "ec2_isolation" {
   }
 
   runtime = "python3.12"
-  role    = aws_iam_role.lambda_ec2_isolate_execution_role.arn
+  role    = module.iam.ec2_isolate_execution_role_arn
 
   #checkov:skip=CKV_AWS_272: source_code_hash is sufficient integrity validation for this environment
 
