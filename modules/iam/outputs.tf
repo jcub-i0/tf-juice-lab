@@ -58,10 +58,6 @@ output "vpc_flow_logs_arn" {
   value = aws_iam_role.vpc_flow_logs.arn
 }
 
-output "replication_role_arn" {
-  value = aws_iam_role.replication_role.arn
-}
-
 output "cloudtrail_to_cw_role" {
   value = aws_iam_role.cloudtrail_to_cw
 }
