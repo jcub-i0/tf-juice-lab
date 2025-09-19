@@ -33,3 +33,7 @@ output "centralized_logs_topic_policy_json" {
 output "centralized_logs_s3_sns_to_sqs_json" {
   value = data.aws_iam_policy_document.centralized_logs_s3_sns_to_sqs.json
 }
+
+output "cloudtrail_sns_sqs_json" {
+  value = data.aws_iam_policy_document.cloudtrail_sns_to_sqs.json
+}
