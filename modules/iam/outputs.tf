@@ -17,3 +17,7 @@ output "lambda_autostop_execution_role_arn" {
 output "lambda_ip_enrich_arn" {
   value = aws_iam_role.lambda_ip_enrich.arn
 }
+
+output "gen_purp_s3_sns_to_sqs_json" {
+  value = data.aws_iam_policy_document.gen_purp_s3_sns_to_sqs.json
+}
