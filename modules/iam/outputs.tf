@@ -25,3 +25,11 @@ output "gen_purp_s3_sns_to_sqs_json" {
 output "general_purpose_sns_policy_json" {
   value = data.aws_iam_policy_document.general_purpose_sns_policy.json
 }
+
+output "centralized_logs_topic_policy_json" {
+  value = data.aws_iam_policy_document.centralized_logs_sns_policy.json
+}
+
+output "centralized_logs_s3_sns_to_sqs_json" {
+  value = data.aws_iam_policy_document.centralized_logs_s3_sns_to_sqs.json
+}

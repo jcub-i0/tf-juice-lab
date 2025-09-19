@@ -146,13 +146,13 @@ resource "aws_sns_topic_policy" "general_purpose_topic_policy" {
 ### Attach IAM policy that allows Centralized Logs S3 Notifications SNS to send messages to SQS
 resource "aws_sqs_queue_policy" "centralized_logs_s3_sns_to_sqs" {
   queue_url = aws_sqs_queue.centralized_logs_s3_event_queue.id
-  policy    = data.aws_iam_policy_document.centralized_logs_s3_sns_to_sqs.json
+  policy    = module.iam.centralized_logs_s3_sns_to_sqs_json
 }
 
 ### Attach IAM policy that allows Centralized Logs S3 to publish to Centralized Logs SNS topic
 resource "aws_sns_topic_policy" "centralized_logs_topic_policy" {
   arn    = aws_sns_topic.centralized_logs_bucket_notifications.arn
-  policy = data.aws_iam_policy_document.centralized_logs_sns_policy.json
+  policy = module.iam.centralized_logs_topic_policy_json
 }
 
 resource "aws_s3_bucket_policy" "general_purpose_replica_policy" {
@@ -231,7 +231,7 @@ resource "aws_sns_topic_policy" "cloudtrail_sns_policy" {
 ## Allow CloudTrail Notifications SNS Topic to publish to CloudTrail SQS queue
 resource "aws_sqs_queue_policy" "cloudtrail_sns_to_sqs_policy" {
   queue_url = aws_sqs_queue.cloudtrail_log_delivery.id
-  policy    = data.aws_iam_policy_document.cloudtrail_sns_to_sqs.json
+  policy    = module.iam.cloudtrail_sns_sqs_json
 }
 
 # Permit EventBridge to publish to "Alerts" SNS topic
