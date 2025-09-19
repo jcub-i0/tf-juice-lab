@@ -14,7 +14,7 @@ locals {
 # Enable VPC Flow Logs and send them to specific CloudWatch Logs Group
 ## VPC Flow Log resource
 resource "aws_flow_log" "main_vpc" {
-  iam_role_arn         = aws_iam_role.vpc_flow_logs.arn
+  iam_role_arn         = module.iam.vpc_flow_logs_arn
   log_destination_type = "cloud-watch-logs"
   log_destination      = aws_cloudwatch_log_group.flow_logs_group.arn
   traffic_type         = "ALL"
@@ -95,7 +95,7 @@ resource "aws_s3_bucket_public_access_block" "centralized_logs_public_block" {
 
 resource "aws_s3_bucket_replication_configuration" "centralized_logs_replication" {
   bucket = aws_s3_bucket.centralized_logs.bucket
-  role   = aws_iam_role.replication_role.arn
+  role   = module.iam.replication_role_arn
 
   depends_on = [module.centralized_logs_replica_bucket]
 
@@ -134,7 +134,7 @@ resource "aws_s3_bucket_replication_configuration" "centralized_logs_replication
 resource "aws_cloudtrail" "cloudtrail" {
   depends_on = [
     aws_s3_bucket_policy.centralized_logs_policy,
-    aws_iam_role.cloudtrail_to_cw,
+    module.iam.cloudtrail_to_cw_role,
     aws_iam_role_policy.cloudtrail_to_cw_policy,
     aws_cloudwatch_log_group.cloudtrail_logs
   ]
@@ -149,7 +149,7 @@ resource "aws_cloudtrail" "cloudtrail" {
   sns_topic_name = aws_sns_topic.cloudtrail_notifications.name
 
   cloud_watch_logs_group_arn = "${aws_cloudwatch_log_group.cloudtrail_logs.arn}:*"
-  cloud_watch_logs_role_arn  = aws_iam_role.cloudtrail_to_cw.arn
+  cloud_watch_logs_role_arn  = module.iam.cloudtrail_to_cw_arn
 
   insight_selector {
     insight_type = "ApiCallRateInsight"

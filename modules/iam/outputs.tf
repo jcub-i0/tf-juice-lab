@@ -49,3 +49,23 @@ output "ec2_autostop_lambda_to_sqs_json" {
 output "ip_enrich_lambda_to_sqs_json" {
   value = data.aws_iam_policy_document.ip_enrich_lambda_to_sqs.json
 }
+
+output "replication_role_arn" {
+  value = aws_iam_role.replication_role.arn
+}
+
+output "vpc_flow_logs_arn" {
+  value = aws_iam_role.vpc_flow_logs.arn
+}
+
+output "replication_role_arn" {
+  value = aws_iam_role.replication_role.arn
+}
+
+output "cloudtrail_to_cw_role" {
+  value = aws_iam_role.cloudtrail_to_cw
+}
+
+output "cloudtrail_to_cw_role_arn" {
+  value = aws_iam_role.cloudtrail_to_cw.arn
+}
