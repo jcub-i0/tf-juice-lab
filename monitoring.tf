@@ -364,7 +364,7 @@ resource "aws_config_remediation_configuration" "disable_public_s3_access" {
 
   parameter {
     name         = "AutomationAssumeRole"
-    static_value = aws_iam_role.config_remediation_role.arn
+    static_value = module.iam.config_remediation_role_arn
   }
   parameter {
     name           = "BucketName"
