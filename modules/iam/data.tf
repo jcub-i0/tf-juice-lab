@@ -107,7 +107,7 @@ data "aws_iam_policy_document" "lambda_ec2_isolate_permissions" {
     actions = [
       "sns:Publish"
     ]
-    resources = [aws_sns_topic.alerts.arn]
+    resources = [var.alerts_sns_topic_arn]
   }
   statement {
     sid = "SecurityHubRead"
@@ -204,7 +204,7 @@ data "aws_iam_policy_document" "lambda_ec2_autostop_permissions" {
     actions = [
       "sns:Publish"
     ]
-    resources = [aws_sns_topic.alerts.arn]
+    resources = [var.alerts_sns_topic_arn]
   }
   statement {
     effect = "Allow"
@@ -272,7 +272,7 @@ data "aws_iam_policy_document" "ip_enrich_permissions" {
     actions = [
       "sns:Publish"
     ]
-    resources = [aws_sns_topic.alerts.arn]
+    resources = [var.alerts_sns_topic_arn]
   }
   statement {
     effect = "Allow"
