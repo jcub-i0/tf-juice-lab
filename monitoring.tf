@@ -313,7 +313,7 @@ resource "aws_sns_topic_subscription" "centralized_logs_bucket_notifications_sub
 
 resource "aws_config_configuration_recorder" "config_rec" {
   name     = "TF-Juice-Lab-Config"
-  role_arn = aws_iam_role.config_role.arn
+  role_arn = module.iam.config_role_arn
 
   recording_group {
     all_supported                 = false

@@ -61,3 +61,7 @@ output "cloudtrail_to_cw_role" {
 output "cloudtrail_to_cw_role_arn" {
   value = aws_iam_role.cloudtrail_to_cw.arn
 }
+
+output "config_role_arn" {
+  value = aws_iam_role.config_role.arn
+}
