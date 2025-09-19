@@ -59,7 +59,7 @@ data "aws_iam_policy_document" "lambda_general_purpose_s3_read" {
       "s3:GetObjectVersion"
     ]
     resources = [
-      "arn:aws:s3:::${aws_s3_bucket.general_purpose.arn}/*"
+      "arn:aws:s3:::${var.general_purpose_bucket_arn}/*"
     ]
   }
 }
@@ -307,7 +307,7 @@ data "aws_iam_policy_document" "terraform_s3_write" {
       "s3:GetObjectVersion"
     ]
     resources = [
-      "${aws_s3_bucket.general_purpose.arn}/*"
+      "${var.general_purpose_bucket_arn}/*"
     ]
   }
 }
@@ -439,7 +439,7 @@ data "aws_iam_policy_document" "general_purpose_sns_policy" {
     condition {
       test     = "ArnEquals"
       variable = "aws:SourceArn"
-      values   = [aws_s3_bucket.general_purpose.arn]
+      values   = [var.general_purpose_bucket_arn]
     }
   }
 }
