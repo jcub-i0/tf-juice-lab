@@ -125,7 +125,7 @@ data "aws_iam_policy_document" "lambda_ec2_isolate_permissions" {
       "s3:PutObjectTagging",
     ]
     resources = [
-      "arn:aws:s3:::${aws_s3_bucket.centralized_logs.bucket}/*"
+      "arn:aws:s3:::${var.centralized_logs_bucket}/*"
     ]
   }
   statement {
@@ -151,7 +151,7 @@ data "aws_iam_policy_document" "lambda_ec2_isolate_permissions" {
       "sqs:SendMessage"
     ]
     resources = [
-      aws_sqs_queue.ec2_isolation_dlq.arn
+      var.ec2_isolation_dlq_arn
     ]
   }
   #checkov:skip=CKV_AWS_111: ec2:ModifyInstanceAttribute requires "*" resource due to AWS API limitations
@@ -211,7 +211,7 @@ data "aws_iam_policy_document" "lambda_ec2_autostop_permissions" {
     actions = [
       "sqs:SendMessage"
     ]
-    resources = [aws_sqs_queue.ec2_autostop_dlq.arn]
+    resources = [var.ec2_autostop_dlq_arn]
   }
   statement {
     sid    = "AllowEC2NetworkInterfaces"
@@ -255,7 +255,7 @@ data "aws_iam_policy_document" "ip_enrich_permissions" {
       "s3:PutObjectAcl",
       "s3:PutObjectTagging",
     ]
-    resources = ["arn:aws:s3:::${aws_s3_bucket.centralized_logs.bucket}/*"]
+    resources = ["arn:aws:s3:::${var.centralized_logs_bucket}/*"]
   }
   statement {
     effect = "Allow"
@@ -352,7 +352,7 @@ data "aws_iam_policy_document" "ec2_isolate_lambda_to_sqs" {
       "sqs:SendMessage"
     ]
 
-    resources = [aws_sqs_queue.ec2_isolation_dlq.arn]
+    resources = [var.ec2_isolation_dlq_arn]
   }
 }
 
@@ -371,7 +371,7 @@ data "aws_iam_policy_document" "ec2_autostop_lambda_to_sqs" {
       "sqs:SendMessage"
     ]
 
-    resources = [aws_sqs_queue.ec2_autostop_dlq.arn]
+    resources = [var.ec2_autostop_dlq_arn]
   }
 }
 

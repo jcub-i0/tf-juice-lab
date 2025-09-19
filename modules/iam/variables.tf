@@ -22,3 +22,18 @@ variable "alerts_sns_topic_arn" {
   description = "ARN of the 'Alerts' SNS topic"
   type        = string
 }
+
+variable "centralized_logs_bucket" {
+  description = "'Bucket' attribute for the Centralized Logs S3 bucket"
+  type        = string
+}
+
+variable "ec2_isolation_dlq_arn" {
+  description = "ARN of the EC2 Isolation function's DLQ"
+  type        = string
+}
+
+variable "ec2_autostop_dlq_arn" {
+  description = "ARN of the EC2 Autostop function's DLQ"
+  type        = string
+}
