@@ -75,7 +75,7 @@ data "aws_iam_policy_document" "lambda_ec2_isolate_permissions" {
       "kms:GenerateDataKey",
       "kms:DescribeKey"
     ]
-    resources = [module.kms.key_arn]
+    resources = [var.kms_key_arn]
   }
   statement {
     sid    = "EC2IsolationActions"
@@ -169,7 +169,7 @@ data "aws_iam_policy_document" "lambda_ec2_autostop_permissions" {
       "kms:GenerateDataKey",
       "kms:DescribeKey"
     ]
-    resources = [module.kms.key_arn]
+    resources = [var.kms_key_arn]
   }
   statement {
     effect = "Allow"
@@ -238,7 +238,7 @@ data "aws_iam_policy_document" "ip_enrich_permissions" {
       "kms:GenerateDataKey",
       "kms:DescribeKey"
     ]
-    resources = [module.kms.key_arn]
+    resources = [var.kms_key_arn]
   }
   statement {
     sid    = "AllowSecurityHubRead"
