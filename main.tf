@@ -24,7 +24,7 @@ module "iam" {
   terraform_admin_username   = var.terraform_admin_username
   account_id                 = var.account_id
   general_purpose_bucket_arn = aws_s3_bucket.general_purpose.arn
-  kms_key_arn = module.kms.key_arn
+  kms_key_arn                = module.kms.key_arn
 }
 
 resource "aws_security_group" "quarantine_sg" {
