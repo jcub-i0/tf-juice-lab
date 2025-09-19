@@ -50,10 +50,6 @@ output "ip_enrich_lambda_to_sqs_json" {
   value = data.aws_iam_policy_document.ip_enrich_lambda_to_sqs.json
 }
 
-output "replication_role_arn" {
-  value = aws_iam_role.replication_role.arn
-}
-
 output "vpc_flow_logs_arn" {
   value = aws_iam_role.vpc_flow_logs.arn
 }
