@@ -17,3 +17,8 @@ variable "kms_key_arn" {
   description = "ARN of the KMS key used for encryption"
   type        = string
 }
+
+variable "alerts_sns_topic_arn" {
+  description = "ARN of the 'Alerts' SNS topic"
+  type        = string
+}
