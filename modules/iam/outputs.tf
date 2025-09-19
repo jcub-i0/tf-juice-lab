@@ -65,3 +65,7 @@ output "cloudtrail_to_cw_role_arn" {
 output "config_remediation_role_arn" {
   value = aws_iam_role.config_remediation_role.arn
 }
+
+output "ec2_isolate_execution_role_arn" {
+  value = aws_iam_role.lambda_ec2_isolate_execution_role.arn
+}
