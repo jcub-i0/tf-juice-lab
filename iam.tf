@@ -140,7 +140,7 @@ resource "aws_sqs_queue_policy" "gen_purp_s3_sns_to_sqs" {
 ### Attach IAM policy that allows General Purpose S3 to publish to Centralized Logs SNS topic
 resource "aws_sns_topic_policy" "general_purpose_topic_policy" {
   arn    = aws_sns_topic.general_purpose_bucket_notifications.arn
-  policy = data.aws_iam_policy_document.general_purpose_sns_policy.json
+  policy = module.iam.general_purpose_sns_policy_json
 }
 
 ### Attach IAM policy that allows Centralized Logs S3 Notifications SNS to send messages to SQS
