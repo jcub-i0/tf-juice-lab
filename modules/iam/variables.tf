@@ -10,5 +10,5 @@ variable "account_id" {
 
 variable "general_purpose_bucket_arn" {
   description = "ARN of the General-Purpose S3 bucket"
-  type = string
+  type        = string
 }
