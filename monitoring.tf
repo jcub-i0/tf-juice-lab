@@ -576,7 +576,7 @@ resource "aws_lambda_function" "ec2_autostop" {
   }
 
   runtime = "python3.12"
-  role    = aws_iam_role.lambda_autostop_execution_role.arn
+  role    = module.iam.lambda_autostop_execution_role_arn
 
   #checkov:skip=CKV_AWS_272: source_code_hash is sufficient integrity validation for this environment
 
