@@ -69,3 +69,7 @@ output "config_remediation_role_arn" {
 output "ec2_isolate_execution_role_arn" {
   value = aws_iam_role.lambda_ec2_isolate_execution_role.arn
 }
+
+output "lambda_ec2_isolate_policy" {
+  value = aws_iam_role_policy.lambda_ec2_isolate_policy
+}
