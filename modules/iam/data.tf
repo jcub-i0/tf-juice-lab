@@ -279,7 +279,7 @@ data "aws_iam_policy_document" "ip_enrich_permissions" {
     actions = [
       "sqs:SendMessage"
     ]
-    resources = [aws_sqs_queue.ip_enrich_dlq.arn]
+    resources = [var.ip_enrich_dlq_arn]
   }
   statement {
     sid    = "AllowEC2NetworkInterfaces"
@@ -390,7 +390,7 @@ data "aws_iam_policy_document" "ip_enrich_lambda_to_sqs" {
       "sqs:SendMessage"
     ]
 
-    resources = [aws_sqs_queue.ip_enrich_dlq.arn]
+    resources = [var.ip_enrich_dlq_arn]
   }
 }
 

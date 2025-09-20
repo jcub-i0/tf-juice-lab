@@ -29,6 +29,7 @@ module "iam" {
   centralized_logs_bucket    = aws_s3_bucket.centralized_logs.bucket
   ec2_isolation_dlq_arn      = aws_sqs_queue.ec2_isolation_dlq.arn
   ec2_autostop_dlq_arn       = aws_sqs_queue.ec2_autostop_dlq.arn
+  ip_enrich_dlq_arn          = aws_sqs_queue.ip_enrich_dlq.arn
 }
 
 resource "aws_security_group" "quarantine_sg" {

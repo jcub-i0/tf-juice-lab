@@ -37,3 +37,7 @@ variable "ec2_autostop_dlq_arn" {
   description = "ARN of the EC2 Autostop function's DLQ"
   type        = string
 }
+
+variable "ip_enrich_dlq_arn" {
+  description = "ARN of the IP Enrichment function's DLQ"
+}
