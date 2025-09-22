@@ -41,3 +41,7 @@ variable "ec2_autostop_dlq_arn" {
 variable "ip_enrich_dlq_arn" {
   description = "ARN of the IP Enrichment function's DLQ"
 }
+
+variable "cloudtrail_log_delivery_arn" {
+  description = "ARN of the CloudTrail Log Delivery resource"
+}

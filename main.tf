@@ -20,16 +20,17 @@ module "compute" {
 }
 
 module "iam" {
-  source                     = "./modules/iam"
-  terraform_admin_username   = var.terraform_admin_username
-  account_id                 = var.account_id
-  general_purpose_bucket_arn = aws_s3_bucket.general_purpose.arn
-  kms_key_arn                = module.kms.key_arn
-  alerts_sns_topic_arn       = aws_sns_topic.alerts.arn
-  centralized_logs_bucket    = aws_s3_bucket.centralized_logs.bucket
-  ec2_isolation_dlq_arn      = aws_sqs_queue.ec2_isolation_dlq.arn
-  ec2_autostop_dlq_arn       = aws_sqs_queue.ec2_autostop_dlq.arn
-  ip_enrich_dlq_arn          = aws_sqs_queue.ip_enrich_dlq.arn
+  source                      = "./modules/iam"
+  terraform_admin_username    = var.terraform_admin_username
+  account_id                  = var.account_id
+  general_purpose_bucket_arn  = aws_s3_bucket.general_purpose.arn
+  kms_key_arn                 = module.kms.key_arn
+  alerts_sns_topic_arn        = aws_sns_topic.alerts.arn
+  centralized_logs_bucket     = aws_s3_bucket.centralized_logs.bucket
+  ec2_isolation_dlq_arn       = aws_sqs_queue.ec2_isolation_dlq.arn
+  ec2_autostop_dlq_arn        = aws_sqs_queue.ec2_autostop_dlq.arn
+  ip_enrich_dlq_arn           = aws_sqs_queue.ip_enrich_dlq.arn
+  cloudtrail_log_delivery_arn = aws_sqs_queue.cloudtrail_log_delivery.arn
 }
 
 resource "aws_security_group" "quarantine_sg" {
