@@ -434,7 +434,7 @@ data "aws_iam_policy_document" "general_purpose_sns_policy" {
       "sns:Publish"
     ]
 
-    resources = [aws_sns_topic.general_purpose_bucket_notifications.arn]
+    resources = [var.gen_purp_bucket_notifications_arn]
 
     condition {
       test     = "ArnEquals"
