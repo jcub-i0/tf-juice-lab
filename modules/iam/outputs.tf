@@ -62,6 +62,10 @@ output "cloudtrail_to_cw_role_arn" {
   value = aws_iam_role.cloudtrail_to_cw.arn
 }
 
+output "cloudtrail_to_cw_policy" {
+  value = aws_iam_role_policy.cloudtrail_to_cw_policy
+}
+
 output "config_remediation_role_arn" {
   value = aws_iam_role.config_remediation_role.arn
 }
