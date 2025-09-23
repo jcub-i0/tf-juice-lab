@@ -332,7 +332,7 @@ data "aws_iam_policy_document" "cloudtrail_sns_to_sqs" {
     condition {
       test     = "ArnEquals"
       variable = "aws:SourceArn"
-      values   = [aws_sns_topic.cloudtrail_notifications.arn]
+      values   = [var.cloudtrail_notifications_arn]
     }
   }
 }

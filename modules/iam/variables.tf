@@ -43,5 +43,9 @@ variable "ip_enrich_dlq_arn" {
 }
 
 variable "cloudtrail_log_delivery_arn" {
-  description = "ARN of the CloudTrail Log Delivery resource"
+  description = "ARN of the CloudTrail Log Delivery SQS queue"
+}
+
+variable "cloudtrail_notifications_arn" {
+  description = "ARN of the CloudTrail Notifications SNS topic"
 }
