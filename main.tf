@@ -36,6 +36,7 @@ module "iam" {
   centralized_logs_bucket_notifications_arn = aws_sns_topic.centralized_logs_bucket_notifications.arn
   gen_purp_s3_event_queue_arn               = aws_sqs_queue.general_purpose_s3_event_queue.arn
   centralized_logs_s3_event_queue_arn       = aws_sqs_queue.centralized_logs_s3_event_queue.arn
+  centralized_logs_bucket_arn               = aws_s3_bucket.centralized_logs.arn
 }
 
 resource "aws_security_group" "quarantine_sg" {

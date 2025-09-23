@@ -489,7 +489,7 @@ data "aws_iam_policy_document" "centralized_logs_sns_policy" {
     condition {
       test     = "ArnEquals"
       variable = "aws:SourceArn"
-      values   = [aws_s3_bucket.centralized_logs.arn]
+      values   = [var.centralized_logs_bucket_arn]
     }
   }
 }

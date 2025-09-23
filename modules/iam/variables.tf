@@ -65,3 +65,7 @@ variable "gen_purp_s3_event_queue_arn" {
 variable "centralized_logs_s3_event_queue_arn" {
   description = "ARN of the Centralized Logs S3 Event SQS queue"
 }
+
+variable "centralized_logs_bucket_arn" {
+  description = "ARN of the Centralized Logs S3 bucket"
+}
