@@ -327,7 +327,7 @@ data "aws_iam_policy_document" "cloudtrail_sns_to_sqs" {
       "SQS:SendMessage",
     ]
 
-    resources = [cloudtrail_log_delivery_arn]
+    resources = [var.cloudtrail_log_delivery_arn]
 
     condition {
       test     = "ArnEquals"
