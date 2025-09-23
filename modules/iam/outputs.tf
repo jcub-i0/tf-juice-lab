@@ -79,5 +79,5 @@ output "lambda_ec2_isolate_policy" {
 }
 
 output "config_role_arn" {
-  value = module.iam.config_role_arn
+  value = aws_iam_role.config_role.arn
 }
