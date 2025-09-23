@@ -250,7 +250,7 @@ resource "aws_iam_policy" "lambda_sns_publish_policy" {
           "sns:Publish",
         ],
         Effect   = "Allow",
-        Resource = aws_sns_topic.alerts.arn
+        Resource = var.alerts_sns_topic_arn
       }
     ]
   })
