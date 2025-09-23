@@ -160,7 +160,7 @@ resource "aws_iam_role_policy" "cloudtrail_to_cw_policy" {
           "logs:CreateLogStream",
           "logs:PutLogEvents"
         ]
-        Resource = "${aws_cloudwatch_log_group.cloudtrail_logs.arn}:*"
+        Resource = "${var.cloudtrail_log_group_arn}:*"
       }
     ]
   })

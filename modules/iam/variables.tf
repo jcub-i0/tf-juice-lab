@@ -86,3 +86,8 @@ variable "gen_purp_replica_bucket_arn" {
 variable "centralized_logs_replica_bucket_arn" {
   description = "ARN of the Centralized Logs Replica S3 bucket"
 }
+
+variable "cloudtrail_log_group_arn" {
+  description = "ARN of the CloudTrail Log Group"
+  type        = string
+}
