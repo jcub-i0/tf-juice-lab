@@ -413,7 +413,7 @@ data "aws_iam_policy_document" "gen_purp_s3_sns_to_sqs" {
     condition {
       test     = "ArnEquals"
       variable = "aws:SourceArn"
-      values   = [aws_sns_topic.general_purpose_bucket_notifications.arn]
+      values   = [var.gen_purp_bucket_notifications_arn]
     }
   }
 }

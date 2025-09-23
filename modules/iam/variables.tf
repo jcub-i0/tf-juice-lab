@@ -49,3 +49,7 @@ variable "cloudtrail_log_delivery_arn" {
 variable "cloudtrail_notifications_arn" {
   description = "ARN of the CloudTrail Notifications SNS topic"
 }
+
+variable "gen_purp_bucket_notifications_arn" {
+  description = "ARN of the General Purpose bucket notifications SNS topic"
+}
