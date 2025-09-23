@@ -65,8 +65,8 @@ resource "aws_iam_role_policy" "replication_policy" {
           "s3:ListBucket"
         ]
         Resource = [
-          aws_s3_bucket.general_purpose.arn,
-          "${aws_s3_bucket.general_purpose.arn}/*"
+          var.gen_purp_bucket_arn,
+          "${var.gen_purp_bucket_arn}/*"
         ]
       },
       # Permissions for General Purpose Replica bucket
