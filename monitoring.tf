@@ -315,6 +315,7 @@ resource "aws_config_configuration_recorder" "config_rec" {
   name     = "TF-Juice-Lab-Config"
   role_arn = module.iam.config_role_arn
 
+  # This only records EC2 and S3 resources -- change it according to your preferences
   recording_group {
     all_supported                 = false
     include_global_resource_types = false
