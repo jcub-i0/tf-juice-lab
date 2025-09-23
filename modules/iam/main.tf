@@ -78,8 +78,8 @@ resource "aws_iam_role_policy" "replication_policy" {
           "s3:ReplicateTags",
         ]
         Resource = [
-          module.general_purpose_replica_bucket.s3_bucket_arn,
-          "${module.general_purpose_replica_bucket.s3_bucket_arn}/*"
+          var.gen_purp_replica_bucket_arn,
+          "${var.gen_purp_replica_bucket_arn}/*"
         ]
       },
       # Permissions for Centralized Logs source bucket
