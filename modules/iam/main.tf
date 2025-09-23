@@ -119,7 +119,7 @@ resource "aws_iam_role_policy" "replication_policy" {
           "kms:DescribeKey"
         ]
         Resource = [
-          module.kms.key_arn,
+          var.kms_key_arn,
           module.kms_replica_secondary_region.key_arn
         ]
       }
