@@ -460,7 +460,7 @@ data "aws_iam_policy_document" "centralized_logs_s3_sns_to_sqs" {
       "sqs:SendMessage"
     ]
 
-    resources = [aws_sqs_queue.centralized_logs_s3_event_queue.arn]
+    resources = [var.centralized_logs_s3_event_queue_arn]
 
     condition {
       test     = "ArnEquals"
