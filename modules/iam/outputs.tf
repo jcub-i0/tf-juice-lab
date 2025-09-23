@@ -81,3 +81,7 @@ output "lambda_ec2_isolate_policy" {
 output "config_role_arn" {
   value = aws_iam_role.config_role.arn
 }
+
+output "config_ssm_automation_policy_attachment" {
+  value = aws_iam_role_policy_attachment.config_ssm_automation
+}
