@@ -20,7 +20,7 @@ variable "kms_key_arn" {
 
 variable "kms_replica_key_arn" {
   description = "ARN of the KMS Replica Key, used in secondary region"
-  type = string
+  type        = string
 }
 
 variable "alerts_sns_topic_arn" {
