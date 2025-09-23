@@ -92,8 +92,8 @@ resource "aws_iam_role_policy" "replication_policy" {
           "s3:ListBucket"
         ]
         Resource = [
-          aws_s3_bucket.centralized_logs.arn,
-          "${aws_s3_bucket.centralized_logs.arn}/*"
+          var.centralized_logs_bucket_arn,
+          "${var.centralized_logs_bucket_arn}/*"
         ]
       },
       # Permissions for Centralized Logs Replica bucket
