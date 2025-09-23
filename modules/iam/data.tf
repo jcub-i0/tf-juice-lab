@@ -484,7 +484,7 @@ data "aws_iam_policy_document" "centralized_logs_sns_policy" {
 
     actions = ["sns:Publish"]
 
-    resources = [aws_sns_topic.centralized_logs_bucket_notifications.arn]
+    resources = [var.centralized_logs_bucket_notifications_arn]
 
     condition {
       test     = "ArnEquals"
