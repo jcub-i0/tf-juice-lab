@@ -77,3 +77,7 @@ variable "gen_purp_bucket_arn" {
 variable "gen_purp_replica_bucket_arn" {
   description = "ARN of the General Purpose Replica S3 bucket"
 }
+
+variable "centralized_logs_replica_bucket_arn" {
+  description = "ARN of the Centralized Logs Replica S3 bucket"
+}

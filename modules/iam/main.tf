@@ -105,8 +105,8 @@ resource "aws_iam_role_policy" "replication_policy" {
           "s3:ReplicateTags",
         ]
         Resource = [
-          module.centralized_logs_replica_bucket.s3_bucket_arn,
-          "${module.centralized_logs_replica_bucket.s3_bucket_arn}/*"
+          var.centralized_logs_replica_bucket_arn,
+          "${var.centralized_logs_replica_bucket_arn}/*"
         ]
       },
       {

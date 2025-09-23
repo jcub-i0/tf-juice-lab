@@ -39,6 +39,7 @@ module "iam" {
   centralized_logs_bucket_arn               = aws_s3_bucket.centralized_logs.arn
   gen_purp_bucket_arn                       = aws_s3_bucket.general_purpose.arn
   gen_purp_replica_bucket_arn               = module.general_purpose_replica_bucket.s3_bucket_arn
+  centralized_logs_replica_bucket_arn       = module.centralized_logs_replica_bucket.s3_bucket_arn
 }
 
 resource "aws_security_group" "quarantine_sg" {
