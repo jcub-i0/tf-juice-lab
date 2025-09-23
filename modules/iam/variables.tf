@@ -91,3 +91,8 @@ variable "cloudtrail_log_group_arn" {
   description = "ARN of the CloudTrail Log Group"
   type        = string
 }
+
+variable "ssm_automation_policy_arn" {
+  description = "ARN of the SSM Automation IAM policy"
+  type        = string
+}

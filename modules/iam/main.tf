@@ -207,7 +207,7 @@ resource "aws_iam_role" "config_remediation_role" {
 
 resource "aws_iam_role_policy_attachment" "config_ssm_automation" {
   role       = aws_iam_role.config_remediation_role.name
-  policy_arn = data.aws_iam_policy.ssm_automation.arn
+  policy_arn = var.ssm_automation_policy_arn
 }
 
 /*
