@@ -149,7 +149,7 @@ resource "aws_cloudtrail" "cloudtrail" {
   sns_topic_name = aws_sns_topic.cloudtrail_notifications.name
 
   cloud_watch_logs_group_arn = "${aws_cloudwatch_log_group.cloudtrail_logs.arn}:*"
-  cloud_watch_logs_role_arn  = module.iam.cloudtrail_to_cw_arn
+  cloud_watch_logs_role_arn  = module.iam.cloudtrail_to_cw_role_arn
 
   insight_selector {
     insight_type = "ApiCallRateInsight"
