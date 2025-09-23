@@ -45,46 +45,57 @@ variable "ec2_autostop_dlq_arn" {
 
 variable "ip_enrich_dlq_arn" {
   description = "ARN of the IP Enrichment function's DLQ"
+  type        = string
 }
 
 variable "cloudtrail_log_delivery_arn" {
   description = "ARN of the CloudTrail Log Delivery SQS queue"
+  type        = string
 }
 
 variable "cloudtrail_notifications_arn" {
   description = "ARN of the CloudTrail Notifications SNS topic"
+  type        = string
 }
 
 variable "gen_purp_bucket_notifications_arn" {
   description = "ARN of the General Purpose Bucket Notifications SNS topic"
+  type        = string
 }
 
 variable "centralized_logs_bucket_notifications_arn" {
   description = "ARN of the Centralized Logs Bucket Notifications SNS topic"
+  type        = string
 }
 
 variable "gen_purp_s3_event_queue_arn" {
   description = "ARN of the General Purpose S3 Event SQS queue"
+  type        = string
 }
 
 variable "centralized_logs_s3_event_queue_arn" {
   description = "ARN of the Centralized Logs S3 Event SQS queue"
+  type        = string
 }
 
 variable "centralized_logs_bucket_arn" {
   description = "ARN of the Centralized Logs S3 bucket"
+  type        = string
 }
 
 variable "gen_purp_bucket_arn" {
   description = "ARN of the General Purpose Logs S3 bucket"
+  type        = string
 }
 
 variable "gen_purp_replica_bucket_arn" {
   description = "ARN of the General Purpose Replica S3 bucket"
+  type        = string
 }
 
 variable "centralized_logs_replica_bucket_arn" {
   description = "ARN of the Centralized Logs Replica S3 bucket"
+  type        = string
 }
 
 variable "cloudtrail_log_group_arn" {
