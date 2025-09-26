@@ -214,7 +214,7 @@ data "aws_ami" "kali-linux" {
 
   filter {
     name   = "name"
-    values = ["kali-last-snapshot-amd64-2025.1.4-804fcc46-63fc-4eb6-85a1-50e66d6c7215"]
+    values = ["kali-last-snapshot-amd64-2025.3.0-804fcc46-63fc-4eb6-85a1-50e66d6c7215"]
   }
 }
 
