@@ -46,7 +46,7 @@ module "iam" {
 }
 
 module "endpoints" {
-  source = "./modules/endpoints"
+  source     = "./modules/endpoints"
   aws_region = var.aws_region
 }
 
