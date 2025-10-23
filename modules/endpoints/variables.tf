@@ -12,3 +12,8 @@ variable "lambda_subnet_id" {
   description = "The Lambda function subnet's ID"
   type        = string
 }
+
+variable "lambda_sub_cidr" {
+  description = "The Lambda subnet's CIDR address"
+  type        = string
+}

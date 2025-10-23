@@ -50,6 +50,7 @@ module "endpoints" {
   aws_region       = var.aws_region
   vpc_id           = module.network.vpc_id
   lambda_subnet_id = module.network.lambda_subnet_id
+  lambda_sub_cidr  = module.network.lambda_sub_cidr
 
 }
 
