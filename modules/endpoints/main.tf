@@ -1,7 +1,7 @@
 # Interface VPC Endpoints for EC2 Isolation Lambda function's needs
 resource "aws_vpc_endpoint" "ec2" {
   vpc_id              = module.network.vpc_id
-  service_name        = "com.amazonaws.${aws_region}.ec2"
+  service_name        = "com.amazonaws.${var.aws_region}.ec2"
   vpc_endpoint_type   = "Interface"
   subnet_ids          = [module.network.lambda_subnet_id]
   security_group_ids  = [aws_security_group.vpc_endpoints_sg.id]
@@ -10,7 +10,7 @@ resource "aws_vpc_endpoint" "ec2" {
 
 resource "aws_vpc_endpoint" "sns" {
   vpc_id              = module.network.vpc_id
-  service_name        = "com.amazonaws.${aws_region}.sns"
+  service_name        = "com.amazonaws.${var.aws_region}.sns"
   vpc_endpoint_type   = "Interface"
   subnet_ids          = [module.network.lambda_subnet_id]
   security_group_ids  = [aws_security_group.vpc_endpoints_sg.id]
@@ -19,7 +19,7 @@ resource "aws_vpc_endpoint" "sns" {
 
 resource "aws_vpc_endpoint" "sqs" {
   vpc_id              = module.network.vpc_id
-  service_name        = "com.amazonaws.${aws_region}.sqs"
+  service_name        = "com.amazonaws.${var.aws_region}.sqs"
   vpc_endpoint_type   = "Interface"
   subnet_ids          = [module.network.lambda_subnet_id]
   security_group_ids  = [aws_security_group.vpc_endpoints_sg.id]
@@ -28,7 +28,7 @@ resource "aws_vpc_endpoint" "sqs" {
 
 resource "aws_vpc_endpoint" "securityhub" {
   vpc_id              = module.network.vpc_id
-  service_name        = "com.amazonaws.${aws_region}.securityhub"
+  service_name        = "com.amazonaws.${var.aws_region}.securityhub"
   vpc_endpoint_type   = "Interface"
   subnet_ids          = [module.network.lambda_subnet_id]
   security_group_ids  = [aws_security_group.vpc_endpoints_sg.id]
@@ -37,7 +37,7 @@ resource "aws_vpc_endpoint" "securityhub" {
 
 resource "aws_vpc_endpoint" "logs" {
   vpc_id              = module.network.vpc_id
-  service_name        = "com.amazonaws.${aws_region}.logs"
+  service_name        = "com.amazonaws.${var.aws_region}.logs"
   vpc_endpoint_type   = "Interface"
   subnet_ids          = [module.network.lambda_subnet_id]
   security_group_ids  = [aws_security_group.vpc_endpoints_sg.id]
@@ -46,7 +46,7 @@ resource "aws_vpc_endpoint" "logs" {
 
 resource "aws_vpc_endpoint" "kms" {
   vpc_id              = module.network.vpc_id
-  service_name        = "com.amazonaws.${aws_region}.kms"
+  service_name        = "com.amazonaws.${var.aws_region}.kms"
   vpc_endpoint_type   = "Interface"
   subnet_ids          = [module.network.lambda_subnet_id]
   security_group_ids  = [aws_security_group.vpc_endpoints_sg.id]
@@ -55,7 +55,7 @@ resource "aws_vpc_endpoint" "kms" {
 
 resource "aws_vpc_endpoint" "cloudtrail" {
   vpc_id              = module.network.vpc_id
-  service_name        = "com.amazonaws.${aws_region}.cloudtrail"
+  service_name        = "com.amazonaws.${var.aws_region}.cloudtrail"
   vpc_endpoint_type   = "Interface"
   subnet_ids          = [module.network.lambda_subnet_id]
   security_group_ids  = [aws_security_group.vpc_endpoints_sg.id]
@@ -64,7 +64,7 @@ resource "aws_vpc_endpoint" "cloudtrail" {
 
 resource "aws_vpc_endpoint" "monitoring" {
   vpc_id              = module.network.vpc_id
-  service_name        = "com.amazonaws.${aws_region}.monitoring"
+  service_name        = "com.amazonaws.${var.aws_region}.monitoring"
   vpc_endpoint_type   = "Interface"
   subnet_ids          = [module.network.lambda_subnet_id]
   security_group_ids  = [aws_security_group.vpc_endpoints_sg.id]
@@ -74,7 +74,7 @@ resource "aws_vpc_endpoint" "monitoring" {
 # Gateway VPC Endpoint
 resource "aws_vpc_endpoint" "s3" {
   vpc_id            = module.network.vpc_id
-  service_name      = "com.amazonaws.${aws_region}.s3"
+  service_name      = "com.amazonaws.${var.aws_region}.s3"
   vpc_endpoint_type = "Gateway"
   route_table_ids   = [module.network.private_route_table_id]
 }
