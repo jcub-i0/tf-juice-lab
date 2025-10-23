@@ -42,7 +42,6 @@ module "iam" {
   gen_purp_replica_bucket_arn               = module.general_purpose_replica_bucket.s3_bucket_arn
   centralized_logs_replica_bucket_arn       = module.centralized_logs_replica_bucket.s3_bucket_arn
   cloudtrail_log_group_arn                  = aws_cloudwatch_log_group.cloudtrail_logs.arn
-  ssm_automation_policy_arn                 = data.aws_iam_policy.ssm_automation.arn
 }
 
 module "endpoints" {
