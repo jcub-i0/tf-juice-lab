@@ -50,6 +50,7 @@ module "endpoints" {
   aws_region       = var.aws_region
   vpc_id           = module.network.vpc_id
   lambda_subnet_id = module.network.lambda_subnet_id
+
 }
 
 resource "aws_security_group" "quarantine_sg" {
@@ -79,7 +80,7 @@ resource "aws_security_group" "lambda_ec2_isolation_sg" {
     from_port       = 443
     to_port         = 443
     protocol        = "tcp"
-    security_groups = [aws_security_group.vpc_endpoints_sg.id]
+    security_groups = [module.endpoints.vpc_endpoints_sg_id]
     description     = "Allow Lambda EC2 Isolation function to only communicate with VPC endpoints inside main VPC"
   }
 
@@ -97,7 +98,7 @@ resource "aws_security_group" "lambda_ec2_autostop_sg" {
     from_port       = 443
     to_port         = 443
     protocol        = "tcp"
-    security_groups = [aws_security_group.vpc_endpoints_sg.id]
+    security_groups = [module.endpoints.vpc_endpoints_sg_id]
     description     = "Allow Lambda EC2 Autostop function to only communicate with VPC endpoints inside main VPC"
   }
 
@@ -121,33 +122,6 @@ resource "aws_security_group" "lambda_ip_enrich_sg" {
 
   tags = {
     Name = "lambda_ip_enrichment"
-  }
-}
-
-# Security Group for all VPC endpoints
-resource "aws_security_group" "vpc_endpoints_sg" {
-  name        = "vpc-endpoints-sg"
-  description = "Allow Lambda subnets to talk to AWS services over HTTPS"
-  vpc_id      = module.network.vpc_id
-
-  ingress {
-    from_port   = 443
-    to_port     = 443
-    protocol    = "tcp"
-    cidr_blocks = [module.network.lambda_sub_cidr]
-    description = "Allow Lambda functions to communicate with VPC endpoints"
-  }
-
-  egress {
-    from_port   = 443
-    to_port     = 443
-    protocol    = "tcp"
-    cidr_blocks = [module.network.lambda_sub_cidr]
-    description = "Allow VPC endpoints to communicate with Lambda functions"
-  }
-
-  tags = {
-    Name = "vpc_endpoints_sg"
   }
 }
 
