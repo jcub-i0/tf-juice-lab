@@ -46,12 +46,12 @@ module "iam" {
 }
 
 module "endpoints" {
-  source           = "./modules/endpoints"
-  aws_region       = var.aws_region
-  vpc_id           = module.network.vpc_id
-  lambda_subnet_id = module.network.lambda_subnet_id
-  lambda_sub_cidr  = module.network.lambda_sub_cidr
-
+  source                 = "./modules/endpoints"
+  aws_region             = var.aws_region
+  vpc_id                 = module.network.vpc_id
+  lambda_subnet_id       = module.network.lambda_subnet_id
+  lambda_sub_cidr        = module.network.lambda_sub_cidr
+  private_route_table_id = module.network.private_route_table_id
 }
 
 resource "aws_security_group" "quarantine_sg" {

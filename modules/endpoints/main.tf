@@ -8,7 +8,7 @@ resource "aws_security_group" "vpc_endpoints_sg" {
     from_port   = 443
     to_port     = 443
     protocol    = "tcp"
-    cidr_blocks = [module.network.lambda_sub_cidr]
+    cidr_blocks = [var.lambda_sub_cidr]
     description = "Allow Lambda functions to communicate with VPC endpoints"
   }
 
@@ -16,7 +16,7 @@ resource "aws_security_group" "vpc_endpoints_sg" {
     from_port   = 443
     to_port     = 443
     protocol    = "tcp"
-    cidr_blocks = [module.network.lambda_sub_cidr]
+    cidr_blocks = [var.lambda_sub_cidr]
     description = "Allow VPC endpoints to communicate with Lambda functions"
   }
 
@@ -103,5 +103,5 @@ resource "aws_vpc_endpoint" "s3" {
   vpc_id            = var.vpc_id
   service_name      = "com.amazonaws.${var.aws_region}.s3"
   vpc_endpoint_type = "Gateway"
-  route_table_ids   = [module.network.private_route_table_id]
+  route_table_ids   = [var.private_route_table_id]
 }

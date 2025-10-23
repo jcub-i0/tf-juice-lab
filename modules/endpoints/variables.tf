@@ -17,3 +17,8 @@ variable "lambda_sub_cidr" {
   description = "The Lambda subnet's CIDR address"
   type        = string
 }
+
+variable "private_route_table_id" {
+  description = "Private Route Table's ID"
+  type        = string
+}
