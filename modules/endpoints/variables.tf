@@ -12,8 +12,3 @@ variable "lambda_subnet_id" {
   description = "The Lambda function subnet's ID"
   type        = string
 }
-
-variable "vpc_endpoints_sg_id" {
-  description = "The ID of the VPC Endpoints Security Group"
-  type        = string
-}
