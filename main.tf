@@ -45,6 +45,10 @@ module "iam" {
   ssm_automation_policy_arn                 = data.aws_iam_policy.ssm_automation.arn
 }
 
+module "endpoints" {
+  source = "./modules/endpoints"
+}
+
 resource "aws_security_group" "quarantine_sg" {
   name        = "quarantine-sg"
   description = "Security Group to send compromised EC2 instances to for isolation"
