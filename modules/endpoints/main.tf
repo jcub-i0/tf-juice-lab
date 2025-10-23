@@ -1,3 +1,30 @@
+# Security Group for all VPC endpoints
+resource "aws_security_group" "vpc_endpoints_sg" {
+  name        = "vpc-endpoints-sg"
+  description = "Allow Lambda subnets to talk to AWS services over HTTPS"
+  vpc_id      = var.vpc_id
+
+  ingress {
+    from_port   = 443
+    to_port     = 443
+    protocol    = "tcp"
+    cidr_blocks = [module.network.lambda_sub_cidr]
+    description = "Allow Lambda functions to communicate with VPC endpoints"
+  }
+
+  egress {
+    from_port   = 443
+    to_port     = 443
+    protocol    = "tcp"
+    cidr_blocks = [module.network.lambda_sub_cidr]
+    description = "Allow VPC endpoints to communicate with Lambda functions"
+  }
+
+  tags = {
+    Name = "vpc_endpoints_sg"
+  }
+}
+
 # Interface VPC Endpoints for EC2 Isolation Lambda function's needs
 resource "aws_vpc_endpoint" "ec2" {
   vpc_id              = var.vpc_id
@@ -77,31 +104,4 @@ resource "aws_vpc_endpoint" "s3" {
   service_name      = "com.amazonaws.${var.aws_region}.s3"
   vpc_endpoint_type = "Gateway"
   route_table_ids   = [module.network.private_route_table_id]
-}
-
-# Security Group for all VPC endpoints
-resource "aws_security_group" "vpc_endpoints_sg" {
-  name        = "vpc-endpoints-sg"
-  description = "Allow Lambda subnets to talk to AWS services over HTTPS"
-  vpc_id      = module.network.vpc_id
-
-  ingress {
-    from_port   = 443
-    to_port     = 443
-    protocol    = "tcp"
-    cidr_blocks = [module.network.lambda_sub_cidr]
-    description = "Allow Lambda functions to communicate with VPC endpoints"
-  }
-
-  egress {
-    from_port   = 443
-    to_port     = 443
-    protocol    = "tcp"
-    cidr_blocks = [module.network.lambda_sub_cidr]
-    description = "Allow VPC endpoints to communicate with Lambda functions"
-  }
-
-  tags = {
-    Name = "vpc_endpoints_sg"
-  }
 }
