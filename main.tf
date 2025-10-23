@@ -47,6 +47,7 @@ module "iam" {
 
 module "endpoints" {
   source = "./modules/endpoints"
+  aws_region = var.aws_region
 }
 
 resource "aws_security_group" "quarantine_sg" {
