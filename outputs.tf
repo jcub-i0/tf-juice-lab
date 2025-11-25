@@ -26,7 +26,7 @@ output "general_purpose_s3_bucket_name" {
 }
 
 output "centralized_logs_s3_bucket_name" {
-  value = aws_s3_bucket.centralized_logs.bucket
+  value = module.logging.centralized_logs_bucket
 }
 
 output "kms_key_arn" {

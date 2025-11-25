@@ -27,17 +27,17 @@ module "iam" {
   kms_key_arn                               = module.kms.key_arn
   kms_replica_key_arn                       = module.kms_replica_secondary_region.key_arn
   alerts_sns_topic_arn                      = aws_sns_topic.alerts.arn
-  centralized_logs_bucket                   = aws_s3_bucket.centralized_logs.bucket
+  centralized_logs_bucket                   = module.logging.centralized_logs_bucket
   ec2_isolation_dlq_arn                     = aws_sqs_queue.ec2_isolation_dlq.arn
   ec2_autostop_dlq_arn                      = aws_sqs_queue.ec2_autostop_dlq.arn
   ip_enrich_dlq_arn                         = aws_sqs_queue.ip_enrich_dlq.arn
   cloudtrail_log_delivery_arn               = aws_sqs_queue.cloudtrail_log_delivery.arn
   cloudtrail_notifications_arn              = aws_sns_topic.cloudtrail_notifications.arn
   gen_purp_bucket_notifications_arn         = aws_sns_topic.general_purpose_bucket_notifications.arn
-  centralized_logs_bucket_notifications_arn = aws_sns_topic.centralized_logs_bucket_notifications.arn
+  centralized_logs_bucket_notifications_arn = module.logging.sns_centralized_logs_notifications_arn
   gen_purp_s3_event_queue_arn               = aws_sqs_queue.general_purpose_s3_event_queue.arn
-  centralized_logs_s3_event_queue_arn       = aws_sqs_queue.centralized_logs_s3_event_queue.arn
-  centralized_logs_bucket_arn               = aws_s3_bucket.centralized_logs.arn
+  centralized_logs_s3_event_queue_arn       = module.logging.sqs_centralized_logs_event_queue_arn
+  centralized_logs_bucket_arn               = module.logging.centralized_logs_bucket_arn
   gen_purp_bucket_arn                       = aws_s3_bucket.general_purpose.arn
   gen_purp_replica_bucket_arn               = module.general_purpose_replica_bucket.s3_bucket_arn
   centralized_logs_replica_bucket_arn       = module.centralized_logs_replica_bucket.s3_bucket_arn
@@ -51,6 +51,13 @@ module "endpoints" {
   lambda_subnet_id       = module.network.lambda_subnet_id
   lambda_sub_cidr        = module.network.lambda_sub_cidr
   private_route_table_id = module.network.private_route_table_id
+}
+
+module "logging" {
+  source      = "./modules/logging"
+  environment = var.environment
+  random_suffix_hex = random_id.random_suffix.hex
+  replication_role_arn = module.iam.replication_role_arn
 }
 
 resource "aws_security_group" "quarantine_sg" {
@@ -193,7 +200,7 @@ resource "aws_s3_bucket_public_access_block" "general_purpose_public_block" {
 resource "aws_s3_bucket_logging" "general_purpose_logging" {
   bucket = aws_s3_bucket.general_purpose.bucket
 
-  target_bucket = aws_s3_bucket.centralized_logs.bucket
+  target_bucket = module.logging.centralized_logs_bucket
   target_prefix = "s3-access-logs/${aws_s3_bucket.general_purpose.bucket}/"
 }
 
