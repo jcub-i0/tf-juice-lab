@@ -13,3 +13,7 @@ variable "replication_role_arn" {
   type = string
 }
 
+variable "kms_master_key_arn" {
+  description = "ARN of the KMS master key"
+  type = string
+}
