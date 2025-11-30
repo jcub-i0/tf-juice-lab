@@ -58,6 +58,21 @@ module "logging" {
   environment = var.environment
   random_suffix_hex = random_id.random_suffix.hex
   replication_role_arn = module.iam.replication_role_arn
+  kms_master_key_arn = module.kms.key_arn
+}
+
+module "s3_replication" {
+  source = "./modules/s3_replication"
+
+}
+
+module "kms" {
+  source = "./modules/kms"
+
+  providers = {
+    aws = aws
+    aws.secondary = aws.secondary
+  }
 }
 
 resource "aws_security_group" "quarantine_sg" {
