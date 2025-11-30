@@ -75,7 +75,7 @@ resource "aws_sns_topic_policy" "centralized_logs_topic_policy" {
 
 resource "aws_s3_bucket_policy" "general_purpose_replica_policy" {
   provider = aws.secondary
-  bucket   = module.general_purpose_replica_bucket.s3_bucket_id
+bucket   = module.s3_replication.general_purpose_replica_bucket_id
 
   policy = jsonencode({
     Version = "2012-10-17"
