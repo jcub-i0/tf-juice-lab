@@ -92,8 +92,8 @@ bucket   = module.s3_replication.general_purpose_replica_bucket_id
           "s3:ReplicateTags"
         ]
         Resource = [
-          module.general_purpose_replica_bucket.s3_bucket_arn,
-          "${module.general_purpose_replica_bucket.s3_bucket_arn}/*"
+          module.s3_replication.general_purpose_replica_bucket_arn,
+          "${module.s3_replication.general_purpose_replica_bucket_arn}/*"
         ]
       }
     ]
@@ -102,7 +102,7 @@ bucket   = module.s3_replication.general_purpose_replica_bucket_id
 
 resource "aws_s3_bucket_policy" "centralized_logs_replica_policy" {
   provider = aws.secondary
-  bucket   = module.centralized_logs_replica_bucket.s3_bucket_id
+  bucket   = module.s3_replication.centralized_logs_replica_bucket_id
 
   policy = jsonencode({
     Version = "2012-10-17",
@@ -119,8 +119,8 @@ resource "aws_s3_bucket_policy" "centralized_logs_replica_policy" {
           "s3:ReplicateTags"
         ]
         Resource = [
-          module.centralized_logs_replica_bucket.s3_bucket_arn,
-          "${module.centralized_logs_replica_bucket.s3_bucket_arn}/*"
+          module.s3_replication.centralized_logs_replica_bucket_arn,
+          "${module.s3_replication.centralized_logs_replica_bucket_arn}/*"
         ]
       }
     ]
