@@ -139,7 +139,7 @@ resource "aws_s3_bucket_notification" "centralized_logs" {
   depends_on = [
     aws_s3_bucket.centralized_logs,
     aws_sns_topic.centralized_logs_bucket_notifications,
-    aws_sns_topic_policy.centralized_logs_topic_policy
+    var.centralized_logs_topic_policy
   ]
 }
 
@@ -162,7 +162,7 @@ resource "aws_sns_topic_subscription" "centralized_logs_bucket_notifications_sub
 resource "aws_config_delivery_channel" "config_delivery_channel" {
   name           = "Config-Delivery-Channel"
   s3_bucket_name = aws_s3_bucket.centralized_logs.bucket
-  depends_on     = [aws_config_configuration_recorder.config_rec]
+  depends_on     = [var.config_configuration_recorder_config_rec]
 }
 
 ## S3 Bucket policy to allow CloudTrail to put objects in Centralized Logs bucket
