@@ -24,7 +24,7 @@ module "iam" {
   terraform_admin_username                  = var.terraform_admin_username
   account_id                                = var.account_id
   general_purpose_bucket_arn                = aws_s3_bucket.general_purpose.arn
-  kms_key_arn                               = module.kms.key_arn
+  kms_key_arn                               = module.kms.kms_key_arn
   kms_replica_key_arn                       = module.kms.kms_replica_secondary_region_key_arn
   alerts_sns_topic_arn                      = aws_sns_topic.alerts.arn
   centralized_logs_bucket                   = module.logging.centralized_logs_bucket
@@ -54,11 +54,14 @@ module "endpoints" {
 }
 
 module "logging" {
-  source      = "./modules/logging"
-  environment = var.environment
-  random_suffix_hex = random_id.random_suffix.hex
-  replication_role_arn = module.iam.replication_role_arn
-  kms_master_key_arn = module.kms.key_arn
+  source                              = "./modules/logging"
+  environment                         = var.environment
+  random_suffix_hex                   = random_id.random_suffix.hex
+  replication_role_arn                = module.iam.replication_role_arn
+  kms_master_key_arn                  = module.kms.kms_key_arn
+  centralized_logs_replica_bucket     = module.s3_replication.centralized_logs_replica_bucket
+  centralized_logs_replica_bucket_arn = module.s3_replication.centralized_logs_replica_bucket_arn
+  kms_key_arn                         = module.kms.kms_key_arn
 }
 
 module "s3_replication" {
@@ -67,10 +70,14 @@ module "s3_replication" {
 }
 
 module "kms" {
-  source = "./modules/kms"
+  source                           = "./modules/kms"
+  lambda_ec2_isolate_exec_role_arn = module.iam.lambda_ec2_isolate_execution_role_arn
+  lambda_ip_enrich_arn             = module.iam.lambda_ip_enrich_arn
+  environment                      = var.environment
+  replication_role_arn             = module.iam.replication_role_arn
 
   providers = {
-    aws = aws
+    aws           = aws
     aws.secondary = aws.secondary
   }
 }
@@ -168,7 +175,7 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "general_purpose_s
 
   rule {
     apply_server_side_encryption_by_default {
-      kms_master_key_id = module.kms.key_arn
+      kms_master_key_id = module.kms.kms_key_arn
       sse_algorithm     = "aws:kms"
     }
   }
@@ -224,17 +231,17 @@ resource "aws_s3_bucket_replication_configuration" "general_purpose_replication"
   bucket = aws_s3_bucket.general_purpose.bucket
   role   = module.iam.replication_role_arn
 
-  depends_on = [module.general_purpose_replica_bucket]
+  depends_on = [module.s3_replication.general_purpose_replica_bucket]
 
   rule {
     id     = "general-purpose-crr"
     status = "Enabled"
 
     destination {
-      bucket        = module.general_purpose_replica_bucket.s3_bucket_arn
+      bucket        = module.s3_replication.general_purpose_replica_bucket_arn
       storage_class = "STANDARD_IA"
       encryption_configuration {
-        replica_kms_key_id = module.kms_replica_secondary_region.key_arn
+        replica_kms_key_id = module.s3_replication.kms_replica_secondary_region_key_arn
       }
     }
 

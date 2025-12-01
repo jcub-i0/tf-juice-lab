@@ -31,5 +31,5 @@ output "centralized_logs_s3_bucket_name" {
 
 output "kms_key_arn" {
   description = "KMS Key ARN used for CloudTrail, SNS, etc."
-  value       = module.kms.key_arn
+  value       = module.kms.kms_key_arn
 }

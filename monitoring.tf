@@ -30,13 +30,13 @@ resource "aws_flow_log" "main_vpc" {
 resource "aws_cloudwatch_log_group" "flow_logs_group" {
   name              = "/aws/vpc/flow-logs"
   retention_in_days = 365
-  kms_key_id        = module.kms.key_arn
+  kms_key_id        = module.kms.kms_key_arn
 }
 
 resource "aws_cloudwatch_log_group" "cloudtrail_logs" {
   name              = "tf-juice-lab-cloudtrail"
   retention_in_days = 365
-  kms_key_id        = module.kms.key_arn
+  kms_key_id        = module.kms.kms_key_arn
 
   tags = {
     Name        = "TF-Juice-Lab CloudTrail Logs"
@@ -89,7 +89,7 @@ resource "aws_cloudwatch_metric_alarm" "unauthorized_api_calls" {
 
 resource "aws_sns_topic" "alerts" {
   name              = "tf-juice-lab-security-alerts"
-  kms_master_key_id = module.kms.key_arn
+  kms_master_key_id = module.kms.kms_key_arn
 }
 
 resource "aws_sns_topic_subscription" "alerts_sub" {
@@ -103,13 +103,13 @@ resource "aws_sns_topic_subscription" "alerts_sub" {
 # Create SNS topic for CloudTrail notificaitons
 resource "aws_sns_topic" "cloudtrail_notifications" {
   name              = "cloudtrail-log-delivery"
-  kms_master_key_id = module.kms.key_arn
+  kms_master_key_id = module.kms.kms_key_arn
 }
 
 # Create SQS queue for CloudTrail notifications
 resource "aws_sqs_queue" "cloudtrail_log_delivery" {
   name              = "cloudtrail-log-delivery-queue"
-  kms_master_key_id = module.kms.key_arn
+  kms_master_key_id = module.kms.kms_key_arn
 }
 
 # Create SNS topic subscription for CloudTrail notifications
@@ -123,7 +123,7 @@ resource "aws_sns_topic_subscription" "cloudtrail_notifications_sub" {
 # Create SNS topic for S3 event notifications
 resource "aws_sns_topic" "general_purpose_bucket_notifications" {
   name              = "general-purpose-s3-notifications"
-  kms_master_key_id = module.kms.key_arn
+  kms_master_key_id = module.kms.kms_key_arn
 }
 
 resource "aws_s3_bucket_notification" "general_purpose" {
@@ -144,7 +144,7 @@ resource "aws_s3_bucket_notification" "general_purpose" {
 
 resource "aws_sqs_queue" "general_purpose_s3_event_queue" {
   name              = "general-purpose-s3-events"
-  kms_master_key_id = module.kms.key_arn
+  kms_master_key_id = module.kms.kms_key_arn
 }
 
 resource "aws_sns_topic_subscription" "general_purpose_bucket_notifications_sub" {
@@ -305,7 +305,7 @@ resource "aws_lambda_function" "ec2_isolation" {
   }
 
   reserved_concurrent_executions = 5
-  kms_key_arn                    = module.kms.key_arn
+  kms_key_arn                    = module.kms.kms_key_arn
 
   # Enable X-Ray tracing
   tracing_config {
@@ -373,7 +373,7 @@ resource "aws_cloudwatch_event_target" "securityhub_ec2_isolate_target" {
 ### SQS DLQ for EC2 Isolation Lambda
 resource "aws_sqs_queue" "ec2_isolation_dlq" {
   name              = "ec2-isolation-lambda-dlq"
-  kms_master_key_id = module.kms.key_arn
+  kms_master_key_id = module.kms.kms_key_arn
 }
 
 ## Lambda EC2 Autostop on Idle
@@ -392,7 +392,7 @@ resource "aws_lambda_function" "ec2_autostop" {
   source_code_hash = data.archive_file.lambda_ec2_autostop_zip.output_base64sha256
 
   reserved_concurrent_executions = 5
-  kms_key_arn                    = module.kms.key_arn
+  kms_key_arn                    = module.kms.kms_key_arn
 
   vpc_config {
     subnet_ids         = [module.network.lambda_subnet_id]
@@ -442,7 +442,7 @@ resource "aws_cloudwatch_event_target" "ec2_autostop_target" {
 ### SQS DLQ for EC2 AutoStop Lambda
 resource "aws_sqs_queue" "ec2_autostop_dlq" {
   name              = "ec2-autostop-lambda-dlq"
-  kms_master_key_id = module.kms.key_arn
+  kms_master_key_id = module.kms.kms_key_arn
 }
 
 ## Lambda IP Encrichment function
@@ -464,7 +464,7 @@ resource "aws_lambda_function" "ip_enrich" {
   runtime          = "python3.12"
 
   reserved_concurrent_executions = 10
-  kms_key_arn                    = module.kms.key_arn
+  kms_key_arn                    = module.kms.kms_key_arn
 
   depends_on = [
     aws_sqs_queue_policy.ip_enrich_lambda_to_sqs
@@ -532,5 +532,5 @@ resource "aws_cloudwatch_event_target" "securityhub_finding_event_target_ip_enri
 ### SQS DLQ for EC2 IP Enrichment Lambda
 resource "aws_sqs_queue" "ip_enrich_dlq" {
   name              = "ec2-ip-enrich-lambda-dlq"
-  kms_master_key_id = module.kms.key_arn
+  kms_master_key_id = module.kms.kms_key_arn
 }
