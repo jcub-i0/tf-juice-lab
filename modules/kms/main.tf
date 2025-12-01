@@ -111,7 +111,7 @@ module "kms" {
       principals = [
         {
           type        = "AWS"
-          identifiers = [module.iam.lambda_ec2_isolate_execution_role_arn]
+          identifiers = [var.lambda_ec2_isolate_exec_role_arn]
         }
       ]
       actions = [
@@ -129,7 +129,7 @@ module "kms" {
       principals = [
         {
           type        = "AWS"
-          identifiers = [module.iam.lambda_autostop_execution_role_arn]
+          identifiers = [var.lambda_ec2_isolate_exec_role_arn]
         }
       ]
       actions = [
@@ -146,7 +146,7 @@ module "kms" {
       principals = [
         {
           type        = "AWS"
-          identifiers = [module.iam.lambda_ip_enrich_arn]
+          identifiers = [var.lambda_ip_enrich_arn]
         }
       ]
       actions = [
@@ -183,7 +183,7 @@ module "kms_replica_secondary_region" {
       principals = [
         {
           type        = "AWS"
-          identifiers = [module.iam.replication_role_arn]
+          identifiers = [var.replication_role_arn]
         }
       ]
       actions = [
