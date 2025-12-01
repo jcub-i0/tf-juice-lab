@@ -68,7 +68,7 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "logs_bucket_encry
 
   rule {
     apply_server_side_encryption_by_default {
-      kms_master_key_id = module.kms.key_arn
+      kms_master_key_id = var.kms_master_key_arn
       sse_algorithm     = "aws:kms"
     }
   }
@@ -92,9 +92,9 @@ resource "aws_s3_bucket_public_access_block" "centralized_logs_public_block" {
 
 resource "aws_s3_bucket_replication_configuration" "centralized_logs_replication" {
   bucket = aws_s3_bucket.centralized_logs.bucket
-  role   = module.iam.replication_role_arn
+  role   = var.replication_role_arn
 
-  depends_on = [module.centralized_logs_replica_bucket]
+  depends_on = [var.centralized_logs_replica_bucket]
 
   rule {
     id     = "centralized-logs-crr"
@@ -145,12 +145,12 @@ resource "aws_s3_bucket_notification" "centralized_logs" {
 
 resource "aws_sqs_queue" "centralized_logs_s3_event_queue" {
   name              = "centralized-logs-s3-notifications"
-  kms_master_key_id = module.kms.key_arn
+  kms_master_key_id = var.kms_key_arn
 }
 
 resource "aws_sns_topic" "centralized_logs_bucket_notifications" {
   name              = "centralized-logs-s3-notifications"
-  kms_master_key_id = module.kms.key_arn
+  kms_master_key_id = var.kms_key_arn
 }
 
 resource "aws_sns_topic_subscription" "centralized_logs_bucket_notifications_sub" {
