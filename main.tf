@@ -54,14 +54,16 @@ module "endpoints" {
 }
 
 module "logging" {
-  source                              = "./modules/logging"
-  environment                         = var.environment
-  random_suffix_hex                   = random_id.random_suffix.hex
-  replication_role_arn                = module.iam.replication_role_arn
-  kms_master_key_arn                  = module.kms.kms_key_arn
-  centralized_logs_replica_bucket     = module.s3_replication.centralized_logs_replica_bucket
-  centralized_logs_replica_bucket_arn = module.s3_replication.centralized_logs_replica_bucket_arn
-  kms_key_arn                         = module.kms.kms_key_arn
+  source                                   = "./modules/logging"
+  environment                              = var.environment
+  random_suffix_hex                        = random_id.random_suffix.hex
+  replication_role_arn                     = module.iam.replication_role_arn
+  kms_master_key_arn                       = module.kms.kms_key_arn
+  centralized_logs_replica_bucket          = module.s3_replication.centralized_logs_replica_bucket
+  centralized_logs_replica_bucket_arn      = module.s3_replication.centralized_logs_replica_bucket_arn
+  kms_key_arn                              = module.kms.kms_key_arn
+  centralized_logs_topic_policy            = aws_sns_topic_policy.centralized_logs_topic_policy
+  config_configuration_recorder_config_rec = aws_config_configuration_recorder.config_rec
 }
 
 module "s3_replication" {
