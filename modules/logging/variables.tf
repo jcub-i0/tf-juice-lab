@@ -32,3 +32,13 @@ variable "kms_key_arn" {
   description = "ARN of the KMS key"
   type        = string
 }
+
+variable "centralized_logs_topic_policy" {
+  description = "Centralized Logs Topic Policy"
+  type        = string
+}
+
+variable "config_configuration_recorder_config_rec" {
+  description = "config_rec attribute of the Configuration Recorder"
+  type        = string
+}
