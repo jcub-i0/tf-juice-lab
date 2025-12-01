@@ -25,7 +25,7 @@ module "iam" {
   account_id                                = var.account_id
   general_purpose_bucket_arn                = aws_s3_bucket.general_purpose.arn
   kms_key_arn                               = module.kms.key_arn
-  kms_replica_key_arn                       = module.kms_replica_secondary_region.key_arn
+  kms_replica_key_arn                       = module.kms.kms_replica_secondary_region_key_arn
   alerts_sns_topic_arn                      = aws_sns_topic.alerts.arn
   centralized_logs_bucket                   = module.logging.centralized_logs_bucket
   ec2_isolation_dlq_arn                     = aws_sqs_queue.ec2_isolation_dlq.arn
@@ -39,8 +39,8 @@ module "iam" {
   centralized_logs_s3_event_queue_arn       = module.logging.sqs_centralized_logs_event_queue_arn
   centralized_logs_bucket_arn               = module.logging.centralized_logs_bucket_arn
   gen_purp_bucket_arn                       = aws_s3_bucket.general_purpose.arn
-  gen_purp_replica_bucket_arn               = module.general_purpose_replica_bucket.s3_bucket_arn
-  centralized_logs_replica_bucket_arn       = module.centralized_logs_replica_bucket.s3_bucket_arn
+  gen_purp_replica_bucket_arn               = module.s3_replication.general_purpose_replica_bucket_arn
+  centralized_logs_replica_bucket_arn       = module.s3_replication.centralized_logs_replica_bucket_arn
   cloudtrail_log_group_arn                  = aws_cloudwatch_log_group.cloudtrail_logs.arn
 }
 
