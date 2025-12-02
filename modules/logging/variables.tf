@@ -55,4 +55,9 @@ variable "cloudtrail_to_cw_policy" {
 
 variable "cloudtrail_logs" {
   description = "Reference to the aws_cloudwatch_log_group.cloudtrail_logs resource"
+  type = string
+}
+
+variable "cloudtrail_notifications_name" {
+  description = "'name' attribute of the aws_sns_topic.cloudtrail_notifications resource"
 }
