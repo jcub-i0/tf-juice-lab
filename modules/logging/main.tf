@@ -14,10 +14,10 @@ resource "aws_cloudtrail" "cloudtrail" {
   enable_log_file_validation    = true
 
   kms_key_id     = var.kms_key_arn
-  sns_topic_name = aws_sns_topic.cloudtrail_notifications.name
+  sns_topic_name = var.cloudtrail_notifications_name
 
-  cloud_watch_logs_group_arn = "${aws_cloudwatch_log_group.cloudtrail_logs.arn}:*"
-  cloud_watch_logs_role_arn  = module.iam.cloudtrail_to_cw_role_arn
+  cloud_watch_logs_group_arn = "${var.cloudtrail_logs_arn}:*"
+  cloud_watch_logs_role_arn  = var.cloudtrail_to_cw_role_arn
 
   insight_selector {
     insight_type = "ApiCallRateInsight"
@@ -101,10 +101,10 @@ resource "aws_s3_bucket_replication_configuration" "centralized_logs_replication
     status = "Enabled"
 
     destination {
-      bucket        = module.centralized_logs_replica_bucket.s3_bucket_arn
+      bucket        = var.centralized_logs_replica_bucket_s3_bucket_arn
       storage_class = "STANDARD_IA"
       encryption_configuration {
-        replica_kms_key_id = module.kms_replica_secondary_region.key_arn
+        replica_kms_key_id = var.kms_replica_secondary_region_key_arn
       }
     }
 
