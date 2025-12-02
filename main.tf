@@ -64,11 +64,22 @@ module "logging" {
   kms_key_arn                              = module.kms.kms_key_arn
   centralized_logs_topic_policy            = aws_sns_topic_policy.centralized_logs_topic_policy
   config_configuration_recorder_config_rec = aws_config_configuration_recorder.config_rec
+  cloudtrail_to_cw_role = module.iam.cloudtrail_to_cw_role
+  cloudtrail_to_cw_policy = module.iam.cloudtrail_to_cw_policy
+  cloudtrail_logs = aws_cloudwatch_log_group.cloudtrail_logs
+  cloudtrail_notifications_name = aws_sns_topic.cloudtrail_notifications.name
+  cloudtrail_logs_arn = aws_cloudwatch_log_group.cloudtrail_logs.arn
+  cloudtrail_to_cw_role_arn = module.iam.cloudtrail_to_cw_role_arn
+  centralized_logs_replica_bucket_s3_bucket_arn = module.s3_replication.centralized_logs_replica_bucket_s3_bucket_arn
+  kms_replica_secondary_region_key_arn = module.kms.kms_replica_secondary_region_key_arn
 }
 
 module "s3_replication" {
-  source = "./modules/s3_replication"
-
+  source               = "./modules/s3_replication"
+  random_suffix_hex    = random_id.random_suffix.hex
+  secondary_aws_region = var.secondary_aws_region
+  environment          = var.environment
+  kms_key_arn          = module.kms.kms_key_arn
 }
 
 module "kms" {
@@ -243,7 +254,7 @@ resource "aws_s3_bucket_replication_configuration" "general_purpose_replication"
       bucket        = module.s3_replication.general_purpose_replica_bucket_arn
       storage_class = "STANDARD_IA"
       encryption_configuration {
-        replica_kms_key_id = module.s3_replication.kms_replica_secondary_region_key_arn
+        replica_kms_key_id = module.kms.kms_replica_secondary_region_key_arn
       }
     }
 
