@@ -14,6 +14,10 @@ output "centralized_logs_replica_bucket_arn" {
   value = module.centralized_logs_replica_bucket.s3_bucket_arn
 }
 
+output "centralized_logs_replica_bucket_s3_bucket_arn" {
+  value = module.centralized_logs_replica_bucket.s3_bucket_arn
+}
+
 output "general_purpose_replica_bucket" {
   value = module.general_purpose_replica_bucket
 }
