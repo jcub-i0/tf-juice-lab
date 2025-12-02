@@ -4,7 +4,7 @@
 module "general_purpose_replica_bucket" {
   source = "git::https://github.com/terraform-aws-modules/terraform-aws-s3-bucket.git?ref=2a25737a72c7e862ea297cea063207a3aa56b1a8"
 
-  bucket = "general-purpose-replica-${random_id.random_suffix.hex}"
+  bucket = "general-purpose-replica-${var.random_suffix_hex}"
   region = var.secondary_aws_region
 
   versioning = {
@@ -14,7 +14,7 @@ module "general_purpose_replica_bucket" {
   server_side_encryption_configuration = {
     rule = {
       apply_server_side_encryption_by_default = {
-        kms_master_key_id = module.kms.key_arn
+        kms_master_key_id = var.kms_key_arn
         sse_algorithm     = "aws:kms"
       }
     }
@@ -41,7 +41,7 @@ module "general_purpose_replica_bucket" {
 module "centralized_logs_replica_bucket" {
   source = "git::https://github.com/terraform-aws-modules/terraform-aws-s3-bucket.git?ref=2a25737a72c7e862ea297cea063207a3aa56b1a8"
 
-  bucket = "centralized-logs-replica-${random_id.random_suffix.hex}"
+  bucket = "centralized-logs-replica-${var.random_suffix_hex}"
   region = var.secondary_aws_region
 
   versioning = {
@@ -51,7 +51,7 @@ module "centralized_logs_replica_bucket" {
   server_side_encryption_configuration = {
     rule = {
       apply_server_side_encryption_by_default = {
-        kms_master_key_id = module.kms.key_arn
+        kms_master_key_id = var.kms_key_arn
         sse_algorithm     = "aws:kms"
       }
     }
