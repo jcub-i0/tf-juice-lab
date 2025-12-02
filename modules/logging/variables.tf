@@ -60,4 +60,5 @@ variable "cloudtrail_logs" {
 
 variable "cloudtrail_notifications_name" {
   description = "'name' attribute of the aws_sns_topic.cloudtrail_notifications resource"
+  type = string
 }
