@@ -42,3 +42,17 @@ variable "config_configuration_recorder_config_rec" {
   description = "config_rec attribute of the Configuration Recorder"
   type        = string
 }
+
+variable "cloudtrail_to_cw_role" {
+  description = "Reference to the aws_iam_role.cloudtrail_to_cw_role resource"
+  type = string
+}
+
+variable "cloudtrail_to_cw_policy" {
+  description = "Reference to the aws_iam_role_policy.cloudtrail_to_cw_policy resource"
+  type = string
+}
+
+variable "cloudtrail_logs" {
+  description = "Reference to the aws_cloudwatch_log_group.cloudtrail_logs resource"
+}
