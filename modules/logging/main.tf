@@ -2,9 +2,9 @@
 resource "aws_cloudtrail" "cloudtrail" {
   depends_on = [
     aws_s3_bucket_policy.centralized_logs_policy,
-    module.iam.cloudtrail_to_cw_role,
-    module.iam.cloudtrail_to_cw_policy,
-    aws_cloudwatch_log_group.cloudtrail_logs
+    var.cloudtrail_to_cw_role,
+    var.cloudtrail_to_cw_policy,
+    var.cloudtrail_logs
   ]
 
   name                          = "CloudTrail"
@@ -13,7 +13,7 @@ resource "aws_cloudtrail" "cloudtrail" {
   is_multi_region_trail         = true
   enable_log_file_validation    = true
 
-  kms_key_id     = module.kms.key_arn
+  kms_key_id     = var.kms_key_arn
   sns_topic_name = aws_sns_topic.cloudtrail_notifications.name
 
   cloud_watch_logs_group_arn = "${aws_cloudwatch_log_group.cloudtrail_logs.arn}:*"
@@ -227,7 +227,7 @@ resource "aws_s3_bucket_policy" "centralized_logs_policy" {
         Sid    = "AllowReplicationRoleReadFromLogsSource"
         Effect = "Allow"
         Principal = {
-          AWS = module.iam.replication_role_arn
+          AWS = var.replication_role_arn
         }
         Action = [
           "s3:GetObjectVersion",
