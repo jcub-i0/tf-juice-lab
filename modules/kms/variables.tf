@@ -4,7 +4,7 @@ variable "lambda_ec2_isolate_exec_role_arn" {
 }
 
 variable "lambda_ip_enrich_arn" {
-  description = "ARN of the Lambda IP Enrichment function"
+  description = "ARN of the Lambda IP Enrichment function role"
   type        = string
 }
 
