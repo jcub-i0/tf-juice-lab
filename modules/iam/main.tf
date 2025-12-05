@@ -319,6 +319,11 @@ resource "aws_iam_role_policy" "lambda_ip_enrich_policy" {
   policy = data.aws_iam_policy_document.ip_enrich_permissions.json
 }
 
+resource "aws_iam_role_policy_attachment" "lambda_vpc_access" {
+  role       = aws_iam_role.lambda_ip_enrich.id
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole"
+}
+
 ### Attach Lambda SNS Publish policy to IP Enrichment func's execution role
 resource "aws_iam_role_policy_attachment" "lambda_ip_enrich_sns_attach" {
   role       = aws_iam_role.lambda_ip_enrich.id
