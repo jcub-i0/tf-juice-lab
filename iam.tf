@@ -55,24 +55,6 @@ resource "aws_sqs_queue_policy" "gen_purp_s3_sns_to_sqs" {
   policy    = module.iam.gen_purp_s3_sns_to_sqs_json
 }
 
-### Attach IAM policy that allows General Purpose S3 to publish to Centralized Logs SNS topic
-resource "aws_sns_topic_policy" "general_purpose_topic_policy" {
-  arn    = aws_sns_topic.general_purpose_bucket_notifications.arn
-  policy = module.iam.general_purpose_sns_policy_json
-}
-
-### Attach IAM policy that allows Centralized Logs S3 Notifications SNS to send messages to SQS
-resource "aws_sqs_queue_policy" "centralized_logs_s3_sns_to_sqs" {
-  queue_url = module.logging.centralized_logs_s3_event_queue_id
-  policy    = module.iam.centralized_logs_s3_sns_to_sqs_json
-}
-
-### Attach IAM policy that allows Centralized Logs S3 to publish to Centralized Logs SNS topic
-resource "aws_sns_topic_policy" "centralized_logs_topic_policy" {
-  arn    = module.logging.centralized_logs_bucket_notifications_arn
-  policy = module.iam.centralized_logs_topic_policy_json
-}
-
 resource "aws_s3_bucket_policy" "general_purpose_replica_policy" {
   provider = aws.secondary
   bucket   = module.s3_replication.general_purpose_replica_bucket_id
