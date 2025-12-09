@@ -26,13 +26,13 @@ module "iam" {
   general_purpose_bucket_arn                = aws_s3_bucket.general_purpose.arn
   kms_key_arn                               = module.kms.kms_key_arn
   kms_replica_key_arn                       = module.kms.kms_replica_secondary_region_key_arn
-  alerts_sns_topic_arn                      = aws_sns_topic.alerts.arn
+  alerts_sns_topic_arn                      = module.monitoring.alerts_sns_topic_arn
   centralized_logs_bucket                   = module.logging.centralized_logs_bucket
   ec2_isolation_dlq_arn                     = module.lambda.ec2_isolation_dlq_arn
   ec2_autostop_dlq_arn                      = module.lambda.ec2_autostop_dlq_arn
   ip_enrich_dlq_arn                         = module.lambda.ip_enrich_dlq_arn
-  cloudtrail_log_delivery_arn               = aws_sqs_queue.cloudtrail_log_delivery.arn
-  cloudtrail_notifications_arn              = aws_sns_topic.cloudtrail_notifications.arn
+  cloudtrail_log_delivery_arn               = module.monitoring.cloudtrail_log_delivery_arn
+  cloudtrail_notifications_arn              = module.monitoring.cloudtrail_notifications_arn
   gen_purp_bucket_notifications_arn         = aws_sns_topic.general_purpose_bucket_notifications.arn
   centralized_logs_bucket_notifications_arn = module.logging.sns_centralized_logs_notifications_arn
   gen_purp_s3_event_queue_arn               = aws_sqs_queue.general_purpose_s3_event_queue.arn
