@@ -82,6 +82,10 @@ module "s3_replication" {
   kms_key_arn          = module.kms.kms_key_arn
 }
 
+module "lambda" {
+  source = "./modules/lambda"
+}
+
 module "kms" {
   source                           = "./modules/kms"
   lambda_ec2_isolate_exec_role_arn = module.iam.lambda_ec2_isolate_execution_role_arn
