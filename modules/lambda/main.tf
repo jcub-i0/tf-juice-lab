@@ -258,7 +258,7 @@ resource "aws_lambda_permission" "allow_eventbridge_invoke_ec2_isolation" {
 ### Attach IAM policy to EC2 Isolate SQS DLQ so Lambda can send it messages
 resource "aws_sqs_queue_policy" "ec2_isolate_dlq_policy" {
   queue_url = aws_sqs_queue.ec2_isolation_dlq.id
-  policy    = module.iam.ec2_isolate_lambda_to_sqs_json
+  policy    = var.ec2_isolate_lambda_to_sqs_json
 }
 
 ### Allow EventBridge to invoke Lambda EC2 Autostop function
@@ -273,7 +273,7 @@ resource "aws_lambda_permission" "allow_eventbridge_invoke_ec2_autostop" {
 ### Attach IAM policy to EC2 AutoStop SQS DLQ so Lambda can send it messages
 resource "aws_sqs_queue_policy" "ec2_autostop_lambda_to_sqs" {
   queue_url = aws_sqs_queue.ec2_autostop_dlq.id
-  policy    = module.iam.ec2_autostop_lambda_to_sqs_json
+  policy    = var.ec2_autostop_lambda_to_sqs_json
 }
 
 resource "aws_lambda_permission" "eventbridge_invoke_ip_enrich" {
@@ -287,5 +287,5 @@ resource "aws_lambda_permission" "eventbridge_invoke_ip_enrich" {
 ### Attach IAM policy to EC2 IP Enrich SQS DLQ so Lambda can send it messages
 resource "aws_sqs_queue_policy" "ip_enrich_lambda_to_sqs" {
   queue_url = aws_sqs_queue.ip_enrich_dlq.id
-  policy    = module.iam.ip_enrich_lambda_to_sqs_json
+  policy    = var.ip_enrich_lambda_to_sqs_json
 }
