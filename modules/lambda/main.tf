@@ -10,8 +10,8 @@ resource "aws_lambda_function" "ec2_isolation" {
   source_code_hash = data.archive_file.lambda_ec2_isolate_zip.output_base64sha256
 
   vpc_config {
-    subnet_ids         = [module.network.lambda_subnet_id]
-    security_group_ids = [aws_security_group.lambda_ec2_isolation_sg.id]
+    subnet_ids         = [var.lambda_subnet_id]
+    security_group_ids = [var.lambda_ec2_isolation_sg_id]
   }
 
   reserved_concurrent_executions = 5
@@ -27,15 +27,15 @@ resource "aws_lambda_function" "ec2_isolation" {
   }
 
   runtime = "python3.12"
-  role    = module.iam.ec2_isolate_execution_role_arn
+  role    = var.ec2_isolate_execution_role_arn
 
   #checkov:skip=CKV_AWS_272: source_code_hash is sufficient integrity validation for this environment
 
   environment {
     variables = {
-      QUARANTINE_SG_ID     = aws_security_group.quarantine_sg.id
+      QUARANTINE_SG_ID     = var.quarantine_sg_id
       RENOTIFY_AFTER_HOURS = var.renotify_after_hours_isolate
-      SNS_TOPIC_ARN        = aws_sns_topic.alerts.arn
+      SNS_TOPIC_ARN        = var.sns_topic_alerts_arn
     }
   }
 
@@ -44,7 +44,7 @@ resource "aws_lambda_function" "ec2_isolation" {
   }
 
   depends_on = [
-    module.iam.lambda_ec2_isolate_policy,
+    var.lambda_ec2_isolate_policy,
     aws_sqs_queue_policy.ec2_isolate_dlq_policy
   ]
 }
@@ -87,12 +87,6 @@ resource "aws_sqs_queue" "ec2_isolation_dlq" {
 }
 
 ## Lambda EC2 Autostop on Idle
-### Zip file containing EC2 autostop func code
-data "archive_file" "lambda_ec2_autostop_zip" {
-  type        = "zip"
-  source_file = "${path.module}/lambda/ec2_autostop/ec2_autostop.py"
-  output_path = "${path.module}/lambda/ec2_autostop/ec2_autostop.zip"
-}
 
 resource "aws_lambda_function" "ec2_autostop" {
   function_name    = "ec2_autostop"
@@ -105,8 +99,8 @@ resource "aws_lambda_function" "ec2_autostop" {
   kms_key_arn                    = var.kms_key_arn
 
   vpc_config {
-    subnet_ids         = [module.network.lambda_subnet_id]
-    security_group_ids = [aws_security_group.lambda_ec2_autostop_sg.id]
+    subnet_ids         = [var.lambda_subnet_id]
+    security_group_ids = [var.lambda_ec2_autostop_sg_id]
   }
 
   depends_on = [
@@ -123,7 +117,7 @@ resource "aws_lambda_function" "ec2_autostop" {
   }
 
   runtime = "python3.12"
-  role    = module.iam.lambda_autostop_execution_role_arn
+  role    = var.lambda_autostop_execution_role_arn
 
   #checkov:skip=CKV_AWS_272: source_code_hash is sufficient integrity validation for this environment
 
@@ -131,7 +125,7 @@ resource "aws_lambda_function" "ec2_autostop" {
     variables = {
       IDLE_CPU_THRESHOLD   = var.idle_cpu_threshold
       IDLE_PERIOD_MINUTES  = var.idle_period_minutes
-      SNS_TOPIC_ARN        = aws_sns_topic.alerts.arn
+      SNS_TOPIC_ARN        = var.sns_topic_alerts_arn
       RENOTIFY_AFTER_HOURS = var.renotify_after_hours_autostop
     }
   }
@@ -155,20 +149,13 @@ resource "aws_sqs_queue" "ec2_autostop_dlq" {
   kms_master_key_id = var.kms_key_arn
 }
 
-## Lambda IP Encrichment function
-### Zip file containing Lambda function code
-data "archive_file" "ip_enrich" {
-  type        = "zip"
-  source_file = "${path.module}/lambda/ip_enrich/ip_enrich_function.py"
-  output_path = "${path.module}/lambda/ip_enrich/ip_enrich_function.zip"
-}
-
+## Lambda IP Enrichment function
 ### Create IP Enrichment Lambda function
 resource "aws_lambda_function" "ip_enrich" {
   filename         = data.archive_file.ip_enrich.output_path
   description      = "Enrich IP address information by querying AbuseIPDB and include that data in SNS notification"
   function_name    = "ip_enrichment"
-  role             = module.iam.lambda_ip_enrich_arn
+  role             = var.lambda_ip_enrich_arn
   handler          = "ip_enrich_function.lambda_handler"
   source_code_hash = data.archive_file.ip_enrich.output_base64sha256
   runtime          = "python3.12"
@@ -181,8 +168,8 @@ resource "aws_lambda_function" "ip_enrich" {
   ]
 
   vpc_config {
-    subnet_ids         = [module.network.lambda_subnet_id]
-    security_group_ids = [aws_security_group.lambda_ip_enrich_sg.id]
+    subnet_ids         = [var.lambda_subnet_id]
+    security_group_ids = [var.lambda_ip_enrich_sg_id]
   }
 
   # Enable X-Ray tracing
@@ -198,19 +185,13 @@ resource "aws_lambda_function" "ip_enrich" {
 
   environment {
     variables = {
-      SNS_TOPIC_ARN      = aws_sns_topic.alerts.arn
+      SNS_TOPIC_ARN      = var.sns_topic_alerts_arn
       ABUSE_IPDB_API_KEY = var.abuse_ipdb_api_key
     }
   }
   layers = [
     aws_lambda_layer_version.requests.arn
   ]
-}
-
-data "archive_file" "layer" {
-  type        = "zip"
-  source_dir  = "${path.module}/lambda/layer"
-  output_path = "${path.module}/lambda/layer.zip"
 }
 
 ### Create Lambda layer so IP Enrichment Lambda can use the requests library

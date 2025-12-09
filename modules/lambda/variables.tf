@@ -42,3 +42,53 @@ variable "ip_enrich_lambda_to_sqs_json" {
   description = "JSON of the ip_enrich_lambda_to_sqs policy"
   type        = string
 }
+
+variable "lambda_subnet_id" {
+  description = "ID of the Lambda subnet"
+  type        = string
+}
+
+variable "lambda_ec2_isolation_sg_id" {
+  description = "ID of the Lambda EC2 Isolation function's Security Group"
+  type        = string
+}
+
+variable "lambda_ip_enrich_sg_id" {
+  description = "ID of the IP Enrich Lambda function's Security Group"
+  type        = string
+}
+
+variable "lambda_ec2_autostop_sg_id" {
+  description = "ID of the EC2 Autostop Lambda function's security group"
+  type        = string
+}
+
+variable "ec2_isolate_execution_role_arn" {
+  description = "ARN of the EC2 Isolation function's execution role"
+  type        = string
+}
+
+variable "quarantine_sg_id" {
+  description = "ID of the Quarantine Security Group (the SG where EC2 Isolation function sends instances to)"
+  type        = string
+}
+
+variable "sns_topic_alerts_arn" {
+  description = "ARN of the SNS topic used for sending out security alerts"
+  type        = string
+}
+
+variable "lambda_ec2_isolate_policy" {
+  description = "The lambda_ec2_isolate_policy resource"
+  type        = any
+}
+
+variable "lambda_autostop_execution_role_arn" {
+  description = "ARN of the EC2 Autostop Lambda function's execution role"
+  type        = string
+}
+
+variable "lambda_ip_enrich_arn" {
+  description = "ARN of the IP Enrich Lambda function"
+  type        = string
+}
