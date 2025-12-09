@@ -1,4 +1,0 @@
-# Run the following command to install all Lambda dependencies:
-# pip install -r lambda/layer/requirements.txt -t lambda/layer/python --only-binary :all:
-
-requests

@@ -54,24 +54,24 @@ module "endpoints" {
 }
 
 module "logging" {
-  source                                   = "./modules/logging"
-  environment                              = var.environment
-  random_suffix_hex                        = random_id.random_suffix.hex
-  replication_role_arn                     = module.iam.replication_role_arn
-  kms_master_key_arn                       = module.kms.kms_key_arn
-  centralized_logs_replica_bucket          = module.s3_replication.centralized_logs_replica_bucket
-  centralized_logs_replica_bucket_arn      = module.s3_replication.centralized_logs_replica_bucket_arn
-  kms_key_arn                              = module.kms.kms_key_arn
-  centralized_logs_topic_policy            = aws_sns_topic_policy.centralized_logs_topic_policy
-  config_configuration_recorder_config_rec = aws_config_configuration_recorder.config_rec
-  cloudtrail_to_cw_role = module.iam.cloudtrail_to_cw_role
-  cloudtrail_to_cw_policy = module.iam.cloudtrail_to_cw_policy
-  cloudtrail_logs = aws_cloudwatch_log_group.cloudtrail_logs
-  cloudtrail_notifications_name = aws_sns_topic.cloudtrail_notifications.name
-  cloudtrail_logs_arn = aws_cloudwatch_log_group.cloudtrail_logs.arn
-  cloudtrail_to_cw_role_arn = module.iam.cloudtrail_to_cw_role_arn
+  source                                        = "./modules/logging"
+  environment                                   = var.environment
+  random_suffix_hex                             = random_id.random_suffix.hex
+  replication_role_arn                          = module.iam.replication_role_arn
+  kms_master_key_arn                            = module.kms.kms_key_arn
+  centralized_logs_replica_bucket               = module.s3_replication.centralized_logs_replica_bucket
+  centralized_logs_replica_bucket_arn           = module.s3_replication.centralized_logs_replica_bucket_arn
+  kms_key_arn                                   = module.kms.kms_key_arn
+  centralized_logs_topic_policy                 = aws_sns_topic_policy.centralized_logs_topic_policy
+  config_configuration_recorder_config_rec      = aws_config_configuration_recorder.config_rec
+  cloudtrail_to_cw_role                         = module.iam.cloudtrail_to_cw_role
+  cloudtrail_to_cw_policy                       = module.iam.cloudtrail_to_cw_policy
+  cloudtrail_logs                               = aws_cloudwatch_log_group.cloudtrail_logs
+  cloudtrail_notifications_name                 = aws_sns_topic.cloudtrail_notifications.name
+  cloudtrail_logs_arn                           = aws_cloudwatch_log_group.cloudtrail_logs.arn
+  cloudtrail_to_cw_role_arn                     = module.iam.cloudtrail_to_cw_role_arn
   centralized_logs_replica_bucket_s3_bucket_arn = module.s3_replication.centralized_logs_replica_bucket_s3_bucket_arn
-  kms_replica_secondary_region_key_arn = module.kms.kms_replica_secondary_region_key_arn
+  kms_replica_secondary_region_key_arn          = module.kms.kms_replica_secondary_region_key_arn
 }
 
 module "s3_replication" {
@@ -83,13 +83,13 @@ module "s3_replication" {
 }
 
 module "lambda" {
-  source = "./modules/lambda"
-  renotify_after_hours_isolate = var.renotify_after_hours_isolate
+  source                        = "./modules/lambda"
+  renotify_after_hours_isolate  = var.renotify_after_hours_isolate
   renotify_after_hours_autostop = var.renotify_after_hours_autostop
-  idle_cpu_threshold = var.idle_cpu_threshold
-  idle_period_minutes = var.idle_period_minutes
-  abuse_ipdb_api_key = var.abuse_ipdb_api_key
-  kms_key_arn = module.kms.kms_key_arn
+  idle_cpu_threshold            = var.idle_cpu_threshold
+  idle_period_minutes           = var.idle_period_minutes
+  abuse_ipdb_api_key            = var.abuse_ipdb_api_key
+  kms_key_arn                   = module.kms.kms_key_arn
 }
 
 module "kms" {

@@ -1,5 +1,5 @@
 variable "renotify_after_hours_isolate" {
-  type = string
+  type        = string
   description = "Number of hours to wait before AutoStop Lambda sends additional SNS notification(s)"
 }
 
@@ -25,5 +25,5 @@ variable "abuse_ipdb_api_key" {
 
 variable "kms_key_arn" {
   description = "The ARN of the primary KMS key"
-  type = string
+  type        = string
 }
