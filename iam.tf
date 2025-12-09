@@ -81,30 +81,3 @@ resource "aws_s3_bucket_policy" "general_purpose_replica_policy" {
     ]
   })
 }
-
-resource "aws_s3_bucket_policy" "centralized_logs_replica_policy" {
-  provider = aws.secondary
-  bucket   = module.s3_replication.centralized_logs_replica_bucket_id
-
-  policy = jsonencode({
-    Version = "2012-10-17",
-    Statement = [
-      {
-        Sid    = "AllowReplicationRoleWriteToLogsReplica"
-        Effect = "Allow"
-        Principal = {
-          AWS = module.iam.replication_role_arn
-        }
-        Action = [
-          "s3:ReplicateObject",
-          "s3:ReplicateDelete",
-          "s3:ReplicateTags"
-        ]
-        Resource = [
-          module.s3_replication.centralized_logs_replica_bucket_arn,
-          "${module.s3_replication.centralized_logs_replica_bucket_arn}/*"
-        ]
-      }
-    ]
-  })
-}
