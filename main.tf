@@ -118,6 +118,10 @@ module "kms" {
   }
 }
 
+module "monitoring" {
+  source = "./modules/monitoring"
+}
+
 resource "aws_security_group" "quarantine_sg" {
   name        = "quarantine-sg"
   description = "Security Group to send compromised EC2 instances to for isolation"
