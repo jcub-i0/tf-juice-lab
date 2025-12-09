@@ -83,16 +83,26 @@ module "s3_replication" {
 }
 
 module "lambda" {
-  source                          = "./modules/lambda"
-  renotify_after_hours_isolate    = var.renotify_after_hours_isolate
-  renotify_after_hours_autostop   = var.renotify_after_hours_autostop
-  idle_cpu_threshold              = var.idle_cpu_threshold
-  idle_period_minutes             = var.idle_period_minutes
-  abuse_ipdb_api_key              = var.abuse_ipdb_api_key
-  kms_key_arn                     = module.kms.kms_key_arn
-  ec2_isolate_lambda_to_sqs_json  = module.iam.ec2_isolate_lambda_to_sqs_json
-  ec2_autostop_lambda_to_sqs_json = module.iam.ec2_autostop_lambda_to_sqs_json
-  ip_enrich_lambda_to_sqs_json    = module.iam.ip_enrich_lambda_to_sqs_json
+  source                             = "./modules/lambda"
+  renotify_after_hours_isolate       = var.renotify_after_hours_isolate
+  renotify_after_hours_autostop      = var.renotify_after_hours_autostop
+  idle_cpu_threshold                 = var.idle_cpu_threshold
+  idle_period_minutes                = var.idle_period_minutes
+  abuse_ipdb_api_key                 = var.abuse_ipdb_api_key
+  kms_key_arn                        = module.kms.kms_key_arn
+  ec2_isolate_lambda_to_sqs_json     = module.iam.ec2_isolate_lambda_to_sqs_json
+  ec2_autostop_lambda_to_sqs_json    = module.iam.ec2_autostop_lambda_to_sqs_json
+  ip_enrich_lambda_to_sqs_json       = module.iam.ip_enrich_lambda_to_sqs_json
+  lambda_subnet_id                   = module.network.lambda_subnet_id
+  lambda_ec2_isolation_sg_id         = aws_security_group.lambda_ec2_isolation_sg.id
+  lambda_ec2_autostop_sg_id          = aws_security_group.lambda_ec2_autostop_sg.id
+  lambda_ip_enrich_sg_id             = aws_security_group.lambda_ip_enrich_sg.id
+  ec2_isolate_execution_role_arn     = module.iam.ec2_isolate_execution_role_arn
+  quarantine_sg_id                   = aws_security_group.quarantine_sg.id
+  sns_topic_alerts_arn               = aws_sns_topic.alerts.arn
+  lambda_ec2_isolate_policy          = module.iam.lambda_ec2_isolate_policy
+  lambda_autostop_execution_role_arn = module.iam.lambda_autostop_execution_role_arn
+  lambda_ip_enrich_arn               = module.iam.lambda_ip_enrich_arn
 }
 
 module "kms" {
