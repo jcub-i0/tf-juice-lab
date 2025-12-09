@@ -15,7 +15,7 @@ resource "aws_lambda_function" "ec2_isolation" {
   }
 
   reserved_concurrent_executions = 5
-  kms_key_arn                    = module.kms.kms_key_arn
+  kms_key_arn                    = var.kms_key_arn
 
   # Enable X-Ray tracing
   tracing_config {
@@ -83,7 +83,7 @@ resource "aws_cloudwatch_event_target" "securityhub_ec2_isolate_target" {
 ### SQS DLQ for EC2 Isolation Lambda
 resource "aws_sqs_queue" "ec2_isolation_dlq" {
   name              = "ec2-isolation-lambda-dlq"
-  kms_master_key_id = module.kms.kms_key_arn
+  kms_master_key_id = var.kms_key_arn
 }
 
 ## Lambda EC2 Autostop on Idle
@@ -102,7 +102,7 @@ resource "aws_lambda_function" "ec2_autostop" {
   source_code_hash = data.archive_file.lambda_ec2_autostop_zip.output_base64sha256
 
   reserved_concurrent_executions = 5
-  kms_key_arn                    = module.kms.kms_key_arn
+  kms_key_arn                    = var.kms_key_arn
 
   vpc_config {
     subnet_ids         = [module.network.lambda_subnet_id]
@@ -152,7 +152,7 @@ resource "aws_cloudwatch_event_target" "ec2_autostop_target" {
 ### SQS DLQ for EC2 AutoStop Lambda
 resource "aws_sqs_queue" "ec2_autostop_dlq" {
   name              = "ec2-autostop-lambda-dlq"
-  kms_master_key_id = module.kms.kms_key_arn
+  kms_master_key_id = var.kms_key_arn
 }
 
 ## Lambda IP Encrichment function
@@ -174,7 +174,7 @@ resource "aws_lambda_function" "ip_enrich" {
   runtime          = "python3.12"
 
   reserved_concurrent_executions = 10
-  kms_key_arn                    = module.kms.kms_key_arn
+  kms_key_arn                    = var.kms_key_arn
 
   depends_on = [
     aws_sqs_queue_policy.ip_enrich_lambda_to_sqs
@@ -242,7 +242,7 @@ resource "aws_cloudwatch_event_target" "securityhub_finding_event_target_ip_enri
 ### SQS DLQ for EC2 IP Enrichment Lambda
 resource "aws_sqs_queue" "ip_enrich_dlq" {
   name              = "ec2-ip-enrich-lambda-dlq"
-  kms_master_key_id = module.kms.kms_key_arn
+  kms_master_key_id = var.kms_key_arn
 }
 
 ## Lambda-related permissions
