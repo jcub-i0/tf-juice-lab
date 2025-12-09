@@ -83,13 +83,16 @@ module "s3_replication" {
 }
 
 module "lambda" {
-  source                        = "./modules/lambda"
-  renotify_after_hours_isolate  = var.renotify_after_hours_isolate
-  renotify_after_hours_autostop = var.renotify_after_hours_autostop
-  idle_cpu_threshold            = var.idle_cpu_threshold
-  idle_period_minutes           = var.idle_period_minutes
-  abuse_ipdb_api_key            = var.abuse_ipdb_api_key
-  kms_key_arn                   = module.kms.kms_key_arn
+  source                          = "./modules/lambda"
+  renotify_after_hours_isolate    = var.renotify_after_hours_isolate
+  renotify_after_hours_autostop   = var.renotify_after_hours_autostop
+  idle_cpu_threshold              = var.idle_cpu_threshold
+  idle_period_minutes             = var.idle_period_minutes
+  abuse_ipdb_api_key              = var.abuse_ipdb_api_key
+  kms_key_arn                     = module.kms.kms_key_arn
+  ec2_isolate_lambda_to_sqs_json  = module.iam.ec2_isolate_lambda_to_sqs_json
+  ec2_autostop_lambda_to_sqs_json = module.iam.ec2_autostop_lambda_to_sqs_json
+  ip_enrich_lambda_to_sqs_json    = module.iam.ip_enrich_lambda_to_sqs_json
 }
 
 module "kms" {
