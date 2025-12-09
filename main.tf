@@ -86,6 +86,9 @@ module "lambda" {
   source = "./modules/lambda"
   renotify_after_hours_isolate = var.renotify_after_hours_isolate
   renotify_after_hours_autostop = var.renotify_after_hours_autostop
+  idle_cpu_threshold = var.idle_cpu_threshold
+  idle_period_minutes = var.idle_period_minutes
+  abuse_ipdb_api_key = var.abuse_ipdb_api_key
 }
 
 module "kms" {
