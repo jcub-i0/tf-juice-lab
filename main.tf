@@ -84,6 +84,8 @@ module "s3_replication" {
 
 module "lambda" {
   source = "./modules/lambda"
+  renotify_after_hours_isolate = var.renotify_after_hours_isolate
+  renotify_after_hours_autostop = var.renotify_after_hours_autostop
 }
 
 module "kms" {
