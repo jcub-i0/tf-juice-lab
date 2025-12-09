@@ -119,7 +119,11 @@ module "kms" {
 }
 
 module "monitoring" {
-  source = "./modules/monitoring"
+  source             = "./modules/monitoring"
+  aws_region         = var.aws_region
+  environment        = var.environment
+  alert_emails       = var.alert_emails
+  guardduty_features = var.guardduty_features
 }
 
 resource "aws_security_group" "quarantine_sg" {
