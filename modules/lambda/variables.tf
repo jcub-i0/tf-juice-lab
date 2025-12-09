@@ -29,16 +29,16 @@ variable "kms_key_arn" {
 }
 
 variable "ec2_isolate_lambda_to_sqs_json" {
-  type = string
+  type        = string
   description = "JSON of the ec2_isolate_lambda_to_sqs policy"
 }
 
 variable "ec2_autostop_lambda_to_sqs_json" {
   description = "JSON of the ec2_autostop_lambda_to_sqs policy"
-  type = string
+  type        = string
 }
 
 variable "ip_enrich_lambda_to_sqs_json" {
   description = "JSON of the ip_enrich_lambda_to_sqs policy"
-  type = string
+  type        = string
 }
