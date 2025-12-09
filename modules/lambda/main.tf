@@ -1,4 +1,3 @@
-
 # Lambda resources
 
 ## Lambda EC2 Isolation
