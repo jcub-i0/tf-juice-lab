@@ -1,3 +1,14 @@
+terraform {
+  required_providers {
+    aws = {
+      source = "hashicorp/aws"
+      configuration_aliases = [
+        aws,
+        aws.secondary,
+      ]
+    }
+  }
+}
 
 # S3 Modules for S3 CRR
 ## General Purpose Replica
