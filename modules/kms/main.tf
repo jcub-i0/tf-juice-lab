@@ -1,5 +1,17 @@
 # KMS Module for CloudTrail, SNS, SQS, and CloudWatch Log Group
 
+terraform {
+  required_providers {
+    aws = {
+      source = "hashicorp/aws"
+      configuration_aliases = [
+        aws,
+        aws.secondary,
+      ]
+    }
+  }
+}
+
 module "kms" {
   source = "git::https://github.com/terraform-aws-modules/terraform-aws-kms.git?ref=210736c7aaf2394a68e5f85de4e29169ac126363"
 
