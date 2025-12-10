@@ -98,7 +98,7 @@ variable "centralized_logs_replica_bucket_arn" {
   type        = string
 }
 
-variable "cloudtrail_log_group_arn" {
+variable "cloudtrail_logs_group_arn" {
   description = "ARN of the CloudTrail Log Group"
   type        = string
 }
