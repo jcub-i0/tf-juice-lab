@@ -41,7 +41,7 @@ module "iam" {
   gen_purp_bucket_arn                       = aws_s3_bucket.general_purpose.arn
   gen_purp_replica_bucket_arn               = module.s3_replication.general_purpose_replica_bucket_arn
   centralized_logs_replica_bucket_arn       = module.s3_replication.centralized_logs_replica_bucket_arn
-  cloudtrail_log_group_arn                  = aws_cloudwatch_log_group.cloudtrail_logs.arn
+  cloudtrail_logs_group_arn                  = module.monitoring.cloudtrail_logs_group_arn
 }
 
 module "endpoints" {
@@ -66,9 +66,9 @@ module "logging" {
   config_configuration_recorder_config_rec      = aws_config_configuration_recorder.config_rec
   cloudtrail_to_cw_role                         = module.iam.cloudtrail_to_cw_role
   cloudtrail_to_cw_policy                       = module.iam.cloudtrail_to_cw_policy
-  cloudtrail_logs                               = aws_cloudwatch_log_group.cloudtrail_logs
+  cloudtrail_logs_group                         = module.monitoring.cloudtrail_logs_group
   cloudtrail_notifications_name                 = aws_sns_topic.cloudtrail_notifications.name
-  cloudtrail_logs_arn                           = aws_cloudwatch_log_group.cloudtrail_logs.arn
+  cloudtrail_logs_group_arn                     = module.monitoring.cloudtrail_logs_group_arn
   cloudtrail_to_cw_role_arn                     = module.iam.cloudtrail_to_cw_role_arn
   centralized_logs_replica_bucket_s3_bucket_arn = module.s3_replication.centralized_logs_replica_bucket_s3_bucket_arn
   kms_replica_secondary_region_key_arn          = module.kms.kms_replica_secondary_region_key_arn
