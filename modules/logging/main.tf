@@ -4,7 +4,7 @@ resource "aws_cloudtrail" "cloudtrail" {
     aws_s3_bucket_policy.centralized_logs_policy,
     var.cloudtrail_to_cw_role,
     var.cloudtrail_to_cw_policy,
-    var.cloudtrail_logs
+    var.cloudtrail_logs_group
   ]
 
   name                          = "CloudTrail"
@@ -16,7 +16,7 @@ resource "aws_cloudtrail" "cloudtrail" {
   kms_key_id     = var.kms_key_arn
   sns_topic_name = var.cloudtrail_notifications_name
 
-  cloud_watch_logs_group_arn = "${var.cloudtrail_logs_arn}:*"
+  cloud_watch_logs_group_arn = "${var.cloudtrail_logs_group_arn}:*"
   cloud_watch_logs_role_arn  = var.cloudtrail_to_cw_role_arn
 
   insight_selector {

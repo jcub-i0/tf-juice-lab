@@ -68,12 +68,12 @@ variable "cloudtrail_to_cw_policy" {
   type        = any
 }
 
-variable "cloudtrail_logs" {
+variable "cloudtrail_logs_group" {
   description = "Reference to the aws_cloudwatch_log_group.cloudtrail_logs resource"
   type        = any
 }
 
-variable "cloudtrail_logs_arn" {
+variable "cloudtrail_logs_group_arn" {
   description = "ARN of the aws_cloudwatch_log_group.cloudtrail_logs resource"
   type        = string
 }
