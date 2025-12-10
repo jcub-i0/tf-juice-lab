@@ -75,7 +75,11 @@ module "logging" {
 }
 
 module "s3_replication" {
-  source               = "./modules/s3_replication"
+  source = "./modules/s3_replication"
+  providers = {
+    aws           = aws
+    aws.secondary = aws.secondary
+  }
   random_suffix_hex    = random_id.random_suffix.hex
   secondary_aws_region = var.secondary_aws_region
   environment          = var.environment
