@@ -41,7 +41,7 @@ module "iam" {
   gen_purp_bucket_arn                       = aws_s3_bucket.general_purpose.arn
   gen_purp_replica_bucket_arn               = module.s3_replication.general_purpose_replica_bucket_arn
   centralized_logs_replica_bucket_arn       = module.s3_replication.centralized_logs_replica_bucket_arn
-  cloudtrail_logs_group_arn                  = module.monitoring.cloudtrail_logs_group_arn
+  cloudtrail_logs_group_arn                 = module.monitoring.cloudtrail_logs_group_arn
 }
 
 module "endpoints" {
@@ -62,16 +62,20 @@ module "logging" {
   centralized_logs_replica_bucket               = module.s3_replication.centralized_logs_replica_bucket
   centralized_logs_replica_bucket_arn           = module.s3_replication.centralized_logs_replica_bucket_arn
   kms_key_arn                                   = module.kms.kms_key_arn
-  centralized_logs_topic_policy                 = aws_sns_topic_policy.centralized_logs_topic_policy
-  config_configuration_recorder_config_rec      = aws_config_configuration_recorder.config_rec
+  centralized_logs_topic_policy                 = module.logging.centralized_logs_topic_policy
+  centralized_logs_topic_policy_json            = module.iam.centralized_logs_topic_policy_json
+  config_configuration_recorder_config_rec      = module.monitoring.config_configuration_recorder_config_rec
   cloudtrail_to_cw_role                         = module.iam.cloudtrail_to_cw_role
   cloudtrail_to_cw_policy                       = module.iam.cloudtrail_to_cw_policy
-  cloudtrail_logs_group                         = module.monitoring.cloudtrail_logs_group
-  cloudtrail_notifications_name                 = aws_sns_topic.cloudtrail_notifications.name
-  cloudtrail_logs_group_arn                     = module.monitoring.cloudtrail_logs_group_arn
   cloudtrail_to_cw_role_arn                     = module.iam.cloudtrail_to_cw_role_arn
+  cloudtrail_logs_group                         = module.monitoring.cloudtrail_logs_group
+  cloudtrail_logs_group_arn                     = module.monitoring.cloudtrail_logs_group_arn
+  cloudtrail_notifications_name                 = module.monitoring.cloudtrail_notifications_name
   centralized_logs_replica_bucket_s3_bucket_arn = module.s3_replication.centralized_logs_replica_bucket_s3_bucket_arn
   kms_replica_secondary_region_key_arn          = module.kms.kms_replica_secondary_region_key_arn
+  centralized_logs_s3_event_queue_id            = module.logging.centralized_logs_s3_event_queue_id
+  centralized_logs_s3_sns_to_sqs_json           = module.iam.centralized_logs_s3_sns_to_sqs_json
+  centralized_logs_bucket_notifications_arn     = module.logging.centralized_logs_bucket_notifications_arn
 }
 
 module "s3_replication" {
@@ -103,7 +107,7 @@ module "lambda" {
   lambda_ip_enrich_sg_id             = aws_security_group.lambda_ip_enrich_sg.id
   ec2_isolate_execution_role_arn     = module.iam.ec2_isolate_execution_role_arn
   quarantine_sg_id                   = aws_security_group.quarantine_sg.id
-  sns_topic_alerts_arn               = aws_sns_topic.alerts.arn
+  sns_topic_alerts_arn               = module.monitoring.sns_topic_alerts_arn
   lambda_ec2_isolate_policy          = module.iam.lambda_ec2_isolate_policy
   lambda_autostop_execution_role_arn = module.iam.lambda_autostop_execution_role_arn
   lambda_ip_enrich_arn               = module.iam.lambda_ip_enrich_arn
@@ -128,6 +132,7 @@ module "monitoring" {
   environment        = var.environment
   alert_emails       = var.alert_emails
   guardduty_features = var.guardduty_features
+  kms_key_arn        = module.kms.kms_key_arn
 }
 
 resource "aws_security_group" "quarantine_sg" {
