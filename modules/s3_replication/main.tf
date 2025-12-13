@@ -83,7 +83,7 @@ module "centralized_logs_replica_bucket" {
 # Policy for Centralized Logs Replica S3 bucket
 resource "aws_s3_bucket_policy" "centralized_logs_replica_policy" {
   provider = aws.secondary
-  bucket   = module.s3_replication.centralized_logs_replica_bucket_id
+  bucket   = module.centralized_logs_replica_bucket.s3_bucket_id
 
   policy = jsonencode({
     Version = "2012-10-17",
@@ -92,7 +92,7 @@ resource "aws_s3_bucket_policy" "centralized_logs_replica_policy" {
         Sid    = "AllowReplicationRoleWriteToLogsReplica"
         Effect = "Allow"
         Principal = {
-          AWS = module.iam.replication_role_arn
+          AWS = var.replication_role_arn
         }
         Action = [
           "s3:ReplicateObject",
@@ -100,8 +100,8 @@ resource "aws_s3_bucket_policy" "centralized_logs_replica_policy" {
           "s3:ReplicateTags"
         ]
         Resource = [
-          module.s3_replication.centralized_logs_replica_bucket_arn,
-          "${module.s3_replication.centralized_logs_replica_bucket_arn}/*"
+          var.centralized_logs_replica_bucket_arn,
+          "${var.centralized_logs_replica_bucket_arn}/*"
         ]
       }
     ]
