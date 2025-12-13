@@ -14,11 +14,11 @@ locals {
 # Enable VPC Flow Logs and send them to specific CloudWatch Logs Group
 ## VPC Flow Log resource
 resource "aws_flow_log" "main_vpc" {
-  iam_role_arn         = module.iam.vpc_flow_logs_arn
+  iam_role_arn         = var.vpc_flow_logs_arn
   log_destination_type = "cloud-watch-logs"
   log_destination      = aws_cloudwatch_log_group.flow_logs_group.arn
   traffic_type         = "ALL"
-  vpc_id               = module.network.vpc_id
+  vpc_id               = var.vpc_id
 
   tags = {
     Name = "TF-Juice-Lab VPC Flow Logs"
@@ -30,13 +30,13 @@ resource "aws_flow_log" "main_vpc" {
 resource "aws_cloudwatch_log_group" "flow_logs_group" {
   name              = "/aws/vpc/flow-logs"
   retention_in_days = 365
-  kms_key_id        = module.kms.kms_key_arn
+  kms_key_id        = var.kms_key_arn
 }
 
 resource "aws_cloudwatch_log_group" "cloudtrail_logs" {
   name              = "tf-juice-lab-cloudtrail"
   retention_in_days = 365
-  kms_key_id        = module.kms.kms_key_arn
+  kms_key_id        = var.kms_key_arn
 
   tags = {
     Name        = "TF-Juice-Lab CloudTrail Logs"
@@ -89,7 +89,7 @@ resource "aws_cloudwatch_metric_alarm" "unauthorized_api_calls" {
 
 resource "aws_sns_topic" "alerts" {
   name              = "tf-juice-lab-security-alerts"
-  kms_master_key_id = module.kms.kms_key_arn
+  kms_master_key_id = var.kms_key_arn
 }
 
 resource "aws_sns_topic_subscription" "alerts_sub" {
@@ -103,13 +103,13 @@ resource "aws_sns_topic_subscription" "alerts_sub" {
 # Create SNS topic for CloudTrail notificaitons
 resource "aws_sns_topic" "cloudtrail_notifications" {
   name              = "cloudtrail-log-delivery"
-  kms_master_key_id = module.kms.kms_key_arn
+  kms_master_key_id = var.kms_key_arn
 }
 
 # Create SQS queue for CloudTrail notifications
 resource "aws_sqs_queue" "cloudtrail_log_delivery" {
   name              = "cloudtrail-log-delivery-queue"
-  kms_master_key_id = module.kms.kms_key_arn
+  kms_master_key_id = var.kms_key_arn
 }
 
 # Create SNS topic subscription for CloudTrail notifications
@@ -123,7 +123,7 @@ resource "aws_sns_topic_subscription" "cloudtrail_notifications_sub" {
 
 resource "aws_config_configuration_recorder" "config_rec" {
   name     = "TF-Juice-Lab-Config"
-  role_arn = module.iam.config_role_arn
+  role_arn = var.config_role_arn
 
   # This only records EC2 and S3 resources -- change it according to your preferences
   recording_group {
@@ -141,7 +141,7 @@ resource "aws_config_configuration_recorder" "config_rec" {
 resource "aws_config_configuration_recorder_status" "config_rec_stat" {
   name       = aws_config_configuration_recorder.config_rec.name
   is_enabled = true
-  depends_on = [module.logging.config_delivery_channel]
+  depends_on = [var.config_delivery_channel]
 
   #checkov:skip=CKV2_AWS_45: Don't want to pay for Config to support all resources Enable it in aws_config_configuration_recorder resource if desired
 }
@@ -169,7 +169,7 @@ resource "aws_config_remediation_configuration" "disable_public_s3_access" {
 
   parameter {
     name         = "AutomationAssumeRole"
-    static_value = module.iam.config_remediation_role_arn
+    static_value = var.config_remediation_role_arn
   }
   parameter {
     name           = "BucketName"
@@ -180,7 +180,7 @@ resource "aws_config_remediation_configuration" "disable_public_s3_access" {
   maximum_automatic_attempts = 5
   retry_attempt_seconds      = 120
 
-  depends_on = [module.iam.config_ssm_automation_policy_attachment]
+  depends_on = [var.config_ssm_automation_policy_attachment]
 }
 
 
@@ -274,7 +274,7 @@ resource "aws_sns_topic_policy" "cloudtrail_sns_policy" {
 ## Allow CloudTrail Notifications SNS Topic to publish to CloudTrail SQS queue
 resource "aws_sqs_queue_policy" "cloudtrail_sns_to_sqs_policy" {
   queue_url = aws_sqs_queue.cloudtrail_log_delivery.id
-  policy    = module.iam.cloudtrail_sns_sqs_json
+  policy    = var.cloudtrail_sns_to_sqs_json
 }
 
 # Permit EventBridge to publish to "Alerts" SNS topic
