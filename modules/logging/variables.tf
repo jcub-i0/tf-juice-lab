@@ -82,3 +82,33 @@ variable "cloudtrail_notifications_name" {
   description = "'name' attribute of the aws_sns_topic.cloudtrail_notifications resource"
   type        = string
 }
+
+variable "centralized_logs_s3_event_queue_id" {
+  description = "ID of the centralized_logs_s3_event_queue resource"
+  type = string
+}
+
+variable "centralized_logs_s3_sns_to_sqs_json" {
+  description = "JSON of the centralized_logs_s3_sns_to_sqs resource"
+  type = string
+}
+
+variable "centralized_logs_bucket_notifications_arn" {
+  description = "ARN of the centralized_logs_bucket_notifications resource"
+  type = string
+}
+
+variable "centralized_logs_topic_policy_json" {
+  description = "JSON of the centralized_logs_bucket_notifications resource"
+  type = string
+}
+
+variable "general_purpose_bucket_notifications_arn" {
+  description = "ARN of the General Purpose Bucket Notifications resource"
+  type = string
+}
+
+variable "general_purpose_sns_policy_json" {
+  description = "JSON of the general_purpose_sns_policy resource"
+  type = string
+}
