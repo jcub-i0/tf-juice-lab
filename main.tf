@@ -76,6 +76,8 @@ module "logging" {
   centralized_logs_s3_event_queue_id            = module.logging.centralized_logs_s3_event_queue_id
   centralized_logs_s3_sns_to_sqs_json           = module.iam.centralized_logs_s3_sns_to_sqs_json
   centralized_logs_bucket_notifications_arn     = module.logging.centralized_logs_bucket_notifications_arn
+  general_purpose_bucket_notifications_arn      = aws_sns_topic.general_purpose_bucket_notifications.arn
+  general_purpose_sns_policy_json               = module.iam.general_purpose_sns_policy_json
 }
 
 module "s3_replication" {
@@ -84,10 +86,12 @@ module "s3_replication" {
     aws           = aws
     aws.secondary = aws.secondary
   }
-  random_suffix_hex    = random_id.random_suffix.hex
-  secondary_aws_region = var.secondary_aws_region
-  environment          = var.environment
-  kms_key_arn          = module.kms.kms_key_arn
+  random_suffix_hex                   = random_id.random_suffix.hex
+  secondary_aws_region                = var.secondary_aws_region
+  environment                         = var.environment
+  kms_key_arn                         = module.kms.kms_key_arn
+  replication_role_arn                = module.iam.replication_role_arn
+  centralized_logs_replica_bucket_arn = module.s3_replication.centralized_logs_replica_bucket_arn
 }
 
 module "lambda" {
@@ -127,12 +131,19 @@ module "kms" {
 }
 
 module "monitoring" {
-  source             = "./modules/monitoring"
-  aws_region         = var.aws_region
-  environment        = var.environment
-  alert_emails       = var.alert_emails
-  guardduty_features = var.guardduty_features
-  kms_key_arn        = module.kms.kms_key_arn
+  source                                  = "./modules/monitoring"
+  aws_region                              = var.aws_region
+  environment                             = var.environment
+  alert_emails                            = var.alert_emails
+  guardduty_features                      = var.guardduty_features
+  kms_key_arn                             = module.kms.kms_key_arn
+  vpc_flow_logs_arn                       = module.iam.vpc_flow_logs_arn
+  vpc_id                                  = module.network.vpc_id
+  config_role_arn                         = module.iam.config_role_arn
+  cloudtrail_sns_to_sqs_json              = module.iam.cloudtrail_sns_to_sqs_json
+  config_delivery_channel                 = module.logging.config_delivery_channel
+  config_remediation_role_arn             = module.iam.config_remediation_role_arn
+  config_ssm_automation_policy_attachment = module.iam.config_ssm_automation_policy_attachment
 }
 
 resource "aws_security_group" "quarantine_sg" {
