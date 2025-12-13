@@ -25,3 +25,11 @@ output "centralized_logs_s3_event_queue_id" {
 output "centralized_logs_bucket_notifications_arn" {
   value = aws_sns_topic.centralized_logs_bucket_notifications.arn
 }
+
+output "centralized_logs_topic_policy" {
+  value = aws_sns_topic_policy.centralized_logs_topic_policy
+}
+
+output "general_purpose_topic_policy" {
+  value = aws_sns_topic_policy.general_purpose_topic_policy
+}
