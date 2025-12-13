@@ -21,3 +21,15 @@ output "cloudtrail_logs_group_arn" {
 output "config_configuration_recorder_config_rec" {
   value = aws_config_configuration_recorder.config_rec
 }
+
+output "cloudtrail_notifications_name" {
+  value = aws_sns_topic.cloudtrail_notifications.name
+}
+
+output "sns_topic_alerts_arn" {
+  value = aws_sns_topic.alerts.arn
+}
+
+output "securityhub_subscription_standards" {
+  value = aws_securityhub_standards_subscription.standards
+}
