@@ -17,3 +17,13 @@ variable "kms_key_arn" {
   description = "ARN of the KMS key used for encryption"
   type        = string
 }
+
+variable "replication_role_arn" {
+  description = "ARN of the S3 replicas' IAM role"
+  type = string
+}
+
+variable "centralized_logs_replica_bucket_arn" {
+  description = "ARN of the Centralized Logs Replica S3 bucket"
+  type = string
+}
