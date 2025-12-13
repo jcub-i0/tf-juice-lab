@@ -20,40 +20,40 @@ variable "guardduty_features" {
 
 variable "kms_key_arn" {
   description = "ARN of the main KMS key"
-  type = string
+  type        = string
 }
 
 variable "vpc_flow_logs_arn" {
   description = "ARN of the VPC Flow Logs resource"
-  type = string
+  type        = string
 }
 
 variable "vpc_id" {
   description = "ID attribute of the main VPC"
-  type = string
+  type        = string
 }
 
 variable "config_role_arn" {
   description = "ARN of the AWS Config IAM role"
-  type = string
+  type        = string
 }
 
 variable "config_remediation_role_arn" {
   description = "ARN of the AWS Config Remediation IAM role"
-  type = string
+  type        = string
 }
 
 variable "cloudtrail_sns_to_sqs_json" {
   description = "JSON attribute of the policy that allows CloudTrail SNS topic to publish to SQS"
-  type = string
+  type        = string
 }
 
 variable "config_delivery_channel" {
   description = "References the config_delivery_channel resource"
-  type = any
+  type        = any
 }
 
 variable "config_ssm_automation_policy_attachment" {
   description = "Config SSM Automation policy attachment resource"
-  type = any
+  type        = any
 }
