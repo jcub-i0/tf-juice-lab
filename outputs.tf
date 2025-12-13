@@ -16,7 +16,7 @@ output "juice_private_ip" {
 
 output "enabled_securityhub_standards" {
   value = {
-    for key, value in aws_securityhub_standards_subscription.standards :
+    for key, value in module.monitoring.securityhub_subscription_standards :
     key => value.standards_arn
   }
 }
