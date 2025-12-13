@@ -16,7 +16,7 @@ resource "aws_s3_bucket_notification" "general_purpose" {
   depends_on = [
     aws_s3_bucket.general_purpose,
     aws_sns_topic.general_purpose_bucket_notifications,
-    aws_sns_topic_policy.general_purpose_topic_policy
+    module.logging.general_purpose_topic_policy
   ]
 }
 
