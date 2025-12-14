@@ -33,3 +33,15 @@ output "centralized_logs_topic_policy" {
 output "general_purpose_topic_policy" {
   value = aws_sns_topic_policy.general_purpose_topic_policy
 }
+
+output "gen_purp_bucket_notifications_arn" {
+  value = aws_sns_topic.general_purpose_bucket_notifications.arn
+}
+
+output "gen_purp_s3_event_queue_arn" {
+  value = aws_sqs_queue.general_purpose_s3_event_queue.arn
+}
+
+output "general_purpose_s3_event_queue_id" {
+  value = aws_sqs_queue.general_purpose_s3_event_queue.id
+}
