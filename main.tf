@@ -78,6 +78,7 @@ module "logging" {
   centralized_logs_bucket_notifications_arn     = module.logging.centralized_logs_bucket_notifications_arn
   general_purpose_bucket_notifications_arn      = module.logging.gen_purp_bucket_notifications_arn
   general_purpose_sns_policy_json               = module.iam.general_purpose_sns_policy_json
+  terraform_admin_username                      = var.terraform_admin_username
 }
 
 module "s3_replication" {
