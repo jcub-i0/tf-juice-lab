@@ -112,3 +112,8 @@ variable "general_purpose_sns_policy_json" {
   description = "JSON of the general_purpose_sns_policy resource"
   type        = string
 }
+
+variable "terraform_admin_username" {
+  description = "IAM username of the Terraform admin user"
+  type        = string
+}
