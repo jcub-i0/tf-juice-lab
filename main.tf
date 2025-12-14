@@ -33,9 +33,9 @@ module "iam" {
   ip_enrich_dlq_arn                         = module.lambda.ip_enrich_dlq_arn
   cloudtrail_log_delivery_arn               = module.monitoring.cloudtrail_log_delivery_arn
   cloudtrail_notifications_arn              = module.monitoring.cloudtrail_notifications_arn
-  gen_purp_bucket_notifications_arn         = aws_sns_topic.general_purpose_bucket_notifications.arn
+  gen_purp_bucket_notifications_arn         = module.logging.gen_purp_bucket_notifications_arn
   centralized_logs_bucket_notifications_arn = module.logging.sns_centralized_logs_notifications_arn
-  gen_purp_s3_event_queue_arn               = aws_sqs_queue.general_purpose_s3_event_queue.arn
+  gen_purp_s3_event_queue_arn               = module.logging.gen_purp_s3_event_queue_arn
   centralized_logs_s3_event_queue_arn       = module.logging.sqs_centralized_logs_event_queue_arn
   centralized_logs_bucket_arn               = module.logging.centralized_logs_bucket_arn
   gen_purp_bucket_arn                       = aws_s3_bucket.general_purpose.arn
@@ -76,7 +76,7 @@ module "logging" {
   centralized_logs_s3_event_queue_id            = module.logging.centralized_logs_s3_event_queue_id
   centralized_logs_s3_sns_to_sqs_json           = module.iam.centralized_logs_s3_sns_to_sqs_json
   centralized_logs_bucket_notifications_arn     = module.logging.centralized_logs_bucket_notifications_arn
-  general_purpose_bucket_notifications_arn      = aws_sns_topic.general_purpose_bucket_notifications.arn
+  general_purpose_bucket_notifications_arn      = module.logging.gen_purp_bucket_notifications_arn
   general_purpose_sns_policy_json               = module.iam.general_purpose_sns_policy_json
 }
 
