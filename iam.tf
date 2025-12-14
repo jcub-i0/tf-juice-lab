@@ -51,7 +51,7 @@ resource "aws_s3_bucket_policy" "general_purpose_policy" {
 
 ### Attach IAM policy that allows General Purpose S3 Notifications SNS to send messages to SQS
 resource "aws_sqs_queue_policy" "gen_purp_s3_sns_to_sqs" {
-  queue_url = aws_sqs_queue.general_purpose_s3_event_queue.id
+  queue_url = module.logging.general_purpose_s3_event_queue_id
   policy    = module.iam.gen_purp_s3_sns_to_sqs_json
 }
 
