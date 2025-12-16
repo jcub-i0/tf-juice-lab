@@ -362,7 +362,7 @@ resource "aws_sns_topic_policy" "general_purpose_topic_policy" {
 
 ### Attach IAM policy that allows Centralized Logs S3 Notifications SNS to send messages to SQS
 resource "aws_sqs_queue_policy" "centralized_logs_s3_sns_to_sqs" {
-  queue_url = var.centralized_logs_s3_event_queue_id
+  queue_url = aws_sqs_queue.centralized_logs_s3_event_queue.id
   policy    = var.centralized_logs_s3_sns_to_sqs_json
 }
 
