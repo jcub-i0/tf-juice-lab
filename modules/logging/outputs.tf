@@ -45,3 +45,11 @@ output "gen_purp_s3_event_queue_arn" {
 output "general_purpose_s3_event_queue_id" {
   value = aws_sqs_queue.general_purpose_s3_event_queue.id
 }
+
+output "general_purpose_bucket_arn" {
+  value = aws_s3_bucket.general_purpose.arn
+}
+
+output "general_purpose_bucket_bucket" {
+  value = aws_s3_bucket.general_purpose.bucket
+}
