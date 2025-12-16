@@ -22,7 +22,7 @@ output "enabled_securityhub_standards" {
 }
 
 output "general_purpose_s3_bucket_name" {
-  value = aws_s3_bucket.general_purpose.bucket
+  value = module.logging.general_purpose_bucket_bucket
 }
 
 output "centralized_logs_s3_bucket_name" {
