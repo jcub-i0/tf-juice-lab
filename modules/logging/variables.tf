@@ -83,11 +83,6 @@ variable "centralized_logs_s3_sns_to_sqs_json" {
   type        = string
 }
 
-variable "centralized_logs_bucket_notifications_arn" {
-  description = "ARN of the centralized_logs_bucket_notifications resource"
-  type        = string
-}
-
 variable "centralized_logs_topic_policy_json" {
   description = "JSON of the centralized_logs_bucket_notifications resource"
   type        = string
