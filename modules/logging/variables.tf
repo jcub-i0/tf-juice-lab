@@ -88,11 +88,6 @@ variable "centralized_logs_topic_policy_json" {
   type        = string
 }
 
-variable "general_purpose_bucket_notifications_arn" {
-  description = "ARN of the General Purpose Bucket Notifications resource"
-  type        = string
-}
-
 variable "general_purpose_sns_policy_json" {
   description = "JSON of the general_purpose_sns_policy resource"
   type        = string
