@@ -356,7 +356,7 @@ resource "aws_s3_bucket_replication_configuration" "general_purpose_replication"
 
 ### Attach IAM policy that allows General Purpose S3 to publish to General Purpose SNS topic
 resource "aws_sns_topic_policy" "general_purpose_topic_policy" {
-  arn    = var.general_purpose_bucket_notifications_arn
+  arn    = aws_sns_topic.general_purpose_bucket_notifications.arn
   policy = var.general_purpose_sns_policy_json
 }
 
