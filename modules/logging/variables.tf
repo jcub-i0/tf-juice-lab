@@ -78,11 +78,6 @@ variable "cloudtrail_notifications_name" {
   type        = string
 }
 
-variable "centralized_logs_s3_event_queue_id" {
-  description = "ID of the centralized_logs_s3_event_queue resource"
-  type        = string
-}
-
 variable "centralized_logs_s3_sns_to_sqs_json" {
   description = "JSON of the centralized_logs_s3_sns_to_sqs resource"
   type        = string
