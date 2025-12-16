@@ -368,7 +368,7 @@ resource "aws_sqs_queue_policy" "centralized_logs_s3_sns_to_sqs" {
 
 ### Attach IAM policy that allows Centralized Logs S3 to publish to Centralized Logs SNS topic
 resource "aws_sns_topic_policy" "centralized_logs_topic_policy" {
-  arn    = var.centralized_logs_bucket_notifications_arn
+  arn    = aws_sns_topic.centralized_logs_bucket_notifications.arn
   policy = var.centralized_logs_topic_policy_json
 }
 
