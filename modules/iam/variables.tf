@@ -83,11 +83,6 @@ variable "centralized_logs_bucket_arn" {
   type        = string
 }
 
-variable "gen_purp_bucket_arn" {
-  description = "ARN of the General Purpose Logs S3 bucket"
-  type        = string
-}
-
 variable "gen_purp_replica_bucket_arn" {
   description = "ARN of the General Purpose Replica S3 bucket"
   type        = string
