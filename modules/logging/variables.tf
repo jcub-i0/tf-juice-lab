@@ -43,11 +43,6 @@ variable "kms_replica_secondary_region_key_arn" {
   type        = string
 }
 
-variable "centralized_logs_topic_policy" {
-  description = "Centralized Logs Topic Policy"
-  type        = any
-}
-
 variable "config_configuration_recorder_config_rec" {
   description = "Configuration Recorder"
   type        = any
@@ -110,6 +105,26 @@ variable "general_purpose_bucket_notifications_arn" {
 
 variable "general_purpose_sns_policy_json" {
   description = "JSON of the general_purpose_sns_policy resource"
+  type        = string
+}
+
+variable "gen_purp_s3_sns_to_sqs_json" {
+  description = "JSON of the General Purpose bucket's SNS topic's policy that allows it to access SQS"
+  type        = string
+}
+
+variable "general_purpose_replica_bucket" {
+  description = "The General Purpose Replica bucket itself (no attribute -- just the resource)"
+  type        = any
+}
+
+variable "general_purpose_replica_bucket_arn" {
+  description = "ARN of the General Purpose Replica bucket"
+  type        = string
+}
+
+variable "lambda_ec2_isolate_execution_role_arn" {
+  description = "ARN of the EC2 Isolate Lambda function's execution role"
   type        = string
 }
 
