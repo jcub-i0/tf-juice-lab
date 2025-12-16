@@ -72,7 +72,6 @@ module "logging" {
   centralized_logs_replica_bucket_s3_bucket_arn = module.s3_replication.centralized_logs_replica_bucket_s3_bucket_arn
   kms_replica_secondary_region_key_arn          = module.kms.kms_replica_secondary_region_key_arn
   centralized_logs_s3_sns_to_sqs_json           = module.iam.centralized_logs_s3_sns_to_sqs_json
-  general_purpose_bucket_notifications_arn      = module.logging.gen_purp_bucket_notifications_arn # Remove this
   general_purpose_sns_policy_json               = module.iam.general_purpose_sns_policy_json
   terraform_admin_username                      = var.terraform_admin_username
   gen_purp_s3_sns_to_sqs_json                   = module.iam.gen_purp_s3_sns_to_sqs_json
