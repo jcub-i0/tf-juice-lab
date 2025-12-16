@@ -71,7 +71,6 @@ module "logging" {
   cloudtrail_notifications_name                 = module.monitoring.cloudtrail_notifications_name
   centralized_logs_replica_bucket_s3_bucket_arn = module.s3_replication.centralized_logs_replica_bucket_s3_bucket_arn
   kms_replica_secondary_region_key_arn          = module.kms.kms_replica_secondary_region_key_arn
-  centralized_logs_s3_event_queue_id            = module.logging.centralized_logs_s3_event_queue_id # Remove this
   centralized_logs_s3_sns_to_sqs_json           = module.iam.centralized_logs_s3_sns_to_sqs_json
   centralized_logs_bucket_notifications_arn     = module.logging.centralized_logs_bucket_notifications_arn # Remove this
   general_purpose_bucket_notifications_arn      = module.logging.gen_purp_bucket_notifications_arn # Remove this
