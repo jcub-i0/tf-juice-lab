@@ -23,7 +23,7 @@ module "iam" {
   source                                    = "./modules/iam"
   terraform_admin_username                  = var.terraform_admin_username
   account_id                                = var.account_id
-  general_purpose_bucket_arn                = aws_s3_bucket.general_purpose.arn
+  general_purpose_bucket_arn                = module.logging.general_purpose_bucket_arn
   kms_key_arn                               = module.kms.kms_key_arn
   kms_replica_key_arn                       = module.kms.kms_replica_secondary_region_key_arn
   alerts_sns_topic_arn                      = module.monitoring.alerts_sns_topic_arn
@@ -38,7 +38,6 @@ module "iam" {
   gen_purp_s3_event_queue_arn               = module.logging.gen_purp_s3_event_queue_arn
   centralized_logs_s3_event_queue_arn       = module.logging.sqs_centralized_logs_event_queue_arn
   centralized_logs_bucket_arn               = module.logging.centralized_logs_bucket_arn
-  gen_purp_bucket_arn                       = aws_s3_bucket.general_purpose.arn
   gen_purp_replica_bucket_arn               = module.s3_replication.general_purpose_replica_bucket_arn
   centralized_logs_replica_bucket_arn       = module.s3_replication.centralized_logs_replica_bucket_arn
   cloudtrail_logs_group_arn                 = module.monitoring.cloudtrail_logs_group_arn
@@ -62,7 +61,6 @@ module "logging" {
   centralized_logs_replica_bucket               = module.s3_replication.centralized_logs_replica_bucket
   centralized_logs_replica_bucket_arn           = module.s3_replication.centralized_logs_replica_bucket_arn
   kms_key_arn                                   = module.kms.kms_key_arn
-  centralized_logs_topic_policy                 = module.logging.centralized_logs_topic_policy
   centralized_logs_topic_policy_json            = module.iam.centralized_logs_topic_policy_json
   config_configuration_recorder_config_rec      = module.monitoring.config_configuration_recorder_config_rec
   cloudtrail_to_cw_role                         = module.iam.cloudtrail_to_cw_role
@@ -79,6 +77,10 @@ module "logging" {
   general_purpose_bucket_notifications_arn      = module.logging.gen_purp_bucket_notifications_arn
   general_purpose_sns_policy_json               = module.iam.general_purpose_sns_policy_json
   terraform_admin_username                      = var.terraform_admin_username
+  gen_purp_s3_sns_to_sqs_json                   = module.iam.gen_purp_s3_sns_to_sqs_json
+  general_purpose_replica_bucket                = module.s3_replication.general_purpose_replica_bucket
+  general_purpose_replica_bucket_arn            = module.s3_replication.general_purpose_replica_bucket_arn
+  lambda_ec2_isolate_execution_role_arn         = module.iam.lambda_ec2_isolate_execution_role_arn
 }
 
 module "s3_replication" {
@@ -87,12 +89,11 @@ module "s3_replication" {
     aws           = aws
     aws.secondary = aws.secondary
   }
-  random_suffix_hex                   = random_id.random_suffix.hex
-  secondary_aws_region                = var.secondary_aws_region
-  environment                         = var.environment
-  kms_key_arn                         = module.kms.kms_key_arn
-  replication_role_arn                = module.iam.replication_role_arn
-  centralized_logs_replica_bucket_arn = module.s3_replication.centralized_logs_replica_bucket_arn
+  random_suffix_hex    = random_id.random_suffix.hex
+  secondary_aws_region = var.secondary_aws_region
+  environment          = var.environment
+  kms_key_arn          = module.kms.kms_key_arn
+  replication_role_arn = module.iam.replication_role_arn
 }
 
 module "lambda" {
