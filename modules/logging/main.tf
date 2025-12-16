@@ -139,7 +139,7 @@ resource "aws_s3_bucket_notification" "centralized_logs" {
   depends_on = [
     aws_s3_bucket.centralized_logs,
     aws_sns_topic.centralized_logs_bucket_notifications,
-    var.centralized_logs_topic_policy
+    aws_sns_topic_policy.centralized_logs_topic_policy
   ]
 }
 
@@ -250,7 +250,7 @@ resource "aws_s3_bucket_policy" "centralized_logs_policy" {
 
 # General Purpose S3 bucket
 resource "aws_s3_bucket" "general_purpose" {
-  bucket = "general-purpose-${random_id.random_suffix.hex}"
+  bucket = "general-purpose-${var.random_suffix_hex}"
 
   tags = {
     Name        = "General Purpose"
@@ -264,7 +264,7 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "general_purpose_s
 
   rule {
     apply_server_side_encryption_by_default {
-      kms_master_key_id = module.kms.kms_key_arn
+      kms_master_key_id = var.kms_key_arn
       sse_algorithm     = "aws:kms"
     }
   }
@@ -311,26 +311,26 @@ resource "aws_s3_bucket_public_access_block" "general_purpose_public_block" {
 resource "aws_s3_bucket_logging" "general_purpose_logging" {
   bucket = aws_s3_bucket.general_purpose.bucket
 
-  target_bucket = module.logging.centralized_logs_bucket
+  target_bucket = aws_s3_bucket.centralized_logs.bucket
   target_prefix = "s3-access-logs/${aws_s3_bucket.general_purpose.bucket}/"
 }
 
 ### CRR Configuration for General Purpose S3 bucket
 resource "aws_s3_bucket_replication_configuration" "general_purpose_replication" {
   bucket = aws_s3_bucket.general_purpose.bucket
-  role   = module.iam.replication_role_arn
+  role   = var.replication_role_arn
 
-  depends_on = [module.s3_replication.general_purpose_replica_bucket]
+  depends_on = [var.general_purpose_replica_bucket]
 
   rule {
     id     = "general-purpose-crr"
     status = "Enabled"
 
     destination {
-      bucket        = module.s3_replication.general_purpose_replica_bucket_arn
+      bucket        = var.general_purpose_replica_bucket_arn
       storage_class = "STANDARD_IA"
       encryption_configuration {
-        replica_kms_key_id = module.kms.kms_replica_secondary_region_key_arn
+        replica_kms_key_id = var.kms_replica_secondary_region_key_arn
       }
     }
 
@@ -391,7 +391,7 @@ resource "aws_s3_bucket_notification" "general_purpose" {
   depends_on = [
     aws_s3_bucket.general_purpose,
     aws_sns_topic.general_purpose_bucket_notifications,
-    module.logging.general_purpose_topic_policy
+    aws_sns_topic_policy.general_purpose_topic_policy
   ]
 }
 
@@ -418,7 +418,7 @@ resource "aws_s3_bucket_policy" "general_purpose_policy" {
         Effect = "Allow",
         Principal = {
           AWS = [
-            module.iam.lambda_ec2_isolate_execution_role_arn,
+            var.lambda_ec2_isolate_execution_role_arn,
             "arn:aws:iam::${data.aws_caller_identity.current.account_id}:user/${var.terraform_admin_username}"
           ]
         },
@@ -432,7 +432,7 @@ resource "aws_s3_bucket_policy" "general_purpose_policy" {
         Sid    = "AllowReplicationRoleReadFromSource"
         Effect = "Allow"
         Principal = {
-          AWS = module.iam.replication_role_arn
+          AWS = var.replication_role_arn
         }
         Action = [
           "s3:GetObjectVersion",
@@ -455,6 +455,6 @@ resource "aws_s3_bucket_policy" "general_purpose_policy" {
 
 ### Attach IAM policy that allows General Purpose S3 Notifications SNS to send messages to SQS
 resource "aws_sqs_queue_policy" "gen_purp_s3_sns_to_sqs" {
-  queue_url = module.logging.general_purpose_s3_event_queue_id
-  policy    = module.iam.gen_purp_s3_sns_to_sqs_json
+  queue_url = aws_sqs_queue.general_purpose_s3_event_queue.id
+  policy    = var.gen_purp_s3_sns_to_sqs_json
 }
