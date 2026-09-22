@@ -67,7 +67,7 @@ variable "alert_emails" {
 }
 
 variable "guardduty_features" {
-  description = "List of features to be added to GuardDuty - Determines data souces"
+  description = "List of GuardDuty features, determining where GuardDuty pulls data from"
   type        = list(string)
   default = [
     "S3_DATA_EVENTS",
